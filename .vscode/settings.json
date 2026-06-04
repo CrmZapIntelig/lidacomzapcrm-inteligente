@@ -1,0 +1,6 @@
+{
+    "npm.enableRunFromFolder": true,
+    "npm.exclude": "",
+    "github.copilot.chat.responsesApi.promptCacheKey.enabled": true,
+    "github.copilot.chat.responsesApiContextManagement.enabled": true
+}

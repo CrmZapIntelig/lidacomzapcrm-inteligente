@@ -1,0 +1,8 @@
+{
+  "name": "CRM WhatsApp Inteligente",
+  "description": "Plataforma SaaS completa de CRM comercial integrado ao WhatsApp com funil de vendas, geração de pedidos dentro do chat, disparador inteligente anti-ban, automações SE/ENTÃO e relatórios consolidados.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
