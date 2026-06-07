@@ -26,6 +26,7 @@ import { Client, Message, HistoryEvent, Order, Campaign, AutomationRule, AppSett
 
 // Import Views
 import Sidebar from './components/Sidebar';
+import PublicCardapioView from './components/PublicCardapioView';
 import Header from './components/Header';
 import DashboardView from './components/DashboardView';
 import WhatsAppView from './components/WhatsAppView';
@@ -917,6 +918,12 @@ const handleToggleAutomation = async (ruleId: string) => {
   const formatCurrency = (val: number) => {
     return `R$ ${val.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
   };
+
+  const publicCardapioMatch = window.location.pathname.match(/^\/cardapio\/([^/]+)$/);
+
+if (publicCardapioMatch) {
+  return <PublicCardapioView menuId={publicCardapioMatch[1]} />;
+}
 
   if (!auth.isAuthenticated) {
     return <LoginView onLogin={handleLogin} />;

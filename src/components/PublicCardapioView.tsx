@@ -135,6 +135,7 @@ export default function PublicCardapioView({ menuId }: PublicCardapioViewProps) 
         number,
         neighborhood,
         complement: complement || undefined,
+        zipCode: '',
       },
       channel: 'whatsapp',
       notes: `Pedido recebido via cardápio público: ${menu.name}`,
@@ -143,7 +144,7 @@ export default function PublicCardapioView({ menuId }: PublicCardapioViewProps) 
     await setDoc(doc(db, 'deliveryOrders', orderId), newOrder, { merge: true });
 
     setLastOrderId(orderId);
-    setBasket([]);
+    setBasket([]);  
     setStep('success');
   };
 

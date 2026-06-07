@@ -698,8 +698,8 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
 
                       <button
                         onClick={() => {
-                          const targetPhone = clients[0]?.phone || '';
-                          const text = `Olá, dê uma olhada no nosso menu digital *${menu.name}*! Acesse e faça o pedido direto no chat: https://delivery.greenhub.crm/cardapio/${menu.id}`;
+                          const text = `Olá, dê uma olhada no nosso menu digital *${menu.name}*! Acesse e faça o pedido direto no chat: ${window.location.origin}/cardapio/${menu.id}`;
+                        
                           if (clients.length > 0) {
                             onSendMessage(clients[0].id, text, 'text');
                             alert(`Link gerado enviado para ${clients[0].name} via WhatsApp!`);
