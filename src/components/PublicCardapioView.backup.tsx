@@ -11,7 +11,15 @@ import {
   User,
   Phone,
 } from 'lucide-react';
-import { collection, doc, getDocs, setDoc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDocs,
+  setDoc,
+  getDoc,
+  updateDoc,
+  arrayUnion
+} from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import {
   Cardapio,
