@@ -1134,7 +1134,24 @@ if (publicCardapioMatch) {
 {currentTab === 'gestao_entregas' && (
   <GestaoEntregasView
     couriers={couriers}
-    setCouriers={setCouriers}
+    setCouriers={async (updater: any) => {
+      setCouriers((prev) => {
+        const nextCouriers =
+          typeof updater === 'function'
+            ? updater(prev)
+            : updater;
+    
+        nextCouriers.forEach((courier: any) => {
+          const cleanCourier = JSON.parse(JSON.stringify(courier));
+    
+          setDoc(doc(db, 'couriers', courier.id), cleanCourier, { merge: true })
+            .then(() => console.log(`COURIER ATUALIZADO FIRESTORE: ${courier.id}`))
+            .catch((error) => console.error('ERRO AO ATUALIZAR COURIER FIRESTORE:', error));
+        });
+    
+        return nextCouriers;
+      });
+    }}
     reviews={reviews}
     setReviews={setReviews}
     routes={routes}
