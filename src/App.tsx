@@ -37,6 +37,7 @@ import CardapioView from './components/CardapioView';
 import CozinhaView from './components/CozinhaView';
 import ProducaoView from './components/ProducaoView';
 import EntregasView from './components/EntregasView';
+import GestaoEntregasView from './components/GestaoEntregasView';
 import EntregadoresView from './components/EntregadoresView';
 import RotasView from './components/RotasView';
 import RastreamentoView from './components/RastreamentoView';
@@ -1130,12 +1131,20 @@ if (publicCardapioMatch) {
             />
           )}
 
-          {currentTab === 'entregas' && (
-            <EntregasView
-              deliveryOrders={deliveryOrders}
-              setDeliveryOrders={setDeliveryOrders}
-            />
-          )}
+{currentTab === 'gestao_entregas' && (
+  <GestaoEntregasView
+    couriers={couriers}
+    setCouriers={setCouriers}
+    reviews={reviews}
+    setReviews={setReviews}
+    routes={routes}
+    setRoutes={setRoutes}
+    messages={messages}
+    setMessages={setMessages}
+    deliveryOrders={deliveryOrders}
+    setDeliveryOrders={setDeliveryOrders}
+  />
+)}
 
           {currentTab === 'entregadores' && (
             <EntregadoresView
