@@ -911,7 +911,48 @@ const handleToggleAutomation = async (ruleId: string) => {
   }
 };
 
-  // 7. Calculate overall pipeline value
+  
+// Centralized Firestore persistence for delivery orders
+const handleUpdateDeliveryOrders = async (updater: any) => {
+  setDeliveryOrders((prev) => {
+    const nextDeliveryOrders =
+      typeof updater === 'function' ? updater(prev) : updater;
+
+    nextDeliveryOrders.forEach((deliveryOrder: any) => {
+      const previousOrder = prev.find((item: any) => item.id === deliveryOrder.id);
+      const cleanDeliveryOrder = JSON.parse(JSON.stringify(deliveryOrder));
+
+      setDoc(doc(db, 'deliveryOrders', deliveryOrder.id), cleanDeliveryOrder, { merge: true })
+        .catch((error) => console.error('ERRO AO ATUALIZAR DELIVERY ORDER FIRESTORE:', error));
+
+      if (previousOrder && previousOrder.status !== deliveryOrder.status) {
+        const historyId = `dh_${Date.now()}_${Math.random().toString(36).substring(2,9)}`;
+        const historyEvent = {
+          id: historyId,
+          orderId: deliveryOrder.id,
+          courierId: deliveryOrder.courierId || '',
+          courierName: deliveryOrder.courierName || '',
+          clientName: deliveryOrder.clientName || '',
+          totalWithFee: deliveryOrder.total || 0,
+          deliveredAt: new Date().toISOString(),
+          status: 'SUCESSO',
+          avgSpeed: 0,
+          type: 'status_change',
+          previousStatus: previousOrder.status,
+          newStatus: deliveryOrder.status,
+          description: `Pedido ${deliveryOrder.id} alterado de ${previousOrder.status} para ${deliveryOrder.status}`,
+          createdAt: new Date().toISOString(),
+        };
+        setDeliveryHistories((current)=>[historyEvent as any,...current]);
+        setDoc(doc(db,'deliveryHistories',historyId),historyEvent,{merge:true}).catch(()=>{});
+      }
+    });
+
+    return nextDeliveryOrders;
+  });
+};
+
+// 7. Calculate overall pipeline value
   const totalPipeline = clients
     .filter((c) => c.stage !== 'Fechado')
     .reduce((v, c) => v + (c.totalBought > 0 ? c.totalBought : 155), 0);
@@ -1118,7 +1159,7 @@ if (publicCardapioMatch) {
               onAddHistoryEvent={handleAddHistoryEvent}
               onSendMessage={handleSendMessage}
               deliveryOrders={deliveryOrders}
-              setDeliveryOrders={setDeliveryOrders}
+              setDeliveryOrders={handleUpdateDeliveryOrders}
               products={productsDigitalMenu}
               setProducts={setProductsDigitalMenu}
             />
@@ -1127,7 +1168,7 @@ if (publicCardapioMatch) {
           {currentTab === 'producao' && (
             <ProducaoView
               deliveryOrders={deliveryOrders}
-              setDeliveryOrders={setDeliveryOrders}
+              setDeliveryOrders={handleUpdateDeliveryOrders}
             />
           )}
 
@@ -1159,112 +1200,15 @@ if (publicCardapioMatch) {
     messages={messages}
     setMessages={setMessages}
     deliveryOrders={deliveryOrders}
-    setDeliveryOrders={setDeliveryOrders}
+    setDeliveryOrders={handleUpdateDeliveryOrders}
   />
 )}
 
-          {currentTab === 'entregadores' && (
-            <EntregadoresView
-              couriers={couriers}
-              setCouriers={async (updater) => {
-  setCouriers((prev) => {
-    const nextCouriers =
-      typeof updater === 'function'
-        ? updater(prev)
-        : updater;
+          
 
-    nextCouriers.forEach((courier: any) => {
-      const cleanCourier = JSON.parse(JSON.stringify(courier));
+          
 
-      setDoc(doc(db, 'couriers', courier.id), cleanCourier, { merge: true })
-        .then(() => console.log(`COURIER ATUALIZADO FIRESTORE: ${courier.id}`))
-        .catch((error) => console.error('ERRO AO ATUALIZAR COURIER FIRESTORE:', error));
-    });
-
-    return nextCouriers;
-  });
-}}
-              reviews={reviews}
-              setReviews={setReviews}
-              deliveryOrders={deliveryOrders}
-            />
-          )}
-
-          {currentTab === 'rotas' && (
-            <RotasView
-              couriers={couriers}
-              setCouriers={async (updater) => {
-                setCouriers((prev) => {
-                  const nextCouriers =
-                    typeof updater === 'function'
-                      ? updater(prev)
-                      : updater;
-              
-                  nextCouriers.forEach((courier: any) => {
-                    const cleanCourier = JSON.parse(JSON.stringify(courier));
-              
-                    setDoc(doc(db, 'couriers', courier.id), cleanCourier, { merge: true })
-                      .then(() => console.log(`COURIER ATUALIZADO FIRESTORE: ${courier.id}`))
-                      .catch((error) => console.error('ERRO AO ATUALIZAR COURIER FIRESTORE:', error));
-                  });
-              
-                  return nextCouriers;
-                });
-              }}
-              routes={routes}
-              setRoutes={async (updater) => {
-  setRoutes((prev) => {
-    const nextRoutes =
-      typeof updater === 'function'
-        ? updater(prev)
-        : updater;
-
-    nextRoutes.forEach((route: any) => {
-      const cleanRoute = JSON.parse(JSON.stringify(route));
-
-      setDoc(doc(db, 'routes', route.id), cleanRoute, { merge: true })
-        .then(() => console.log(`ROUTE ATUALIZADA FIRESTORE: ${route.id}`))
-        .catch((error) => console.error('ERRO AO ATUALIZAR ROUTE FIRESTORE:', error));
-    });
-
-    return nextRoutes;
-  });
-}}
-              deliveryOrders={deliveryOrders}
-              setDeliveryOrders={setDeliveryOrders}
-              messages={messages}
-              setMessages={setMessages}
-            />
-          )}
-
-          {currentTab === 'rastreamento' && (
-            <RastreamentoView
-              deliveryOrders={deliveryOrders}
-              setDeliveryOrders={setDeliveryOrders}
-              routes={routes}
-              setRoutes={setRoutes}
-              couriers={couriers}
-              setCouriers={async (updater) => {
-                setCouriers((prev) => {
-                  const nextCouriers =
-                    typeof updater === 'function'
-                      ? updater(prev)
-                      : updater;
-              
-                  nextCouriers.forEach((courier: any) => {
-                    const cleanCourier = JSON.parse(JSON.stringify(courier));
-              
-                    setDoc(doc(db, 'couriers', courier.id), cleanCourier, { merge: true })
-                      .then(() => console.log(`COURIER ATUALIZADO FIRESTORE: ${courier.id}`))
-                      .catch((error) => console.error('ERRO AO ATUALIZAR COURIER FIRESTORE:', error));
-                  });
-              
-                  return nextCouriers;
-                });
-              }}
-              messages={messages}
-            />
-          )}
+          
 
           {currentTab === 'pedidos' && (
             <div className="space-y-6 font-sans">
