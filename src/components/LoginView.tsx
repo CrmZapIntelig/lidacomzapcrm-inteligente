@@ -1,39 +1,26 @@
 import React, { useState } from 'react';
 import { Utensils, Lock, Mail, Loader2 } from 'lucide-react';
-import { User } from '../types';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../lib/firebase';
 
-interface LoginViewProps {
-  onLogin: (user: User) => void;
-}
-
-export default function LoginView({ onLogin }: LoginViewProps) {
+export default function LoginView() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Simulate Supabase login delay
-    setTimeout(() => {
-      // Mock validation
-      if (email === 'admin@pratomineiro.com.br' || password === 'admin123') {
-        const mockUser: User = {
-          id: 'usr_1',
-          name: 'Administrador (Prato Mineiro)',
-          email: 'admin@pratomineiro.com.br',
-          role: 'administrador',
-          active: true,
-        };
-        onLogin(mockUser);
-      } else {
-        setError('E-mail ou senha inválidos. Utilize admin@pratomineiro.com.br e admin123.');
-        setLoading(false);
-      }
-    }, 1200);
+    try {
+      await signInWithEmailAndPassword(auth, email.trim(), password);
+    } catch (err) {
+      console.error('ERRO AO AUTENTICAR FIREBASE:', err);
+      setError('E-mail ou senha inválidos.');
+      setLoading(false);
+    }
   };
 
   return (
@@ -111,11 +98,11 @@ export default function LoginView({ onLogin }: LoginViewProps) {
 
         <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 text-center">
           <p className="text-xs text-slate-400 font-medium">
-            Sistema preparado para operação real. <br />Para acessar, use: <br/>
-            <span className="font-mono text-emerald-500">admin@pratomineiro.com.br</span> / <span className="font-mono text-emerald-500">admin123</span>
+            Sistema preparado para operação real. <br />Acesso restrito a usuários cadastrados no Firebase Authentication.
           </p>
         </div>
       </div>
     </div>
   );
 }
+

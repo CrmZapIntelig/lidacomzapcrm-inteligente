@@ -52,7 +52,8 @@ import CaixaView from './components/CaixaView';
 import { ShoppingBag, Star, TrendingUp } from 'lucide-react';
 import { AuthSession, User, CaixaSession, CaixaTransaction } from './types';
 
-import { db } from './lib/firebase';
+import { db, auth as firebaseAuth } from './lib/firebase';
+import { onAuthStateChanged, signOut, type User as FirebaseAuthUser } from 'firebase/auth';
 import { collection, doc, setDoc, onSnapshot, type DocumentData, type QuerySnapshot } from 'firebase/firestore';
 
 const mapSnapshotWithId = <T,>(snapshot: QuerySnapshot<DocumentData>): T[] =>
@@ -61,6 +62,14 @@ const mapSnapshotWithId = <T,>(snapshot: QuerySnapshot<DocumentData>): T[] =>
     id: docSnap.id,
   }));
 
+const mapFirebaseUser = (firebaseUser: FirebaseAuthUser): User => ({
+  id: firebaseUser.uid,
+  email: firebaseUser.email || '',
+  name: firebaseUser.displayName || firebaseUser.email || 'Usuário Firebase',
+  role: 'administrador',
+  active: true,
+});
+
 export default function App() {
 
   useEffect(() => {
@@ -68,20 +77,30 @@ export default function App() {
   }, []);
 
   // Auth state
-  const [auth, setAuth] = useState<AuthSession>(() => {
-    const saved = localStorage.getItem('lidacomzap_auth');
-    return saved ? JSON.parse(saved) : { user: null, token: null, isAuthenticated: false };
+  const [auth, setAuth] = useState<AuthSession>({
+    user: null,
+    token: null,
+    isAuthenticated: false,
   });
 
-  const handleLogin = (user: User) => {
-    const newAuth = { user, token: 'mock_token', isAuthenticated: true };
-    setAuth(newAuth);
-    localStorage.setItem('lidacomzap_auth', JSON.stringify(newAuth));
-  };
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(firebaseAuth, (firebaseUser) => {
+      setAuth({
+        user: firebaseUser ? mapFirebaseUser(firebaseUser) : null,
+        token: null,
+        isAuthenticated: !!firebaseUser,
+      });
+    });
 
-  const handleLogout = () => {
-    setAuth({ user: null, token: null, isAuthenticated: false });
-    localStorage.removeItem('lidacomzap_auth');
+    return unsubscribe;
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(firebaseAuth);
+    } catch (error) {
+      console.error('ERRO AO SAIR DO FIREBASE AUTH:', error);
+    }
   };
 
   // 1. Core State Managers backed by LocalStorage
@@ -930,7 +949,7 @@ if (publicCardapioMatch) {
 }
 
   if (!auth.isAuthenticated) {
-    return <LoginView onLogin={handleLogin} />;
+    return <LoginView />;
   }
 
   return (
