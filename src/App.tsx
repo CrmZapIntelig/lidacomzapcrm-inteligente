@@ -53,7 +53,14 @@ import { ShoppingBag, Star, TrendingUp } from 'lucide-react';
 import { AuthSession, User, CaixaSession, CaixaTransaction } from './types';
 
 import { db } from './lib/firebase';
-import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
+import { collection, doc, setDoc, onSnapshot, type DocumentData, type QuerySnapshot } from 'firebase/firestore';
+
+const mapSnapshotWithId = <T,>(snapshot: QuerySnapshot<DocumentData>): T[] =>
+  snapshot.docs.map((docSnap) => ({
+    ...(docSnap.data() as T),
+    id: docSnap.id,
+  }));
+
 export default function App() {
 
   useEffect(() => {
@@ -81,29 +88,29 @@ export default function App() {
   const [clients, setClients] = useState<Client[]>([]);
 
   useEffect(() => {
-    const loadFirestoreClients = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'clients'));
-        const firestoreClients = snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as Client) }));
+    const unsubscribe = onSnapshot(
+      collection(db, 'clients'),
+      (snapshot) => {
+        const firestoreClients = mapSnapshotWithId<Client>(snapshot);
         const loadedClients = firestoreClients.length ? firestoreClients : INITIAL_CLIENTS;
         setClients(loadedClients);
-        console.log(`FIRESTORE CLIENTS CARREGADOS: ${loadedClients.length}`);
-      } catch (error) {
+        console.log(`FIRESTORE CLIENTS SINCRONIZADOS: ${loadedClients.length}`);
+      },
+      (error) => {
         console.error('ERRO AO CARREGAR CLIENTS FIRESTORE:', error);
         setClients(INITIAL_CLIENTS);
-        console.log(`FIRESTORE CLIENTS CARREGADOS: ${INITIAL_CLIENTS.length}`);
       }
-    };
-    loadFirestoreClients();
+    );
+
+    return unsubscribe;
   }, []);
 
   const [messages, setMessages] = useState<Record<string, Message[]>>({});
 
   useEffect(() => {
-    const loadFirestoreMessages = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'messages'));
-  
+    const unsubscribe = onSnapshot(
+      collection(db, 'messages'),
+      (snapshot) => {
         const firestoreMessages: Record<string, Message[]> = {};
   
         snapshot.forEach((docSnap) => {
@@ -127,9 +134,10 @@ export default function App() {
         setMessages(loadedMessages);
   
         console.log(
-          `FIRESTORE MESSAGES CARREGADAS: ${Object.keys(loadedMessages).length}`
+          `FIRESTORE MESSAGES SINCRONIZADAS: ${Object.keys(loadedMessages).length}`
         );
-      } catch (error) {
+      },
+      (error) => {
         console.error(
           'ERRO AO CARREGAR MESSAGES FIRESTORE:',
           error
@@ -137,50 +145,41 @@ export default function App() {
   
         setMessages(INITIAL_MESSAGES);
       }
-    };
+    );
   
-    loadFirestoreMessages();
+    return unsubscribe;
   }, []);
   
   const [history, setHistory] = useState<HistoryEvent[]>([]);
   useEffect(() => {
-    const loadFirestoreHistory = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'history'));
-  
-        const firestoreHistory = snapshot.docs.map((docSnap) => ({
-          ...(docSnap.data() as HistoryEvent),
-          id: docSnap.id,
-        }));
-  
+    const unsubscribe = onSnapshot(
+      collection(db, 'history'),
+      (snapshot) => {
+        const firestoreHistory = mapSnapshotWithId<HistoryEvent>(snapshot);
         const loadedHistory = firestoreHistory.length
           ? firestoreHistory
           : INITIAL_HISTORY;
   
         setHistory(loadedHistory);
   
-        console.log(`FIRESTORE HISTORY CARREGADO: ${loadedHistory.length}`);
-      } catch (error) {
+        console.log(`FIRESTORE HISTORY SINCRONIZADO: ${loadedHistory.length}`);
+      },
+      (error) => {
         console.error('ERRO AO CARREGAR HISTORY FIRESTORE:', error);
         setHistory(INITIAL_HISTORY);
       }
-    };
+    );
   
-    loadFirestoreHistory();
+    return unsubscribe;
   }, []);
 
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 
   useEffect(() => {
-    const loadFirestoreCampaigns = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'campaigns'));
-  
-        const firestoreCampaigns = snapshot.docs.map((docSnap) => ({
-          ...(docSnap.data() as Campaign),
-          id: docSnap.id,
-        }));
-  
+    const unsubscribe = onSnapshot(
+      collection(db, 'campaigns'),
+      (snapshot) => {
+        const firestoreCampaigns = mapSnapshotWithId<Campaign>(snapshot);
         const loadedCampaigns =
           firestoreCampaigns.length > 0
             ? firestoreCampaigns
@@ -189,9 +188,10 @@ export default function App() {
         setCampaigns(loadedCampaigns);
   
         console.log(
-          `FIRESTORE CAMPAIGNS CARREGADAS: ${loadedCampaigns.length}`
+          `FIRESTORE CAMPAIGNS SINCRONIZADAS: ${loadedCampaigns.length}`
         );
-      } catch (error) {
+      },
+      (error) => {
         console.error(
           'ERRO AO CARREGAR CAMPAIGNS FIRESTORE:',
           error
@@ -199,23 +199,18 @@ export default function App() {
   
         setCampaigns(INITIAL_CAMPAIGNS);
       }
-    };
+    );
   
-    loadFirestoreCampaigns();
+    return unsubscribe;
   }, []);
   
   const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
-    const loadFirestoreOrders = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'orders'));
-  
-        const firestoreOrders = snapshot.docs.map((docSnap) => ({
-          ...(docSnap.data() as Order),
-          id: docSnap.id,
-        }));
-  
+    const unsubscribe = onSnapshot(
+      collection(db, 'orders'),
+      (snapshot) => {
+        const firestoreOrders = mapSnapshotWithId<Order>(snapshot);
         const loadedOrders =
           firestoreOrders.length > 0
             ? firestoreOrders
@@ -224,9 +219,10 @@ export default function App() {
         setOrders(loadedOrders);
   
         console.log(
-          `FIRESTORE ORDERS CARREGADOS: ${loadedOrders.length}`
+          `FIRESTORE ORDERS SINCRONIZADOS: ${loadedOrders.length}`
         );
-      } catch (error) {
+      },
+      (error) => {
         console.error(
           'ERRO AO CARREGAR ORDERS FIRESTORE:',
           error
@@ -234,23 +230,18 @@ export default function App() {
   
         setOrders(INITIAL_ORDERS);
       }
-    };
+    );
   
-    loadFirestoreOrders();
+    return unsubscribe;
   }, []);
 
   const [automations, setAutomations] = useState<AutomationRule[]>([]);
 
   useEffect(() => {
-    const loadFirestoreAutomations = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'automations'));
-  
-        const firestoreAutomations = snapshot.docs.map((docSnap) => ({
-          ...(docSnap.data() as AutomationRule),
-          id: docSnap.id,
-        }));
-  
+    const unsubscribe = onSnapshot(
+      collection(db, 'automations'),
+      (snapshot) => {
+        const firestoreAutomations = mapSnapshotWithId<AutomationRule>(snapshot);
         const loadedAutomations =
           firestoreAutomations.length > 0
             ? firestoreAutomations
@@ -259,9 +250,10 @@ export default function App() {
         setAutomations(loadedAutomations);
   
         console.log(
-          `FIRESTORE AUTOMATIONS CARREGADAS: ${loadedAutomations.length}`
+          `FIRESTORE AUTOMATIONS SINCRONIZADAS: ${loadedAutomations.length}`
         );
-      } catch (error) {
+      },
+      (error) => {
         console.error(
           'ERRO AO CARREGAR AUTOMATIONS FIRESTORE:',
           error
@@ -269,25 +261,25 @@ export default function App() {
   
         setAutomations(INITIAL_AUTOMATIONS);
       }
-    };
+    );
   
-    loadFirestoreAutomations();
+    return unsubscribe;
   }, []);
   
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
 
   useEffect(() => {
-    const loadFirestoreSettings = async () => {
-      try {
-        const snap = await getDoc(doc(db, 'settings', 'default'));
-  
+    const unsubscribe = onSnapshot(
+      doc(db, 'settings', 'default'),
+      (snap) => {
         if (snap.exists()) {
           setSettings(snap.data() as AppSettings);
-          console.log('FIRESTORE SETTINGS CARREGADO');
+          console.log('FIRESTORE SETTINGS SINCRONIZADO');
         } else {
           setSettings(DEFAULT_SETTINGS);
         }
-      } catch (error) {
+      },
+      (error) => {
         console.error(
           'ERRO AO CARREGAR SETTINGS FIRESTORE:',
           error
@@ -295,26 +287,19 @@ export default function App() {
   
         setSettings(DEFAULT_SETTINGS);
       }
-    };
+    );
   
-    loadFirestoreSettings();
+    return unsubscribe;
   }, []);
 
   const [productsDigitalMenu, setProductsDigitalMenu] = useState(
     INITIAL_PRODUCTS_DIGITAL_MENU
   );
   useEffect(() => {
-    const loadFirestoreProducts = async () => {
-      try {
-        const snapshot = await getDocs(
-          collection(db, 'productsDigitalMenu')
-        );
-  
-        const firestoreProducts = snapshot.docs.map((docSnap) => ({
-          ...(docSnap.data() as any),
-          id: docSnap.id,
-        }));
-  
+    const unsubscribe = onSnapshot(
+      collection(db, 'productsDigitalMenu'),
+      (snapshot) => {
+        const firestoreProducts = mapSnapshotWithId<any>(snapshot);
         const loadedProducts =
           firestoreProducts.length > 0
             ? firestoreProducts
@@ -323,9 +308,10 @@ export default function App() {
         setProductsDigitalMenu(loadedProducts);
   
         console.log(
-          `FIRESTORE PRODUCTS CARREGADOS: ${loadedProducts.length}`
+          `FIRESTORE PRODUCTS SINCRONIZADOS: ${loadedProducts.length}`
         );
-      } catch (error) {
+      },
+      (error) => {
         console.error(
           'ERRO AO CARREGAR PRODUCTS FIRESTORE:',
           error
@@ -333,23 +319,18 @@ export default function App() {
   
         setProductsDigitalMenu(INITIAL_PRODUCTS_DIGITAL_MENU);
       }
-    };
+    );
   
-    loadFirestoreProducts();
+    return unsubscribe;
   }, []);
 
   const [cardapios, setCardapios] = useState(INITIAL_CARDAPIOS);
 
   useEffect(() => {
-    const loadFirestoreCardapios = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'cardapios'));
-  
-        const firestoreCardapios = snapshot.docs.map((docSnap) => ({
-          ...(docSnap.data() as any),
-          id: docSnap.id,
-        }));
-  
+    const unsubscribe = onSnapshot(
+      collection(db, 'cardapios'),
+      (snapshot) => {
+        const firestoreCardapios = mapSnapshotWithId<any>(snapshot);
         const loadedCardapios =
           firestoreCardapios.length > 0
             ? firestoreCardapios
@@ -358,9 +339,10 @@ export default function App() {
         setCardapios(loadedCardapios);
   
         console.log(
-          `FIRESTORE CARDAPIOS CARREGADOS: ${loadedCardapios.length}`
+          `FIRESTORE CARDAPIOS SINCRONIZADOS: ${loadedCardapios.length}`
         );
-      } catch (error) {
+      },
+      (error) => {
         console.error(
           'ERRO AO CARREGAR CARDAPIOS FIRESTORE:',
           error
@@ -368,23 +350,18 @@ export default function App() {
   
         setCardapios(INITIAL_CARDAPIOS);
       }
-    };
+    );
   
-    loadFirestoreCardapios();
+    return unsubscribe;
   }, []);
 
   const [deliveryOrders, setDeliveryOrders] = useState(INITIAL_DELIVERY_ORDERS);
 
   useEffect(() => {
-    const loadFirestoreDeliveryOrders = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'deliveryOrders'));
-  
-        const firestoreDeliveryOrders = snapshot.docs.map((docSnap) => ({
-          ...(docSnap.data() as any),
-          id: docSnap.id,
-        }));
-  
+    const unsubscribe = onSnapshot(
+      collection(db, 'deliveryOrders'),
+      (snapshot) => {
+        const firestoreDeliveryOrders = mapSnapshotWithId<any>(snapshot);
         const loadedDeliveryOrders =
           firestoreDeliveryOrders.length > 0
             ? firestoreDeliveryOrders
@@ -393,29 +370,25 @@ export default function App() {
         setDeliveryOrders(loadedDeliveryOrders);
   
         console.log(
-          `FIRESTORE DELIVERY ORDERS CARREGADOS: ${loadedDeliveryOrders.length}`
+          `FIRESTORE DELIVERY ORDERS SINCRONIZADOS: ${loadedDeliveryOrders.length}`
         );
-      } catch (error) {
+      },
+      (error) => {
         console.error('ERRO AO CARREGAR DELIVERY ORDERS FIRESTORE:', error);
         setDeliveryOrders(INITIAL_DELIVERY_ORDERS);
       }
-    };
+    );
   
-    loadFirestoreDeliveryOrders();
+    return unsubscribe;
   }, []);
 
   const [couriers, setCouriers] = useState<Courier[]>(INITIAL_COURIERS);
 
   useEffect(() => {
-    const loadFirestoreCouriers = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'couriers'));
-  
-        const firestoreCouriers = snapshot.docs.map((docSnap) => ({
-          ...(docSnap.data() as Courier),
-          id: docSnap.id,
-        }));
-  
+    const unsubscribe = onSnapshot(
+      collection(db, 'couriers'),
+      (snapshot) => {
+        const firestoreCouriers = mapSnapshotWithId<Courier>(snapshot);
         const loadedCouriers =
           firestoreCouriers.length > 0
             ? firestoreCouriers
@@ -423,28 +396,24 @@ export default function App() {
   
         setCouriers(loadedCouriers);
   
-        console.log(`FIRESTORE COURIERS CARREGADOS: ${loadedCouriers.length}`);
-      } catch (error) {
+        console.log(`FIRESTORE COURIERS SINCRONIZADOS: ${loadedCouriers.length}`);
+      },
+      (error) => {
         console.error('ERRO AO CARREGAR COURIERS FIRESTORE:', error);
         setCouriers(INITIAL_COURIERS);
       }
-    };
+    );
   
-    loadFirestoreCouriers();
+    return unsubscribe;
   }, []);
 
   const [routes, setRoutes] = useState<DeliveryRoute[]>(INITIAL_ROUTES);
 
   useEffect(() => {
-    const loadFirestoreRoutes = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'routes'));
-  
-        const firestoreRoutes = snapshot.docs.map((docSnap) => ({
-          ...(docSnap.data() as DeliveryRoute),
-          id: docSnap.id,
-        }));
-  
+    const unsubscribe = onSnapshot(
+      collection(db, 'routes'),
+      (snapshot) => {
+        const firestoreRoutes = mapSnapshotWithId<DeliveryRoute>(snapshot);
         const loadedRoutes =
           firestoreRoutes.length > 0
             ? firestoreRoutes
@@ -452,28 +421,24 @@ export default function App() {
   
         setRoutes(loadedRoutes);
   
-        console.log(`FIRESTORE ROUTES CARREGADAS: ${loadedRoutes.length}`);
-      } catch (error) {
+        console.log(`FIRESTORE ROUTES SINCRONIZADAS: ${loadedRoutes.length}`);
+      },
+      (error) => {
         console.error('ERRO AO CARREGAR ROUTES FIRESTORE:', error);
         setRoutes(INITIAL_ROUTES);
       }
-    };
+    );
   
-    loadFirestoreRoutes();
+    return unsubscribe;
   }, []);
 
   const [reviews, setReviews] = useState<CourierReview[]>(INITIAL_COURIER_REVIEWS);
 
   useEffect(() => {
-    const loadFirestoreReviews = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'reviews'));
-  
-        const firestoreReviews = snapshot.docs.map((docSnap) => ({
-          ...(docSnap.data() as CourierReview),
-          id: docSnap.id,
-        }));
-  
+    const unsubscribe = onSnapshot(
+      collection(db, 'reviews'),
+      (snapshot) => {
+        const firestoreReviews = mapSnapshotWithId<CourierReview>(snapshot);
         const loadedReviews =
           firestoreReviews.length > 0
             ? firestoreReviews
@@ -481,28 +446,24 @@ export default function App() {
   
         setReviews(loadedReviews);
   
-        console.log(`FIRESTORE REVIEWS CARREGADAS: ${loadedReviews.length}`);
-      } catch (error) {
+        console.log(`FIRESTORE REVIEWS SINCRONIZADAS: ${loadedReviews.length}`);
+      },
+      (error) => {
         console.error('ERRO AO CARREGAR REVIEWS FIRESTORE:', error);
         setReviews(INITIAL_COURIER_REVIEWS);
       }
-    };
+    );
   
-    loadFirestoreReviews();
+    return unsubscribe;
   }, []);
 
   const [deliveryHistories, setDeliveryHistories] = useState<DeliveryHistory[]>(INITIAL_DELIVERY_HISTORIES);
 
   useEffect(() => {
-    const loadFirestoreDeliveryHistories = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'deliveryHistories'));
-  
-        const firestoreDeliveryHistories = snapshot.docs.map((docSnap) => ({
-          ...(docSnap.data() as DeliveryHistory),
-          id: docSnap.id,
-        }));
-  
+    const unsubscribe = onSnapshot(
+      collection(db, 'deliveryHistories'),
+      (snapshot) => {
+        const firestoreDeliveryHistories = mapSnapshotWithId<DeliveryHistory>(snapshot);
         const loadedDeliveryHistories =
           firestoreDeliveryHistories.length > 0
             ? firestoreDeliveryHistories
@@ -511,9 +472,10 @@ export default function App() {
         setDeliveryHistories(loadedDeliveryHistories);
   
         console.log(
-          `FIRESTORE DELIVERY HISTORIES CARREGADOS: ${loadedDeliveryHistories.length}`
+          `FIRESTORE DELIVERY HISTORIES SINCRONIZADOS: ${loadedDeliveryHistories.length}`
         );
-      } catch (error) {
+      },
+      (error) => {
         console.error(
           'ERRO AO CARREGAR DELIVERY HISTORIES FIRESTORE:',
           error
@@ -521,9 +483,9 @@ export default function App() {
   
         setDeliveryHistories(INITIAL_DELIVERY_HISTORIES);
       }
-    };
+    );
   
-    loadFirestoreDeliveryHistories();
+    return unsubscribe;
   }, []);
 
   // 2. Navigation & UI controls
@@ -605,7 +567,7 @@ export default function App() {
     }
   }, [settings.theme]);
 
-  // Sincronizar Supabase simulation
+  // Sincronizar Firebase/Firestore simulation
   const handleTriggerSync = () => {
     setIsSyncing(true);
     setTimeout(() => {
@@ -615,13 +577,13 @@ export default function App() {
         id: `h_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         clientId: 'system',
         type: 'system_alert',
-        title: 'Sincronização Supabase',
-        description: 'Conexão sincronizada. Sincronismo integral efetuado com sucesso!',
+        title: 'Sincronização Firestore',
+        description: 'Conexão Firebase sincronizada. Sincronismo integral efetuado com sucesso!',
         timestamp: new Date().toISOString(),
         operatorName: settings.operatorName,
       };
       setHistory((prev) => [newEvent, ...prev]);
-      alert('Sincronização com o Supabase efetuada com sucesso! 0 novos leads inseridos.');
+      alert('Sincronização com o Firestore efetuada com sucesso! 0 novos leads inseridos.');
     }, 1200);
   };
 
