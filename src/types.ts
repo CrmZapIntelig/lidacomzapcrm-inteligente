@@ -34,12 +34,15 @@ export interface AuthSession {
 
 export interface CaixaTransaction {
   id: string;
+  sessionId: string;
   type: 'entrada' | 'saida' | 'sangria';
   value: number;
   description: string;
   method?: 'Pix' | 'Cartão' | 'Dinheiro' | 'Crédito Interno';
   orderId?: string;
   timestamp: string;
+  operatorId: string;
+  operatorName: string;
 }
 
 export interface CaixaSession {
@@ -52,6 +55,8 @@ export interface CaixaSession {
   currentBalance: number;
   status: 'aberto' | 'fechado';
   transactions: CaixaTransaction[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface FunnelStageConfig {
@@ -422,6 +427,4 @@ export interface ChatbotNode {
   content: string;
   options: { label: string; nextNodeId: string }[];
 }
-
-
 

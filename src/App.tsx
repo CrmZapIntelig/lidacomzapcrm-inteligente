@@ -507,6 +507,33 @@ export default function App() {
     return unsubscribe;
   }, []);
 
+  const [activeCaixaSession, setActiveCaixaSession] = useState<CaixaSession | null>(null);
+  const [caixaHistory, setCaixaHistory] = useState<CaixaSession[]>([]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, 'caixaSessions'),
+      (snapshot) => {
+        const firestoreSessions = mapSnapshotWithId<CaixaSession>(snapshot)
+          .sort((a, b) => new Date(b.openedAt).getTime() - new Date(a.openedAt).getTime());
+
+        setCaixaHistory(firestoreSessions);
+        setActiveCaixaSession(
+          firestoreSessions.find((session) => session.status === 'aberto') || null
+        );
+
+        console.log(`FIRESTORE CAIXA SESSIONS SINCRONIZADAS: ${firestoreSessions.length}`);
+      },
+      (error) => {
+        console.error('ERRO AO CARREGAR CAIXA SESSIONS FIRESTORE:', error);
+        setCaixaHistory([]);
+        setActiveCaixaSession(null);
+      }
+    );
+
+    return unsubscribe;
+  }, []);
+
   // 2. Navigation & UI controls
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -892,6 +919,96 @@ const handleToggleAutomation = async (ruleId: string) => {
   }
 };
 
+const handleOpenCashier = async (initialBalance: number) => {
+  const now = new Date().toISOString();
+  const currentUser = auth.user;
+  const newSession: CaixaSession = {
+    id: `caixa_${Date.now()}`,
+    operatorId: currentUser?.id || 'usr_prato_mineiro',
+    operatorName: currentUser?.name || settings.operatorName || 'Administrador (Prato Mineiro)',
+    openedAt: now,
+    initialBalance,
+    currentBalance: initialBalance,
+    status: 'aberto',
+    transactions: [],
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  setActiveCaixaSession(newSession);
+
+  try {
+    await setDoc(doc(db, 'caixaSessions', newSession.id), newSession, { merge: true });
+    console.log(`CAIXA ABERTO FIRESTORE: ${newSession.id}`);
+  } catch (error) {
+    console.error('ERRO AO ABRIR CAIXA FIRESTORE:', error);
+  }
+};
+
+const handleRegisterCaixaTransaction = async (
+  type: CaixaTransaction['type'],
+  value: number,
+  description: string
+) => {
+  if (!activeCaixaSession) return;
+
+  const now = new Date().toISOString();
+  const currentUser = auth.user;
+  const newTx: CaixaTransaction = {
+    id: `tx_${Date.now()}`,
+    sessionId: activeCaixaSession.id,
+    type,
+    value,
+    description,
+    method: 'Dinheiro',
+    timestamp: now,
+    operatorId: currentUser?.id || activeCaixaSession.operatorId,
+    operatorName: currentUser?.name || activeCaixaSession.operatorName,
+  };
+
+  const currentBalance =
+    type === 'entrada'
+      ? activeCaixaSession.currentBalance + value
+      : activeCaixaSession.currentBalance - value;
+
+  const updatedSession: CaixaSession = {
+    ...activeCaixaSession,
+    currentBalance,
+    transactions: [newTx, ...activeCaixaSession.transactions],
+    updatedAt: now,
+  };
+
+  setActiveCaixaSession(updatedSession);
+
+  try {
+    await setDoc(doc(db, 'caixaSessions', updatedSession.id), updatedSession, { merge: true });
+    console.log(`MOVIMENTACAO CAIXA FIRESTORE: ${newTx.id}`);
+  } catch (error) {
+    console.error('ERRO AO REGISTRAR MOVIMENTACAO CAIXA FIRESTORE:', error);
+  }
+};
+
+const handleCloseCashier = async () => {
+  if (!activeCaixaSession) return;
+
+  const now = new Date().toISOString();
+  const closedSession: CaixaSession = {
+    ...activeCaixaSession,
+    status: 'fechado',
+    closedAt: now,
+    updatedAt: now,
+  };
+
+  setActiveCaixaSession(null);
+
+  try {
+    await setDoc(doc(db, 'caixaSessions', closedSession.id), closedSession, { merge: true });
+    console.log(`CAIXA FECHADO FIRESTORE: ${closedSession.id}`);
+  } catch (error) {
+    console.error('ERRO AO FECHAR CAIXA FIRESTORE:', error);
+  }
+};
+
   
 // Centralized Firestore persistence for delivery orders
 const handleUpdateDeliveryOrders = async (updater: any) => {
@@ -1004,7 +1121,16 @@ if (publicCardapioMatch) {
             />
           )}
 
-          {currentTab === 'caixa' && <CaixaView />}
+          {currentTab === 'caixa' && (
+            <CaixaView
+              activeSession={activeCaixaSession}
+              lastClosedSession={caixaHistory.find((session) => session.status === 'fechado') || null}
+              currentUser={auth.user}
+              onOpenCashier={handleOpenCashier}
+              onRegisterTransaction={handleRegisterCaixaTransaction}
+              onCloseCashier={handleCloseCashier}
+            />
+          )}
 
           {currentTab === 'whatsapp' && (
             <WhatsAppView

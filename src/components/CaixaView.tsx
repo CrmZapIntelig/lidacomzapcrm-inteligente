@@ -1,26 +1,56 @@
 import React, { useState } from 'react';
 import { DollarSign, ArrowUpCircle, ArrowDownCircle, Printer, Download, Clock } from 'lucide-react';
-import { CaixaSession, CaixaTransaction } from '../types';
+import { CaixaSession, CaixaTransaction, User } from '../types';
 
-export default function CaixaView() {
-  const [session, setSession] = useState<CaixaSession | null>(null);
+interface CaixaViewProps {
+  activeSession?: CaixaSession | null;
+  lastClosedSession?: CaixaSession | null;
+  currentUser?: User | null;
+  onOpenCashier?: (initialBalance: number) => void | Promise<void>;
+  onRegisterTransaction?: (
+    type: CaixaTransaction['type'],
+    value: number,
+    description: string
+  ) => void | Promise<void>;
+  onCloseCashier?: () => void | Promise<void>;
+}
+
+export default function CaixaView({
+  activeSession,
+  lastClosedSession,
+  currentUser,
+  onOpenCashier,
+  onRegisterTransaction,
+  onCloseCashier,
+}: CaixaViewProps = {}) {
+  const [localSession, setLocalSession] = useState<CaixaSession | null>(null);
   const [initialValue, setInitialValue] = useState('100.00');
   const [operationType, setOperationType] = useState<'entrada' | 'saida' | 'sangria'>('entrada');
   const [opValue, setOpValue] = useState('');
   const [opDesc, setOpDesc] = useState('');
+  const session = activeSession ?? localSession;
+  const closedSession = session?.status === 'fechado' ? session : lastClosedSession;
   
   const handleOpenCashier = (e: React.FormEvent) => {
     e.preventDefault();
     const val = parseFloat(initialValue.replace(',', '.'));
-    setSession({
+    if (onOpenCashier) {
+      onOpenCashier(val);
+      return;
+    }
+
+    const now = new Date().toISOString();
+    setLocalSession({
       id: `caixa_${Date.now()}`,
-      operatorId: 'usr_1',
-      operatorName: 'Administrador (Prato Mineiro)',
-      openedAt: new Date().toISOString(),
+      operatorId: currentUser?.id || 'usr_prato_mineiro',
+      operatorName: currentUser?.name || 'Administrador (Prato Mineiro)',
+      openedAt: now,
       initialBalance: val,
       currentBalance: val,
       status: 'aberto',
-      transactions: []
+      transactions: [],
+      createdAt: now,
+      updatedAt: now,
     });
   };
 
@@ -33,21 +63,32 @@ export default function CaixaView() {
 
     const newTx: CaixaTransaction = {
       id: `tx_${Date.now()}`,
+      sessionId: session.id,
       type: operationType,
       value: val,
       description: opDesc,
       method: 'Dinheiro',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      operatorId: currentUser?.id || session.operatorId,
+      operatorName: currentUser?.name || session.operatorName,
     };
+
+    if (onRegisterTransaction) {
+      onRegisterTransaction(operationType, val, opDesc);
+      setOpValue('');
+      setOpDesc('');
+      return;
+    }
 
     let newBalance = session.currentBalance;
     if (operationType === 'entrada') newBalance += val;
     else newBalance -= val; // saida or sangria
 
-    setSession({
+    setLocalSession({
       ...session,
       currentBalance: newBalance,
-      transactions: [newTx, ...session.transactions]
+      transactions: [newTx, ...session.transactions],
+      updatedAt: new Date().toISOString(),
     });
 
     setOpValue('');
@@ -56,10 +97,16 @@ export default function CaixaView() {
 
   const handleCloseCashier = () => {
     if (!session) return;
-    setSession({
+    if (onCloseCashier) {
+      onCloseCashier();
+      return;
+    }
+
+    setLocalSession({
       ...session,
       status: 'fechado',
-      closedAt: new Date().toISOString()
+      closedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
   };
 
