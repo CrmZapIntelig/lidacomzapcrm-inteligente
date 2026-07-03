@@ -70,6 +70,17 @@ const mapFirebaseUser = (firebaseUser: FirebaseAuthUser): User => ({
   active: true,
 });
 
+const CURRENT_TAB_STORAGE_KEY = 'lidacomzap_current_tab';
+
+const isSameOperationalDate = (dateValue: string, comparisonDate = new Date()) => {
+  const date = new Date(dateValue);
+  return (
+    date.getFullYear() === comparisonDate.getFullYear() &&
+    date.getMonth() === comparisonDate.getMonth() &&
+    date.getDate() === comparisonDate.getDate()
+  );
+};
+
 export default function App() {
 
   useEffect(() => {
@@ -535,7 +546,13 @@ export default function App() {
   }, []);
 
   // 2. Navigation & UI controls
-  const [currentTab, setCurrentTab] = useState<string>('dashboard');
+  const [currentTab, setCurrentTab] = useState<string>(() => {
+    try {
+      return localStorage.getItem(CURRENT_TAB_STORAGE_KEY) || 'dashboard';
+    } catch (error) {
+      return 'dashboard';
+    }
+  });
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
@@ -547,6 +564,14 @@ export default function App() {
   const [clientForOrder, setClientForOrder] = useState<Client | null>(null);
 
   // Sync to storage on state changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(CURRENT_TAB_STORAGE_KEY, currentTab);
+    } catch (error) {
+      console.error('ERRO AO SALVAR ABA ATUAL:', error);
+    }
+  }, [currentTab]);
+
   useEffect(() => {
     saveData('clients', clients);
   }, [clients]);
@@ -920,6 +945,16 @@ const handleToggleAutomation = async (ruleId: string) => {
 };
 
 const handleOpenCashier = async (initialBalance: number) => {
+  const openedSession =
+    activeCaixaSession?.status === 'aberto'
+      ? activeCaixaSession
+      : caixaHistory.find((session) => session.status === 'aberto');
+
+  if (openedSession) {
+    alert('Já existe um caixa aberto. Feche a sessão atual antes de abrir outro.');
+    return;
+  }
+
   const now = new Date().toISOString();
   const currentUser = auth.user;
   const newSession: CaixaSession = {
@@ -988,14 +1023,43 @@ const handleRegisterCaixaTransaction = async (
   }
 };
 
-const handleCloseCashier = async () => {
+const handleCloseCashier = async (closingData: {
+  dinheiro: number;
+  cartao: number;
+  pix: number;
+  notaFiado: number;
+  notes: string;
+}) => {
   if (!activeCaixaSession) return;
 
   const now = new Date().toISOString();
+  const closingBreakdown = {
+    dinheiro: closingData.dinheiro || 0,
+    cartao: closingData.cartao || 0,
+    pix: closingData.pix || 0,
+    notaFiado: closingData.notaFiado || 0,
+  };
+  const expectedBalance = activeCaixaSession.currentBalance;
+  const countedBalance =
+    closingBreakdown.dinheiro +
+    closingBreakdown.cartao +
+    closingBreakdown.pix +
+    closingBreakdown.notaFiado;
+  const closedAsLate = !isSameOperationalDate(activeCaixaSession.openedAt);
+
   const closedSession: CaixaSession = {
     ...activeCaixaSession,
     status: 'fechado',
     closedAt: now,
+    closingBreakdown,
+    closingNotes: closingData.notes || '',
+    expectedBalance,
+    countedBalance,
+    difference: countedBalance - expectedBalance,
+    closedAsLate,
+    originalOpenedAt: activeCaixaSession.openedAt,
+    closedOperationalDate: now,
+    closingReason: closedAsLate ? 'fechamento_atrasado' : 'fechamento_normal',
     updatedAt: now,
   };
 

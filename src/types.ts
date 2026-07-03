@@ -55,6 +55,20 @@ export interface CaixaSession {
   currentBalance: number;
   status: 'aberto' | 'fechado';
   transactions: CaixaTransaction[];
+  closingBreakdown?: {
+    dinheiro: number;
+    cartao: number;
+    pix: number;
+    notaFiado: number;
+  };
+  closingNotes?: string;
+  expectedBalance?: number;
+  countedBalance?: number;
+  difference?: number;
+  closedAsLate?: boolean;
+  originalOpenedAt?: string;
+  closedOperationalDate?: string;
+  closingReason?: 'fechamento_normal' | 'fechamento_atrasado';
   createdAt: string;
   updatedAt: string;
 }
@@ -427,4 +441,3 @@ export interface ChatbotNode {
   content: string;
   options: { label: string; nextNodeId: string }[];
 }
-

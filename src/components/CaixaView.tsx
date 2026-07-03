@@ -12,7 +12,13 @@ interface CaixaViewProps {
     value: number,
     description: string
   ) => void | Promise<void>;
-  onCloseCashier?: () => void | Promise<void>;
+  onCloseCashier?: (closingData: {
+    dinheiro: number;
+    cartao: number;
+    pix: number;
+    notaFiado: number;
+    notes: string;
+  }) => void | Promise<void>;
 }
 
 export default function CaixaView({
@@ -28,8 +34,91 @@ export default function CaixaView({
   const [operationType, setOperationType] = useState<'entrada' | 'saida' | 'sangria'>('entrada');
   const [opValue, setOpValue] = useState('');
   const [opDesc, setOpDesc] = useState('');
+  const [closingDinheiro, setClosingDinheiro] = useState('');
+  const [closingCartao, setClosingCartao] = useState('');
+  const [closingPix, setClosingPix] = useState('');
+  const [closingNotaFiado, setClosingNotaFiado] = useState('');
+  const [closingNotes, setClosingNotes] = useState('');
   const session = activeSession ?? localSession;
   const closedSession = session?.status === 'fechado' ? session : lastClosedSession;
+
+  const parseOptionalCurrency = (value: string) => {
+    const parsed = parseFloat(value.replace(',', '.'));
+    return isNaN(parsed) ? 0 : parsed;
+  };
+
+  const isSameOperationalDate = (dateValue: string, comparisonDate = new Date()) => {
+    const date = new Date(dateValue);
+    return (
+      date.getFullYear() === comparisonDate.getFullYear() &&
+      date.getMonth() === comparisonDate.getMonth() &&
+      date.getDate() === comparisonDate.getDate()
+    );
+  };
+
+  const formatCurrency = (value?: number) => `R$ ${(value || 0).toFixed(2)}`;
+  const formatDateTime = (value?: string) =>
+    value ? new Date(value).toLocaleString('pt-BR') : '-';
+  const escapeHtml = (value: string) =>
+    value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  const isLateOpenSession =
+    session?.status === 'aberto' ? !isSameOperationalDate(session.openedAt) : false;
+
+  const handlePrintClosingSummary = (closedCaixaSession?: CaixaSession | null) => {
+    if (!closedCaixaSession) return;
+
+    const breakdown = closedCaixaSession.closingBreakdown || {
+      dinheiro: 0,
+      cartao: 0,
+      pix: 0,
+      notaFiado: 0,
+    };
+
+    const printWindow = window.open('', '_blank', 'width=720,height=840');
+    if (!printWindow) {
+      window.print();
+      return;
+    }
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Fechamento de Caixa</title>
+          <style>
+            body { font-family: Arial, sans-serif; color: #0f172a; padding: 24px; }
+            h1 { font-size: 20px; margin: 0 0 4px; }
+            h2 { font-size: 14px; margin: 0 0 20px; color: #475569; }
+            .row { display: flex; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding: 8px 0; font-size: 13px; }
+            .label { font-weight: 700; color: #475569; }
+            .notes { margin-top: 16px; font-size: 13px; white-space: pre-wrap; }
+          </style>
+        </head>
+        <body>
+          <h1>Restaurante Prato Mineiro</h1>
+          <h2>Resumo do Fechamento de Caixa</h2>
+          <div class="row"><span class="label">Data abertura</span><span>${formatDateTime(closedCaixaSession.openedAt)}</span></div>
+          <div class="row"><span class="label">Data fechamento</span><span>${formatDateTime(closedCaixaSession.closedAt)}</span></div>
+          <div class="row"><span class="label">Saldo inicial</span><span>${formatCurrency(closedCaixaSession.initialBalance)}</span></div>
+          <div class="row"><span class="label">Saldo esperado</span><span>${formatCurrency(closedCaixaSession.expectedBalance ?? closedCaixaSession.currentBalance)}</span></div>
+          <div class="row"><span class="label">Dinheiro</span><span>${formatCurrency(breakdown.dinheiro)}</span></div>
+          <div class="row"><span class="label">Cart&atilde;o</span><span>${formatCurrency(breakdown.cartao)}</span></div>
+          <div class="row"><span class="label">Pix</span><span>${formatCurrency(breakdown.pix)}</span></div>
+          <div class="row"><span class="label">Nota/Fiado</span><span>${formatCurrency(breakdown.notaFiado)}</span></div>
+          <div class="row"><span class="label">Valor contado</span><span>${formatCurrency(closedCaixaSession.countedBalance)}</span></div>
+          <div class="row"><span class="label">Diferen&ccedil;a</span><span>${formatCurrency(closedCaixaSession.difference)}</span></div>
+          <div class="notes"><strong>Observa&ccedil;&otilde;es:</strong><br />${escapeHtml(closedCaixaSession.closingNotes || '')}</div>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  };
   
   const handleOpenCashier = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,16 +186,43 @@ export default function CaixaView({
 
   const handleCloseCashier = () => {
     if (!session) return;
+    const closingData = {
+      dinheiro: parseOptionalCurrency(closingDinheiro),
+      cartao: parseOptionalCurrency(closingCartao),
+      pix: parseOptionalCurrency(closingPix),
+      notaFiado: parseOptionalCurrency(closingNotaFiado),
+      notes: closingNotes.trim(),
+    };
+
     if (onCloseCashier) {
-      onCloseCashier();
+      onCloseCashier(closingData);
       return;
     }
+
+    const countedBalance =
+      closingData.dinheiro + closingData.cartao + closingData.pix + closingData.notaFiado;
+    const now = new Date().toISOString();
+    const closedAsLate = !isSameOperationalDate(session.openedAt);
 
     setLocalSession({
       ...session,
       status: 'fechado',
-      closedAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      closedAt: now,
+      closingBreakdown: {
+        dinheiro: closingData.dinheiro,
+        cartao: closingData.cartao,
+        pix: closingData.pix,
+        notaFiado: closingData.notaFiado,
+      },
+      closingNotes: closingData.notes,
+      expectedBalance: session.currentBalance,
+      countedBalance,
+      difference: countedBalance - session.currentBalance,
+      closedAsLate,
+      originalOpenedAt: session.openedAt,
+      closedOperationalDate: now,
+      closingReason: closedAsLate ? 'fechamento_atrasado' : 'fechamento_normal',
+      updatedAt: now,
     });
   };
 
@@ -146,21 +262,26 @@ export default function CaixaView({
             </button>
           </form>
           
-          {session && session.status === 'fechado' && (
+          {closedSession && (
              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-left">
-                <p className="text-xs text-slate-500 font-bold mb-2">Último Fechamento: {new Date(session.closedAt!).toLocaleTimeString()}</p>
+                <p className="text-xs text-slate-500 font-bold mb-2">Ultimo Fechamento: {new Date(closedSession.closedAt!).toLocaleTimeString()}</p>
                 <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800 p-3 rounded-lg">
                    <span className="text-xs font-bold text-slate-500">Saldo Final</span>
-                   <span className="font-mono font-bold text-slate-700 dark:text-slate-300">R$ {session.currentBalance.toFixed(2)}</span>
+                   <span className="font-mono font-bold text-slate-700 dark:text-slate-300">R$ {closedSession.currentBalance.toFixed(2)}</span>
                 </div>
-                <button className="w-full mt-2 flex items-center justify-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-800 bg-slate-100 p-2 rounded-lg">
-                  <Printer className="w-3 h-3" /> Imprimir Resumo
+                <button onClick={() => handlePrintClosingSummary(closedSession)} className="w-full mt-2 flex items-center justify-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-800 bg-slate-100 p-2 rounded-lg">
+                  <Printer className="w-3 h-3" /> Imprimir Fechamento
                 </button>
              </div>
           )}
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {isLateOpenSession && (
+            <div className="lg:col-span-12 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 text-amber-700 dark:text-amber-300 rounded-xl p-4 text-sm font-bold">
+              Existe um caixa aberto de data anterior. Feche ou regularize esta sessão antes de abrir o caixa de hoje.
+            </div>
+          )}
           <div className="lg:col-span-8 flex flex-col gap-6">
             
             {/* Action Cards */}
@@ -247,6 +368,31 @@ export default function CaixaView({
                <div className="flex items-center justify-between mb-4 pb-4 border-b border-slate-100 dark:border-slate-800">
                  <span className="text-slate-500 text-xs">Operador:</span>
                  <span className="font-medium text-xs truncate max-w-[150px]">{session.operatorName}</span>
+               </div>
+
+               <div className="space-y-3 mb-4">
+                 <div className="grid grid-cols-2 gap-3">
+                   <div>
+                     <label className="text-xs font-bold text-slate-400 block mb-1">Dinheiro</label>
+                     <input type="text" value={closingDinheiro} onChange={e => setClosingDinheiro(e.target.value)} placeholder="0.00" className="w-full bg-slate-50 border p-2 rounded-lg text-sm font-mono outline-none dark:bg-slate-800" />
+                   </div>
+                   <div>
+                     <label className="text-xs font-bold text-slate-400 block mb-1">CartÃ£o</label>
+                     <input type="text" value={closingCartao} onChange={e => setClosingCartao(e.target.value)} placeholder="0.00" className="w-full bg-slate-50 border p-2 rounded-lg text-sm font-mono outline-none dark:bg-slate-800" />
+                   </div>
+                   <div>
+                     <label className="text-xs font-bold text-slate-400 block mb-1">Pix</label>
+                     <input type="text" value={closingPix} onChange={e => setClosingPix(e.target.value)} placeholder="0.00" className="w-full bg-slate-50 border p-2 rounded-lg text-sm font-mono outline-none dark:bg-slate-800" />
+                   </div>
+                   <div>
+                     <label className="text-xs font-bold text-slate-400 block mb-1">Nota / Fiado</label>
+                     <input type="text" value={closingNotaFiado} onChange={e => setClosingNotaFiado(e.target.value)} placeholder="0.00" className="w-full bg-slate-50 border p-2 rounded-lg text-sm font-mono outline-none dark:bg-slate-800" />
+                   </div>
+                 </div>
+                 <div>
+                   <label className="text-xs font-bold text-slate-400 block mb-1">ObservaÃ§Ãµes do fechamento</label>
+                   <textarea value={closingNotes} onChange={e => setClosingNotes(e.target.value)} rows={3} placeholder="Opcional" className="w-full bg-slate-50 border p-2 rounded-lg text-sm outline-none dark:bg-slate-800 resize-none" />
+                 </div>
                </div>
                
                <button onClick={handleCloseCashier} className="w-full bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 border border-red-200 dark:border-red-900/50 font-bold py-3 rounded-xl text-xs hover:bg-red-100 transition">
