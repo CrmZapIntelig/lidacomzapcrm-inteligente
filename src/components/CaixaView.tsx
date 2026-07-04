@@ -292,11 +292,11 @@ export default function CaixaView({
               </div>
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4">
                 <span className="text-[10px] font-bold uppercase tracking-wider block mb-1 text-slate-400">Total Entradas</span>
-                <span className="text-lg font-bold font-mono text-emerald-600">R$ {(session.transactions.filter(t => t.type === 'entrada').reduce((s,t) => s+t.value,0)).toFixed(2)}</span>
+                <span className="text-lg font-bold font-mono text-emerald-600">R$ {(session.transactions.filter(t => t.type === 'entrada' || t.type === 'venda').reduce((s,t) => s+t.value,0)).toFixed(2)}</span>
               </div>
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4">
                 <span className="text-[10px] font-bold uppercase tracking-wider block mb-1 text-slate-400">Sangrias / Saídas</span>
-                <span className="text-lg font-bold font-mono text-red-600">R$ {(session.transactions.filter(t => t.type !== 'entrada').reduce((s,t) => s+t.value,0)).toFixed(2)}</span>
+                <span className="text-lg font-bold font-mono text-red-600">R$ {(session.transactions.filter(t => t.type !== 'entrada' && t.type !== 'venda').reduce((s,t) => s+t.value,0)).toFixed(2)}</span>
               </div>
             </div>
 
@@ -310,7 +310,7 @@ export default function CaixaView({
                 {session.transactions.map(tx => (
                   <div key={tx.id} className="flex items-center justify-between p-3 border border-slate-100 dark:border-slate-800 rounded-lg">
                     <div className="flex items-center gap-3">
-                      {tx.type === 'entrada' ? (
+                      {tx.type === 'entrada' || tx.type === 'venda' ? (
                         <ArrowUpCircle className="w-5 h-5 text-emerald-500" />
                       ) : (
                         <ArrowDownCircle className="w-5 h-5 text-red-500" />
@@ -320,8 +320,8 @@ export default function CaixaView({
                         <p className="text-[10px] text-slate-400 font-mono">{new Date(tx.timestamp).toLocaleTimeString()} - {tx.method}</p>
                       </div>
                     </div>
-                    <span className={`font-mono font-bold text-sm ${tx.type === 'entrada' ? 'text-emerald-500' : 'text-red-500'}`}>
-                      {tx.type === 'entrada' ? '+' : '-'} R$ {tx.value.toFixed(2)}
+                    <span className={`font-mono font-bold text-sm ${tx.type === 'entrada' || tx.type === 'venda' ? 'text-emerald-500' : 'text-red-500'}`}>
+                      {tx.type === 'entrada' || tx.type === 'venda' ? '+' : '-'} R$ {tx.value.toFixed(2)}
                     </span>
                   </div>
                 ))}

@@ -35,11 +35,12 @@ export interface AuthSession {
 export interface CaixaTransaction {
   id: string;
   sessionId: string;
-  type: 'entrada' | 'saida' | 'sangria';
+  type: 'entrada' | 'saida' | 'sangria' | 'venda';
   value: number;
   description: string;
-  method?: 'Pix' | 'Cartão' | 'Dinheiro' | 'Crédito Interno';
+  method?: string;
   orderId?: string;
+  source?: 'order' | 'deliveryOrder';
   timestamp: string;
   operatorId: string;
   operatorName: string;

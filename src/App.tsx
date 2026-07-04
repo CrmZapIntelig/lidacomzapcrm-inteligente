@@ -847,6 +847,15 @@ const handleSaveOrderCreated = async (newOrder: Order) => {
     console.error('ERRO AO ATUALIZAR ORDER FIRESTORE:', error);
   }
 
+  if (newOrder.status === 'Pago') {
+    handleRegisterPaidOrderInCashier({
+      id: newOrder.id,
+      total: newOrder.total,
+      paymentMethod: newOrder.paymentMethod,
+      source: 'order',
+    });
+  }
+
   // Bind orders status stats to customer total comprado
   const targetCli = clients.find((c) => c.id === newOrder.clientId);
   if (targetCli) {
@@ -944,6 +953,68 @@ const handleToggleAutomation = async (ruleId: string) => {
   }
 };
 
+const handleRegisterPaidOrderInCashier = (paidOrder: {
+  id: string;
+  total: number;
+  paymentMethod?: string;
+  source: 'order' | 'deliveryOrder';
+}) => {
+  const openedSession =
+    activeCaixaSession?.status === 'aberto'
+      ? activeCaixaSession
+      : caixaHistory.find((session) => session.status === 'aberto');
+
+  if (!openedSession) {
+    console.warn('Pedido pago sem caixa aberto.');
+    return;
+  }
+
+  const now = new Date().toISOString();
+  const currentUser = auth.user;
+  const orderPrefix = paidOrder.source === 'order' ? 'PED' : 'DEL';
+
+  setActiveCaixaSession((currentSession) => {
+    const sessionToUpdate =
+      currentSession?.status === 'aberto' ? currentSession : openedSession;
+
+    if (!sessionToUpdate) return currentSession;
+
+    const alreadyRegistered = sessionToUpdate.transactions.some(
+      (transaction) =>
+        transaction.orderId === paidOrder.id && transaction.source === paidOrder.source
+    );
+
+    if (alreadyRegistered) return sessionToUpdate;
+
+    const newTx: CaixaTransaction = {
+      id: `tx_venda_${paidOrder.source}_${paidOrder.id}_${Date.now()}`,
+      sessionId: sessionToUpdate.id,
+      type: 'venda',
+      value: paidOrder.total,
+      description: `Venda vinculada ao pedido ${orderPrefix} ${paidOrder.id}`,
+      method: paidOrder.paymentMethod || 'Dinheiro',
+      orderId: paidOrder.id,
+      source: paidOrder.source,
+      timestamp: now,
+      operatorId: currentUser?.id || sessionToUpdate.operatorId,
+      operatorName: currentUser?.name || sessionToUpdate.operatorName,
+    };
+
+    const updatedSession: CaixaSession = {
+      ...sessionToUpdate,
+      currentBalance: sessionToUpdate.currentBalance + paidOrder.total,
+      transactions: [newTx, ...sessionToUpdate.transactions],
+      updatedAt: now,
+    };
+
+    setDoc(doc(db, 'caixaSessions', updatedSession.id), updatedSession, { merge: true })
+      .then(() => console.log(`VENDA REGISTRADA NO CAIXA: ${paidOrder.id}`))
+      .catch((error) => console.error('ERRO AO REGISTRAR VENDA NO CAIXA:', error));
+
+    return updatedSession;
+  });
+};
+
 const handleOpenCashier = async (initialBalance: number) => {
   const openedSession =
     activeCaixaSession?.status === 'aberto'
@@ -1002,7 +1073,7 @@ const handleRegisterCaixaTransaction = async (
   };
 
   const currentBalance =
-    type === 'entrada'
+    type === 'entrada' || type === 'venda'
       ? activeCaixaSession.currentBalance + value
       : activeCaixaSession.currentBalance - value;
 
@@ -1086,6 +1157,15 @@ const handleUpdateDeliveryOrders = async (updater: any) => {
 
       setDoc(doc(db, 'deliveryOrders', deliveryOrder.id), cleanDeliveryOrder, { merge: true })
         .catch((error) => console.error('ERRO AO ATUALIZAR DELIVERY ORDER FIRESTORE:', error));
+
+      if (deliveryOrder.status === 'FECHADO' && previousOrder?.status !== 'FECHADO') {
+        handleRegisterPaidOrderInCashier({
+          id: deliveryOrder.id,
+          total: deliveryOrder.total || 0,
+          paymentMethod: deliveryOrder.paymentMethod || 'Dinheiro',
+          source: 'deliveryOrder',
+        });
+      }
 
       if (previousOrder && previousOrder.status !== deliveryOrder.status) {
         const historyId = `dh_${Date.now()}_${Math.random().toString(36).substring(2,9)}`;
@@ -1302,24 +1382,7 @@ if (publicCardapioMatch) {
   });
 }}
               deliveryOrders={deliveryOrders}
-              setDeliveryOrders={async (updater) => {
-  setDeliveryOrders((prev) => {
-    const nextDeliveryOrders =
-      typeof updater === 'function'
-        ? updater(prev)
-        : updater;
-
-    nextDeliveryOrders.forEach((deliveryOrder: any) => {
-      const cleanDeliveryOrder = JSON.parse(JSON.stringify(deliveryOrder));
-
-      setDoc(doc(db, 'deliveryOrders', deliveryOrder.id), cleanDeliveryOrder, { merge: true })
-        .then(() => console.log(`DELIVERY ORDER ATUALIZADO FIRESTORE: ${deliveryOrder.id}`))
-        .catch((error) => console.error('ERRO AO ATUALIZAR DELIVERY ORDER FIRESTORE:', error));
-    });
-
-    return nextDeliveryOrders;
-  });
-}}
+              setDeliveryOrders={handleUpdateDeliveryOrders}
 />
 )}
 
