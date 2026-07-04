@@ -82,7 +82,7 @@ export default function EntregasView({
   });
 
   // Flow classification
-  const waitingOrders = filteredOrders.filter(o => o.status === 'PRONTO' || o.status === 'PEDIDO GERADO' || o.status === 'PRODUÇÃO');
+  const waitingOrders = filteredOrders.filter(o => o.status === 'PRONTO');
   const inRouteOrders = filteredOrders.filter(o => o.status === 'EM ENTREGA');
   const deliveredOrders = filteredOrders.filter(o => o.status === 'FECHADO');
 

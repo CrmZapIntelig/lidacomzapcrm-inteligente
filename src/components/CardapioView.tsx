@@ -488,6 +488,9 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
     if (newStatus === 'PRODUÇÃO') {
       targetCrmStage = 'Produção';
       label = 'Status: Em Produção';
+    } else if (newStatus === 'PRONTO') {
+      targetCrmStage = 'Produção';
+      label = 'Status: Pronto para entrega';
     } else if (newStatus === 'EM ENTREGA') {
       targetCrmStage = 'Entregue';
       label = 'Status: Saiu para entrega';
@@ -890,6 +893,10 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
                   <span className="flex items-center gap-1.5 text-purple-500">
                     <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
                     Cozinha aceitou ➜ PRODUÇÃO
+                  </span>
+                  <span className="flex items-center gap-1.5 text-teal-500">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
+                    Pedido embalado ➜ PRONTO
                   </span>
                   <span className="flex items-center gap-1.5 text-amber-500">
                     <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
@@ -1565,6 +1572,9 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
               <span className="bg-purple-100 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400 px-3 py-1 rounded-full border border-purple-200 dark:border-purple-800">
                 EM PRODUÇÃO
               </span>
+              <span className="bg-teal-100 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400 px-3 py-1 rounded-full border border-teal-200 dark:border-teal-800">
+                PRONTO
+              </span>
               <span className="bg-amber-100 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 px-3 py-1 rounded-full border border-amber-250 border-amber-500/20">
                 EM ENTREGA
               </span>
@@ -1675,6 +1685,10 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
                               <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400 border border-purple-200 animate-pulse">
                                 COZINHA/PRODUÇÃO
                               </span>
+                            ) : ord.status === 'PRONTO' ? (
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400 border border-teal-200">
+                                PRONTO/EXPEDIÇÃO
+                              </span>
                             ) : ord.status === 'EM ENTREGA' ? (
                               <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-200">
                                 EM ROTA ENTREGA
@@ -1699,6 +1713,15 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
                               )}
 
                               {ord.status === 'PRODUÇÃO' && (
+                                <button
+                                  onClick={() => handleUpdateDeliveryStatus(ord.id, 'PRONTO')}
+                                  className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-1 px-2.5 rounded-lg text-[10px] transition"
+                                >
+                                  Marcar Pronto
+                                </button>
+                              )}
+
+                              {ord.status === 'PRONTO' && (
                                 <button
                                   onClick={() => handleUpdateDeliveryStatus(ord.id, 'EM ENTREGA')}
                                   className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-1 px-2.5 rounded-lg text-[10px] transition flex items-center gap-0.5"

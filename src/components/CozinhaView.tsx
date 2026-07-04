@@ -240,7 +240,7 @@ export default function CozinhaView({
       historyTitle = 'Cozinha iniciada';
       historyDesc = `Pedido ${orderId} aceito pelo Chef e movido para Preparo.`;
     } else if (newStatus === 'PRONTO') {
-      whatsAppMsg = `🍔 *Seu pedido está PRONTO!* Já embalamos com carinho e o motoboy foi acionado para a entrega.`;
+      whatsAppMsg = `🍔 *Seu pedido está PRONTO!* Já embalamos com carinho e ele está aguardando despacho para entrega.`;
       pipelineStage = 'Produção';
       historyTitle = 'Produção Finalizada';
       historyDesc = `Pedido ${orderId} concluído com sucesso e embalado.`;
@@ -1293,26 +1293,6 @@ function OrderKitchenCard({
           >
             <Check className="w-3.5 h-3.5 font-bold" />
             Pronto para Enviar
-          </button>
-        )}
-
-        {order.status === 'PRONTO' && (
-          <button
-            onClick={() => onStatusChange(order.id, 'EM ENTREGA')}
-            className="w-full bg-sky-600 hover:bg-sky-500 text-white font-extrabold py-2 px-3 rounded-lg text-[10.5px] uppercase flex items-center justify-center gap-1 transition-all shadow-md shadow-sky-500/10 border border-sky-500/20 leading-none"
-          >
-            <Bike className="w-3.5 h-3.5" />
-            Saiu p/ Entrega
-          </button>
-        )}
-
-        {order.status === 'EM ENTREGA' && (
-          <button
-            onClick={() => onStatusChange(order.id, 'FECHADO')}
-            className="w-full bg-slate-100 hover:bg-white text-slate-900 font-extrabold py-2 px-3 rounded-lg text-[10.5px] uppercase flex items-center justify-center gap-1 transition-all shadow-md shadow-white/5 border leading-none"
-          >
-            <CheckCircle className="w-3.5 h-3.5" />
-            Entregue ✅
           </button>
         )}
 

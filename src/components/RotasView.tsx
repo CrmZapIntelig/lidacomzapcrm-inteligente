@@ -171,12 +171,12 @@ export default function RotasView({
   const triggerAutoDispatch = () => {
     // Locate orders that are ready but have no assigned route
     const readyOrders = deliveryOrders.filter(o => 
-      (o.status === 'PRONTO' || o.status === 'PEDIDO GERADO' || o.status === 'PRODUÇÃO') && 
+      o.status === 'PRONTO' && 
       !routes.some(r => r.orderId === o.id)
     );
 
     if (readyOrders.length === 0) {
-      alert('Não no momento: Não há pedidos pendentes aguardando despacho de rota.');
+      alert('Não no momento: Não há pedidos PRONTO aguardando despacho de rota.');
       return;
     }
 
