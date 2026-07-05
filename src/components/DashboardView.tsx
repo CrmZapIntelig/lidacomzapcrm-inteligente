@@ -42,12 +42,13 @@ export default function DashboardView({
   
   const conversationsStarted = Object.keys(messages).length;
   
-  const totalMessagesSent = Object.values(messages)
-    .flatMap((msgs) => msgs)
-    .filter((m) => m.sender === 'operador' || m.sender === 'sistema')
-    .length + 1500; // adding constant base for simulated stats
-
-  const responseRate = 74; // Simulated static rate
+  const allMessages = Object.values(messages).flatMap((msgs) => msgs);
+  const totalMessagesSent = allMessages.filter((m) => m.sender === 'operador' || m.sender === 'sistema').length;
+  const totalClientMessages = allMessages.filter((m) => m.sender === 'cliente').length;
+  const hasResponseRateData = totalMessagesSent > 0 || totalClientMessages > 0;
+  const responseRate = hasResponseRateData
+    ? Math.round((totalClientMessages / Math.max(totalMessagesSent + totalClientMessages, 1)) * 100)
+    : null;
 
   const ordersGenerated = orders.length;
   
@@ -73,26 +74,23 @@ export default function DashboardView({
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, 4);
 
-  // Recharts Sales performance mock data (daily representation)
-  const salesChartData = [
-    { name: 'Seg', faturamento: 1200 },
-    { name: 'Ter', faturamento: 1900 },
-    { name: 'Qua', faturamento: 1600 },
-    { name: 'Qui', faturamento: 2400 },
-    { name: 'Sex', faturamento: 3100 },
-    { name: 'Sáb', faturamento: 2800 },
-    { name: 'Dom', faturamento: 1500 },
-  ];
+  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const salesChartData = weekDays.map((name) => ({ name, faturamento: 0 }));
+  orders
+    .filter((order) => order.status === 'Pago')
+    .forEach((order) => {
+      const parsedDate = new Date(order.createdAt);
+      if (!Number.isNaN(parsedDate.getTime())) {
+        const dayIndex = parsedDate.getDay();
+        salesChartData[dayIndex].faturamento += order.total;
+      }
+    });
 
-  // Recharts Response rate mock data
-  const responseChartData = [
-    { name: '09h', envios: 40, respostas: 30 },
-    { name: '11h', envios: 85, respostas: 60 },
-    { name: '13h', envios: 50, respostas: 45 },
-    { name: '15h', envios: 110, respostas: 80 },
-    { name: '17h', envios: 90, respostas: 72 },
-    { name: '19h', envios: 60, respostas: 40 },
-  ];
+  const hasSalesChartData = salesChartData.some((item) => item.faturamento > 0);
+  const hasConversionData = totalLeads > 0 && salesClosed > 0;
+  const conversionRate = hasConversionData
+    ? ((salesClosed / totalLeads) * 100).toFixed(1)
+    : null;
 
   return (
     <div className="space-y-6 font-sans p-1 pb-10">
@@ -110,7 +108,7 @@ export default function DashboardView({
         <div className="flex items-center gap-2">
           <span className="text-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            LIVE SIMULATION
+            OPERAÇÃO REAL
           </span>
         </div>
       </div>
@@ -123,8 +121,8 @@ export default function DashboardView({
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Leads Totais</span>
             <div className="flex items-baseline gap-1.5">
               <span className="text-2xl font-bold text-slate-900 dark:text-white font-mono">{totalLeads}</span>
-              <span className="text-xs text-emerald-500 font-bold flex items-center gap-0.5 font-mono">
-                +12% <TrendingUp className="w-3 h-3" />
+              <span className="text-xs text-slate-400 font-bold flex items-center gap-0.5 font-mono">
+                {totalLeads > 0 ? 'Atual' : 'Sem dados suficientes'}
               </span>
             </div>
             {/* Breakdown */}
@@ -146,8 +144,8 @@ export default function DashboardView({
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Conversas</span>
             <div className="flex items-baseline gap-1.5">
               <span className="text-2xl font-bold text-slate-900 dark:text-white font-mono">{conversationsStarted}</span>
-              <span className="text-xs text-emerald-500 font-bold flex items-center gap-0.5 font-mono">
-                +8% <TrendingUp className="w-3 h-3" />
+              <span className="text-xs text-slate-400 font-bold flex items-center gap-0.5 font-mono">
+                {conversationsStarted > 0 ? 'Atual' : 'Sem dados suficientes'}
               </span>
             </div>
           </div>
@@ -176,8 +174,12 @@ export default function DashboardView({
           <div className="space-y-2">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Taxa de Resposta</span>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl font-bold text-slate-900 dark:text-white font-mono">{responseRate}%</span>
-              <span className="text-xs text-sky-500 font-bold font-mono">Seguro</span>
+              <span className="text-2xl font-bold text-slate-900 dark:text-white font-mono">
+                {responseRate !== null ? `${responseRate}%` : '--'}
+              </span>
+              <span className="text-xs text-sky-500 font-bold font-mono">
+                {responseRate !== null ? 'Atual' : 'Sem dados suficientes'}
+              </span>
             </div>
           </div>
           <div className="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-950/20 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
@@ -197,7 +199,7 @@ export default function DashboardView({
               <p className="text-xs text-slate-500 dark:text-slate-400">Total acumulado de pedidos pagos na semana corrente.</p>
             </div>
             <div className="text-xs font-mono font-medium text-amber-500 flex items-center gap-1">
-              R$ 17.500 total est.
+              {hasSalesChartData ? `R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} total` : 'Sem dados suficientes'}
             </div>
           </div>
           <div className="h-64 w-full">
@@ -256,7 +258,9 @@ export default function DashboardView({
 
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
             <span className="text-slate-500">Conversão de Lead a Pago:</span>
-            <span className="font-bold text-emerald-500 font-mono">18.4%</span>
+            <span className="font-bold text-emerald-500 font-mono">
+              {conversionRate ? `${conversionRate}%` : 'Sem dados suficientes'}
+            </span>
           </div>
         </div>
       </div>

@@ -461,7 +461,7 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
 💳 *Total:* *R$ ${total.toFixed(2)}*
 💳 *Pagamento:* ${custPayment}${custChange ? ` (Troco para ${custChange})` : ''}
 ------------------------------------
-🏁 _Resumo integrado do GreenHub Delivery_`;
+🏁 _Resumo integrado do Restaurante Prato Mineiro_`;
 
       onSendMessage(matchedClient.id, orderMessage, 'text');
     }
@@ -568,7 +568,7 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
             }`}
           >
             <Smartphone className="w-3.5 h-3.5" />
-            3. Simulador de Checkout
+            3. Checkout Assistido
           </button>
           <button
             onClick={() => setSubTab('pedidos')}
@@ -855,7 +855,7 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                 <Smartphone className="w-4.5 h-4.5 text-emerald-500 animate-pulse" />
-                <span>Simulador de Cliente do WhatsApp</span>
+                <span>Checkout Assistido do WhatsApp</span>
               </h3>
               <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
                 Opere a interface móvel responsiva emulada abaixo. Preencha o carrinho e finalize para ver o pedido ser injetado nas colunas do CRM e enviar uma notificação de Pix no WhatsApp.
@@ -1604,7 +1604,7 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
                   {deliveryOrders.length === 0 ? (
                     <tr>
                       <td colSpan={8} className="py-12 text-center text-slate-400 italic">
-                        Nenhuma ordem de delivery registrada. Use o "Simulador de Checkout" para rodar testes.
+                        Nenhuma ordem de delivery registrada. Use o checkout assistido para registrar pedidos.
                       </td>
                     </tr>
                   ) : (
@@ -2288,7 +2288,7 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
             {/* Simulated 58mm Thermal Receipt styling */}
             <div className="w-full text-[10px] font-mono font-medium leading-relaxed uppercase tracking-tight text-slate-900 space-y-3">
               <div className="text-center space-y-1">
-                <h3 className="font-bold text-base leading-none tracking-wider">★★★ GREENHUB DELIVERY ★★★</h3>
+                <h3 className="font-bold text-base leading-none tracking-wider">★★★ RESTAURANTE PRATO MINEIRO ★★★</h3>
                 <p className="text-[9px] font-bold">CNPJ: 12.345.678/0001-90</p>
                 <p className="text-[9px]">SÃO PAULO - SP | SESSÃO ATIVA</p>
                 <p className="text-[8px] text-slate-450">FATOR EXCLUSIVO VIA WHATSAPP</p>
@@ -2297,7 +2297,7 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
               <div className="border-t border-b border-dashed border-slate-600 py-1.5 space-y-0.5 text-[9px]">
                 <p><strong>Nº Ordem:</strong> {orderToPrint.id}</p>
                 <p><strong>Registro:</strong> {new Date(orderToPrint.createdAt).toLocaleDateString('pt-BR')} {new Date(orderToPrint.createdAt).toLocaleTimeString('pt-BR')}</p>
-                <p><strong>Operador:</strong> GreenHub AutoSaaS</p>
+                <p><strong>Operador:</strong> LidacomZapCRM Inteligente</p>
               </div>
 
               <div className="space-y-0.5">

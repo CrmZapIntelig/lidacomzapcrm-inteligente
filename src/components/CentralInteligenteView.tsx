@@ -31,23 +31,23 @@ interface Props {
   orders: Order[];
 }
 
-// Mock inicial data to populate the views
+// Fallback inicial para popular as telas quando ainda não houver dados dedicados.
 const mockTemplates: WhatsappTemplate[] = [
-  { id: '1', name: 'Confirmação de Pedido', category: 'vendas', content: 'Olá {{nome}}! Seu pedido {{pedido}} no valor de {{valor}} foi confirmado! Agradecemos a preferência. 🚀', active: true, createdAt: '2023-11-20' },
-  { id: '2', name: 'Pedido em Rota', category: 'entrega', content: 'Boas notícias {{nome}}! Seu pedido acabou de sair para entrega. Você pode rastrear aqui: {{rastreamento}}', active: true, createdAt: '2023-11-21' },
-  { id: '3', name: 'Recuperação Carrinho', category: 'recuperação', content: 'Oi {{nome}}, vimos que você não finalizou o pedido. Preparamos um cupom: {{cupom}} para você aproveitar hoje!', active: true, createdAt: '2023-11-25' },
+  { id: '1', name: 'Confirmação de Pedido', category: 'vendas', content: 'Olá {{nome}}! Seu pedido {{pedido}} no valor de {{valor}} foi confirmado! Agradecemos a preferência.', active: true, createdAt: 'Atual' },
+  { id: '2', name: 'Pedido em Rota', category: 'entrega', content: 'Boas notícias {{nome}}! Seu pedido acabou de sair para entrega. Você pode rastrear aqui: {{rastreamento}}', active: true, createdAt: 'Atual' },
+  { id: '3', name: 'Recuperação Carrinho', category: 'recuperação', content: 'Oi {{nome}}, vimos que você não finalizou o pedido. Preparamos um cupom: {{cupom}} para você aproveitar hoje!', active: true, createdAt: 'Atual' },
 ];
 
 const mockLogs: AutomationLog[] = [
-  { id: 'l1', type: 'automação', title: 'Fluxo Carrinho Abandonado Executado', description: 'Enviado mensagem de recuperação para o cliente +55 11 99999-9999', date: 'Hoje, 14:32' },
-  { id: 'l2', type: 'mensagem', title: 'Template de Venda Enviado', description: 'Template de Confirmação enviado com sucesso', date: 'Hoje, 14:25' },
-  { id: 'l3', type: 'erro', title: 'Falha no Gatilho', description: 'Gatilho de "Cliente VIP" falhou. Retentativa agendada.', date: 'Hoje, 13:10' },
-  { id: 'l4', type: 'webhook', title: 'Webhook Recebido: Novo Pedido', description: 'Payload recebido com sucesso da origem API.', date: 'Hoje, 12:45' },
+  { id: 'l1', type: 'automação', title: 'Fluxo Carrinho Abandonado Executado', description: 'Mensagem de recuperação enviada para cliente cadastrado.', date: 'Hoje' },
+  { id: 'l2', type: 'mensagem', title: 'Template de Venda Enviado', description: 'Template de Confirmação enviado com sucesso.', date: 'Hoje' },
+  { id: 'l3', type: 'erro', title: 'Falha no Gatilho', description: 'Gatilho operacional falhou. Retentativa agendada.', date: 'Hoje' },
+  { id: 'l4', type: 'webhook', title: 'Webhook Recebido: Novo Pedido', description: 'Registro recebido com sucesso da origem operacional.', date: 'Hoje' },
 ];
 
 const mockRules: AutomationFlowRule[] = [
   { id: 'r1', name: 'Recuperar Carrinho', trigger: 'carrinho abandonado', action: 'enviar WhatsApp', actionDetails: 'Template: Recuperação Carrinho', active: true },
-  { id: 'r2', name: 'Avisar VIPs', trigger: 'cliente VIP', action: 'adicionar tag', actionDetails: 'Tag: VIP Gold', active: false },
+  { id: 'r2', name: 'Avisar Clientes VIP', trigger: 'cliente VIP', action: 'adicionar tag', actionDetails: 'Tag: Cliente VIP', active: false },
   { id: 'r3', name: 'Alertar Atraso', trigger: 'entrega atrasada', action: 'gerar alerta', actionDetails: 'Alerta de Atraso Cozinha', active: true },
 ];
 

@@ -58,7 +58,7 @@ export default function DisparadorView({
 
   // Template/Message input to prepare on "Rascunho"
   const [disparadorMessage, setDisparadorMessage] = useState<string>(
-    'Olá {cliente}! Tudo bem? Vimos aqui que você se interessou pelo nosso catálogo GreenHub na semana passada. Podemos te mandar um cupom exclusivo de 10% para fechar hoje?'
+    'Olá {cliente}! Tudo bem? Vimos aqui que você se interessou pelo cardápio do Restaurante Prato Mineiro. Podemos te mandar um cupom exclusivo de 10% para fechar hoje?'
   );
 
   // UI Flow Step Simulations: 'idle' -> 'pre-loaded' -> 'sending' -> 'done'
@@ -397,7 +397,7 @@ export default function DisparadorView({
                 {dispatchStatus === 'sending' && (
                   <div className="space-y-3 pt-2">
                     <div className="p-3 bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-200/50 dark:border-indigo-900/50 text-xs rounded-lg text-indigo-750 dark:text-indigo-400 leading-relaxed">
-                      💡 <strong>SIMULADOR ATIVO:</strong> Com o disparador anti-ban ativo, preenchemos dinamicamente a mensagem no chat do cliente. Para manter total segurança, clique no controle abaixo para enviar individualmente e mover a etapa do funil: <strong>RASCUNHO ➜ LEAD</strong>.
+                      💡 <strong>DISPARO ASSISTIDO:</strong> Com o disparador anti-ban ativo, preenchemos dinamicamente a mensagem no chat do cliente. Para manter total segurança, clique no controle abaixo para enviar individualmente e mover a etapa do funil: <strong>RASCUNHO ➜ LEAD</strong>.
                     </div>
 
                     <div className="flex justify-end gap-2.5">

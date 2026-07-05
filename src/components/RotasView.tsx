@@ -56,7 +56,7 @@ export default function RotasView({
   const [logMessages, setLogMessages] = useState<string[]>([
     'Iniciando Satélite de GPS da Frota...',
     'Central de Operações sincronizada.',
-    'Mecanismo de Roteamento Inteligente Loggi/Ifood ativo.'
+    'Mecanismo de roteamento inteligente ativo.'
   ]);
 
   // Operational alerts
@@ -484,7 +484,7 @@ export default function RotasView({
                 <div className="w-4 h-4 rounded-full bg-emerald-500 border border-white" />
               </div>
               <span className="bg-slate-950/95 text-emerald-400 font-bold border border-emerald-900/60 rounded px-1.5 py-0.5 mt-1 text-[8.5px] uppercase tracking-wider font-mono shadow-md">
-                CRM GreenHub Base
+                Base Prato Mineiro
               </span>
             </div>
 
@@ -604,7 +604,7 @@ export default function RotasView({
                 Aceite Pendente no App
               </span>
               <p className="text-[10px] text-slate-600 dark:text-slate-300">
-                O aplicativo do celular de entregas recebeu um chamado para o pedido de rota ativa. Simular resposta física do entregador:
+                O aplicativo do celular de entregas recebeu um chamado para o pedido de rota ativa. Registre a resposta do entregador:
               </p>
               
               <div className="space-y-1.5">

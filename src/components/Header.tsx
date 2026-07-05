@@ -49,12 +49,12 @@ export default function Header({
           </button>
           
           <div className="hidden lg:flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700/50">
-             <div className="flex items-center gap-1.5 px-2 cursor-help" title="Banco de Dados (Supabase)">
+             <div className="flex items-center gap-1.5 px-2 cursor-help" title="Banco de Dados operacional">
                <Database className="w-3.5 h-3.5 text-emerald-500" />
                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
              </div>
              <div className="w-px h-4 bg-slate-200 dark:bg-slate-700" />
-             <div className="flex items-center gap-1.5 px-2 cursor-help" title="Conexão WhatsApp (Baileys)">
+             <div className="flex items-center gap-1.5 px-2 cursor-help" title="Conexão WhatsApp">
                <MessageSquare className="w-3.5 h-3.5 text-emerald-500" />
                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
              </div>

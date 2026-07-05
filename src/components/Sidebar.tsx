@@ -77,11 +77,11 @@ export default function Sidebar({
           </div>
           <div>
             <h1 className="font-sans font-bold text-sm tracking-tight text-slate-900 dark:text-white leading-none">
-              CRM GreenHub
+              LidacomZapCRM Inteligente
             </h1>
             <span className="text-[10px] font-mono font-medium text-emerald-500 flex items-center gap-1 mt-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
-              SaaS Ativo V2.5
+              Operação Prato Mineiro
             </span>
           </div>
         </div>

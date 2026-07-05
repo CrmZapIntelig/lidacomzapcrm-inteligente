@@ -377,7 +377,7 @@ export default function CaixaView({
                      <input type="text" value={closingDinheiro} onChange={e => setClosingDinheiro(e.target.value)} placeholder="0.00" className="w-full bg-slate-50 border p-2 rounded-lg text-sm font-mono outline-none dark:bg-slate-800" />
                    </div>
                    <div>
-                     <label className="text-xs font-bold text-slate-400 block mb-1">CartÃ£o</label>
+                     <label className="text-xs font-bold text-slate-400 block mb-1">Cartão</label>
                      <input type="text" value={closingCartao} onChange={e => setClosingCartao(e.target.value)} placeholder="0.00" className="w-full bg-slate-50 border p-2 rounded-lg text-sm font-mono outline-none dark:bg-slate-800" />
                    </div>
                    <div>
@@ -390,7 +390,7 @@ export default function CaixaView({
                    </div>
                  </div>
                  <div>
-                   <label className="text-xs font-bold text-slate-400 block mb-1">ObservaÃ§Ãµes do fechamento</label>
+                   <label className="text-xs font-bold text-slate-400 block mb-1">Observações do fechamento</label>
                    <textarea value={closingNotes} onChange={e => setClosingNotes(e.target.value)} rows={3} placeholder="Opcional" className="w-full bg-slate-50 border p-2 rounded-lg text-sm outline-none dark:bg-slate-800 resize-none" />
                  </div>
                </div>

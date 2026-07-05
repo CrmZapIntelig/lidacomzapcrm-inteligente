@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Sliders, Database, Check, ShieldAlert, KeyRound, HelpCircle, HardDriveDownload, Sparkles, RefreshCw } from 'lucide-react';
+import { Sliders, Check, ShieldAlert, KeyRound, HelpCircle, HardDriveDownload, Sparkles, RefreshCw } from 'lucide-react';
 import { AppSettings } from '../types';
 
 interface ConfiguracoesViewProps {
@@ -25,9 +25,6 @@ export default function ConfiguracoesView({
   const [autoPause, setAutoPause] = useState(settings.autoPause);
   const [autoPauseAfter, setAutoPauseAfter] = useState(settings.autoPauseAfter);
 
-  const [supabaseUrl, setSupabaseUrl] = useState(settings.supabaseUrl || '');
-  const [supabaseAnonKey, setSupabaseAnonKey] = useState(settings.supabaseAnonKey || '');
-
   const [sessionStatus, setSessionStatus] = useState<AppSettings['waSessionStatus']>(settings.waSessionStatus);
 
   const handleSaveConfigsSubmit = (e: React.FormEvent) => {
@@ -38,15 +35,13 @@ export default function ConfiguracoesView({
       intervalMax,
       autoPause,
       autoPauseAfter,
-      supabaseUrl,
-      supabaseAnonKey,
       waSessionStatus: sessionStatus,
     });
-    alert('Configurações salvas e aplicadas em tempo real na plataforma!');
+    alert('Configurações salvas e aplicadas em tempo real na operação!');
   };
 
   const handleFactoryResetWithAlert = () => {
-    if (confirm('Aviso Crítico: Deseja redefinir todo o banco de dados local para os dados iniciais de demonstração (Factory Reset)? Suas modificações de chat serão limpas.')) {
+    if (confirm('Aviso Crítico: deseja redefinir os dados locais para o padrão inicial? Suas modificações de chat serão limpas.')) {
       onResetDatabase();
       alert('Banco de dados local redefinido com sucesso!');
     }
@@ -57,9 +52,9 @@ export default function ConfiguracoesView({
       
       {/* Title */}
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">Painel de Configuração SaaS</h2>
+        <h2 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">Painel de Configuração Operacional</h2>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          Gerencie chaves criptográficas de sincronização, conexões com o Supabase e limites de proteção de envio do WhatsApp.
+          Gerencie sincronização operacional, sessão do WhatsApp e limites de proteção de envio.
         </p>
       </div>
 
@@ -147,50 +142,13 @@ export default function ConfiguracoesView({
             </div>
           </div>
 
-          {/* Database keys secrets */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-245 border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-4">
-            <h3 className="text-sm font-bold text-slate-955 dark:text-white flex items-center gap-1.5">
-              <Database className="w-4.5 h-4.5 text-indigo-500" />
-              <span>Banco de Dados - Supabase Integration</span>
-            </h3>
-
-            <div className="p-3 bg-slate-50 dark:bg-slate-805 text-slate-650 dark:text-slate-350 border border-slate-100 dark:border-slate-750 rounded-xl leading-relaxed">
-              🔌 <strong>Conexão Criptográfica:</strong> Preencha os campos abaixo para sincronizar automaticamente seus leads capilares captados nas landing pages do Supabase com o funil do WhatsApp do GreenHub.
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-slate-450 font-bold mb-1.5 uppercase text-[9px] uppercase">Supabase API URL Target</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={supabaseUrl}
-                    onChange={(e) => setSupabaseUrl(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-705 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 font-mono focus:outline-none"
-                    placeholder="https://suas-credenciais-supabase.co"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-slate-450 font-bold mb-1.5 uppercase text-[9px] uppercase">Supabase Anon Key Criptográfica</label>
-                <input
-                  type="password"
-                  value={supabaseAnonKey}
-                  onChange={(e) => setSupabaseAnonKey(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-705 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 font-mono focus:outline-none"
-                  placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC..."
-                />
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Right Side Column: Devices Session, clearing cached values, triggers */}
         <div className="space-y-6">
           {/* Device Active Session config */}
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-4">
-            <h3 className="text-xs font-bold text-slate-400 tracking-wider uppercase">Sessão Ativa WhatsApp QR</h3>
+            <h3 className="text-xs font-bold text-slate-400 tracking-wider uppercase">Sessão WhatsApp</h3>
             
             <div className="space-y-3.5">
               <div className="p-3 bg-emerald-500/10 border border-emerald-355 border-emerald-500/30 rounded-xl flex items-center justify-between">
@@ -199,14 +157,14 @@ export default function ConfiguracoesView({
               </div>
 
               <div>
-                <label className="block text-slate-400 font-bold mb-1 uppercase tracking-wider text-[9px]">Simular Status de QR</label>
+                <label className="block text-slate-400 font-bold mb-1 uppercase tracking-wider text-[9px]">Status da Conexão</label>
                 <select
                   value={sessionStatus}
                   onChange={(e) => setSessionStatus(e.target.value as any)}
                   className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 p-2 rounded-xl text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer"
                 >
-                  <option value="connected">Conectado (Live)</option>
-                  <option value="disconnected">Desconectado (Qr Code Pendente)</option>
+                  <option value="connected">Conectado</option>
+                  <option value="disconnected">Desconectado</option>
                   <option value="connecting">Tentando Reestabelecer Sinal</option>
                 </select>
               </div>
@@ -219,7 +177,7 @@ export default function ConfiguracoesView({
             
             <div className="space-y-3">
               <p className="text-[11px] text-slate-500">
-                Se os dados simulados estiverem cheios ou você quiser reiniciar a experiência, clique no controle de Factory Reset abaixo para restaurar todos os valores para o padrão inicial.
+                Se os dados locais estiverem cheios ou você quiser reiniciar a operação, clique no controle abaixo para restaurar os valores iniciais.
               </p>
 
               <button
@@ -228,7 +186,7 @@ export default function ConfiguracoesView({
                 className="w-full bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/20 text-rose-600 dark:text-rose-450 border border-rose-200 dark:border-rose-900 font-bold py-2 px-3 rounded-xl transition inline-flex items-center justify-center gap-1.5"
               >
                 <RefreshCw className="w-3.5 h-3.5 animate-spin-reverse" />
-                <span>FACTORY RESET DATA</span>
+                <span>REDEFINIR DADOS LOCAIS</span>
               </button>
             </div>
           </div>

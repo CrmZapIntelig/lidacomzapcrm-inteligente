@@ -601,7 +601,7 @@ export default function EntregadoresView({
 
                 {/* Add dynamic review form */}
                 <form onSubmit={handleAddReview} className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Simular Review do Cliente</p>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Registrar Review do Cliente</p>
                   
                   <div>
                     <label className="text-[9px] font-bold text-slate-400 block mb-1">Qualidade (1 a 5 estrelas)</label>
@@ -639,7 +639,7 @@ export default function EntregadoresView({
             ) : (
               <div className="space-y-3.5">
                 <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
-                  Selecione o botão <strong>"Reviews"</strong> nos cartões de cada motoboy para ler e simular notas, verificar o histórico de satisfação de clientes e as avaliações do iFood Logística ou Uber Direct.
+                  Selecione o botão <strong>"Reviews"</strong> nos cartões de cada motoboy para registrar notas e verificar o histórico de satisfação de clientes.
                 </p>
 
                 <div className="p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-205 dark:border-slate-900 rounded-xl space-y-3">
@@ -675,7 +675,7 @@ export default function EntregadoresView({
               tbl_entregadores
             </span>
             <p className="text-[9.5px] leading-snug">
-              Campos de logísticos indexados no Supabase e em sincronia bidirecional com webhook de entregadores do iFood e Lalamove.
+              Campos logísticos indexados na operação e em sincronia com os registros de entregadores.
             </p>
             <div className="p-1.5 bg-slate-100 dark:bg-slate-950 text-slate-400 border border-slate-200 dark:border-slate-850 rounded text-[9px] flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />

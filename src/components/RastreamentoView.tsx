@@ -165,7 +165,7 @@ export default function RastreamentoView({
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h2 className="text-base font-extrabold text-slate-900 dark:text-white">Simulador do Link de Rastreio Público</h2>
+              <h2 className="text-base font-extrabold text-slate-900 dark:text-white">Prévia do Link de Rastreio Público</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 Esta é a interface mobile premium que o cliente acessa via link do WhatsApp para acompanhar a entrega ao vivo.
               </p>
@@ -260,7 +260,7 @@ export default function RastreamentoView({
                                 onClick={() => handleSimulateGPSJump(matchedRoute.id)}
                                 className="flex-1 bg-white hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-900 border border-slate-200 dark:border-slate-805 text-[9px] font-bold py-1.5 rounded-lg text-slate-600 dark:text-slate-400 transition"
                               >
-                                Simular Salto GPS 📡
+                                Atualizar GPS 📡
                               </button>
                             </div>
                           </div>
@@ -572,7 +572,7 @@ export default function RastreamentoView({
                         <div className="px-5 text-center text-[10px] text-slate-400 space-y-1 py-1 select-none">
                           <p className="flex items-center justify-center gap-1">
                             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                            Entrega Segura com PIN CRM GreenHub
+                            Entrega Segura com PIN LidacomZapCRM Inteligente
                           </p>
                           <p className="text-[8px] text-slate-450 leading-relaxed max-w-xs mx-auto">
                             Seus dados estão protegidos sob protocolos da LGPD. Em caso de dúvidas, contate o restaurante via WhatsApp.

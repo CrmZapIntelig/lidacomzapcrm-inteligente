@@ -948,7 +948,7 @@ export default function CozinhaView({
 
                 <div className="text-center text-[9px] text-zinc-550 border-t border-dashed border-zinc-300 pt-2 font-semibold">
                   Obrigado pela preferência!<br />
-                  GreenHub Sistemas e CRM Integrado V2.5
+                  LidacomZapCRM Inteligente
                 </div>
 
               </div>

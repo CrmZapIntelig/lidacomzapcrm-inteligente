@@ -605,7 +605,7 @@ export default function WhatsAppView({
                       ? 'bg-rose-500 text-white border-rose-500 animation-pulse'
                       : 'hover:bg-slate-50 text-slate-500 bg-slate-100 border-slate-200 dark:bg-slate-800 dark:border-slate-700'
                   }`}
-                  title="Simular Gravação de Áudio"
+                  title="Gravar áudio"
                 >
                   <Mic className="w-5 h-5" />
                 </button>

@@ -394,7 +394,7 @@ export default function EntregasView({
               tbl_entregas_webhook
             </p>
             <p className="text-[9.5px] text-slate-500 leading-snug">
-              Webhooks ativos escutando canais do iFood Logística, Lalamove, Uber Direct e Loggi para simulação transparente.
+              Webhooks ativos escutando canais logísticos para acompanhamento operacional.
             </p>
             <div className="bg-slate-950 p-2 rounded border border-slate-850 text-[9px] text-sky-350">
               ⚡ CONNECTED - STATUS 200 OK
