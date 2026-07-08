@@ -70,6 +70,82 @@ const mapFirebaseUser = (firebaseUser: FirebaseAuthUser): User => ({
   active: true,
 });
 
+const normalizeSettings = (rawSettings?: Partial<AppSettings>): AppSettings => {
+  const source = rawSettings || {};
+  const dailyLimit = source.dailyLimit ?? source.dispatcher?.dailyLimit ?? DEFAULT_SETTINGS.dailyLimit;
+  const intervalMin = source.intervalMin ?? source.dispatcher?.intervalMin ?? DEFAULT_SETTINGS.intervalMin;
+  const intervalMax = source.intervalMax ?? source.dispatcher?.intervalMax ?? DEFAULT_SETTINGS.intervalMax;
+  const autoPause = source.autoPause ?? source.dispatcher?.autoPause ?? DEFAULT_SETTINGS.autoPause;
+  const autoPauseAfter = source.autoPauseAfter ?? source.dispatcher?.autoPauseAfter ?? DEFAULT_SETTINGS.autoPauseAfter;
+  const waSessionStatus = source.waSessionStatus ?? source.whatsapp?.sessionStatus ?? DEFAULT_SETTINGS.waSessionStatus;
+  const operatorRole = source.operatorRole ?? source.ui?.operatorRole ?? DEFAULT_SETTINGS.operatorRole;
+  const operatorName = source.operatorName ?? source.ui?.operatorName ?? DEFAULT_SETTINGS.operatorName;
+  const theme = source.theme ?? source.ui?.theme ?? DEFAULT_SETTINGS.theme;
+
+  return {
+    ...DEFAULT_SETTINGS,
+    ...source,
+    restaurant: {
+      ...DEFAULT_SETTINGS.restaurant,
+      ...source.restaurant,
+      address: {
+        ...DEFAULT_SETTINGS.restaurant.address,
+        ...source.restaurant?.address,
+      },
+      social: {
+        ...DEFAULT_SETTINGS.restaurant.social,
+        ...source.restaurant?.social,
+      },
+    },
+    operation: {
+      ...DEFAULT_SETTINGS.operation,
+      ...source.operation,
+    },
+    delivery: {
+      ...DEFAULT_SETTINGS.delivery,
+      ...source.delivery,
+    },
+    cashier: {
+      ...DEFAULT_SETTINGS.cashier,
+      ...source.cashier,
+    },
+    whatsapp: {
+      ...DEFAULT_SETTINGS.whatsapp,
+      ...source.whatsapp,
+      sessionStatus: waSessionStatus,
+      statusMessages: {
+        ...DEFAULT_SETTINGS.whatsapp.statusMessages,
+        ...source.whatsapp?.statusMessages,
+      },
+    },
+    dispatcher: {
+      ...DEFAULT_SETTINGS.dispatcher,
+      ...source.dispatcher,
+      dailyLimit,
+      intervalMin,
+      intervalMax,
+      autoPause,
+      autoPauseAfter,
+    },
+    ui: {
+      ...DEFAULT_SETTINGS.ui,
+      ...source.ui,
+      theme,
+      operatorName,
+      operatorRole,
+    },
+    dailyLimit,
+    intervalMin,
+    intervalMax,
+    autoPause,
+    autoPauseAfter,
+    waSessionStatus,
+    operatorRole,
+    operatorName,
+    theme,
+  };
+};
+
 const CURRENT_TAB_STORAGE_KEY = 'lidacomzap_current_tab';
 
 const isSameOperationalDate = (dateValue: string, comparisonDate = new Date()) => {
@@ -303,10 +379,10 @@ export default function App() {
       doc(db, 'settings', 'default'),
       (snap) => {
         if (snap.exists()) {
-          setSettings(snap.data() as AppSettings);
+          setSettings(normalizeSettings(snap.data() as Partial<AppSettings>));
           console.log('FIRESTORE SETTINGS SINCRONIZADO');
         } else {
-          setSettings(DEFAULT_SETTINGS);
+          setSettings(normalizeSettings(DEFAULT_SETTINGS));
         }
       },
       (error) => {
@@ -315,7 +391,7 @@ export default function App() {
           error
         );
   
-        setSettings(DEFAULT_SETTINGS);
+        setSettings(normalizeSettings(DEFAULT_SETTINGS));
       }
     );
   
@@ -599,6 +675,18 @@ export default function App() {
   useEffect(() => {
     saveData('settings', settings);
   }, [settings]);
+
+  const handleUpdateSettings = async (settingsUpdate: Partial<AppSettings>) => {
+    const updatedSettings = normalizeSettings({ ...settings, ...settingsUpdate });
+    setSettings(updatedSettings);
+
+    try {
+      await setDoc(doc(db, 'settings', 'default'), updatedSettings, { merge: true });
+      console.log('SETTINGS ATUALIZADO FIRESTORE');
+    } catch (error) {
+      console.error('ERRO AO ATUALIZAR SETTINGS FIRESTORE:', error);
+    }
+  };
 
   useEffect(() => {
     saveData('productsDigitalMenu', productsDigitalMenu);
@@ -1232,17 +1320,7 @@ if (publicCardapioMatch) {
         {/* Header Workspace Options */}
         <Header
           settings={settings}
-          onUpdateSettings={async (s) => {
-  const updatedSettings = { ...settings, ...s };
-  setSettings(updatedSettings);
-
-  try {
-    await setDoc(doc(db, 'settings', 'default'), updatedSettings, { merge: true });
-    console.log('SETTINGS ATUALIZADO FIRESTORE');
-  } catch (error) {
-    console.error('ERRO AO ATUALIZAR SETTINGS FIRESTORE:', error);
-  }
-}}
+          onUpdateSettings={handleUpdateSettings}
 
           onToggleMobileMenu={() => setMobileSidebarOpen(true)}
           searchQuery={searchQuery}
@@ -1319,17 +1397,7 @@ if (publicCardapioMatch) {
             <DisparadorView
               clients={clients}
               settings={settings}
-              onUpdateSettings={async (s) => {
-                const updatedSettings = { ...settings, ...s };
-                setSettings(updatedSettings);
-              
-                try {
-                  await setDoc(doc(db, 'settings', 'default'), updatedSettings, { merge: true });
-                  console.log('SETTINGS ATUALIZADO FIRESTORE');
-                } catch (error) {
-                  console.error('ERRO AO ATUALIZAR SETTINGS FIRESTORE:', error);
-                }
-              }}
+              onUpdateSettings={handleUpdateSettings}
 
               onUpdateClient={handleUpdateClient}
               onAddHistoryEvent={handleAddHistoryEvent}
@@ -1529,17 +1597,7 @@ if (publicCardapioMatch) {
           {currentTab === 'configuracoes' && (
             <ConfiguracoesView
               settings={settings}
-              onUpdateSettings={async (s) => {
-  const updatedSettings = { ...settings, ...s };
-  setSettings(updatedSettings);
-
-  try {
-    await setDoc(doc(db, 'settings', 'default'), updatedSettings, { merge: true });
-    console.log('SETTINGS ATUALIZADO FIRESTORE');
-  } catch (error) {
-    console.error('ERRO AO ATUALIZAR SETTINGS FIRESTORE:', error);
-  }
-}}
+              onUpdateSettings={handleUpdateSettings}
 
               onResetDatabase={handleResetDatabase}
             />

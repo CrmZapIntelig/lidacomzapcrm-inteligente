@@ -450,6 +450,82 @@ export const INITIAL_DELIVERY_ORDERS: DeliveryOrder[] = [
 
 
 export const DEFAULT_SETTINGS: AppSettings = {
+  restaurant: {
+    name: 'Restaurante Prato Mineiro',
+    brandName: 'Restaurante Prato Mineiro',
+    systemName: 'LidacomZapCRM Inteligente',
+    legalName: '',
+    cnpj: '',
+    phone: '',
+    whatsapp: '',
+    email: '',
+    address: {
+      street: '',
+      number: '',
+      neighborhood: '',
+      city: '',
+      state: '',
+      zipCode: '',
+    },
+    social: {
+      instagram: '',
+      website: '',
+    },
+  },
+  operation: {
+    isOpen: true,
+    timezone: 'America/Sao_Paulo',
+    averagePreparationMinutes: 25,
+    acceptPublicOrders: true,
+    acceptTableOrders: true,
+  },
+  delivery: {
+    defaultFee: 7,
+    freeDeliveryAbove: null,
+    defaultEtaMinutes: 12,
+    maxDelayAlertMinutes: 15,
+    maxRadiusKm: null,
+    allowedNeighborhoods: [],
+  },
+  cashier: {
+    suggestedInitialBalance: 100,
+    defaultPaymentMethod: 'Dinheiro',
+    acceptedPaymentMethods: ['Pix', 'Cartão', 'Dinheiro'],
+    requireDailyClosing: true,
+    differenceTolerance: 0,
+  },
+  whatsapp: {
+    sessionStatus: 'connected',
+    quickTemplates: [
+      'Olá {nome}! Seu pedido foi recebido pelo Restaurante Prato Mineiro.',
+      'Seu pedido entrou em produção.',
+      'Seu pedido está pronto e aguardando despacho.',
+    ],
+    statusMessages: {
+      orderCreated: 'Pedido recebido pelo Restaurante Prato Mineiro.',
+      production: 'Seu pedido entrou em produção.',
+      ready: 'Seu pedido está pronto e aguardando despacho.',
+      outForDelivery: 'Seu pedido saiu para entrega.',
+      closed: 'Pedido entregue. Agradecemos a preferência!',
+    },
+  },
+  dispatcher: {
+    dailyLimit: 250,
+    intervalMin: 4,
+    intervalMax: 12,
+    autoPause: true,
+    autoPauseAfter: 50,
+    defaultChannel: 'todos',
+    excludeGroups: true,
+    excludeBlocked: true,
+    excludeAlreadySent: true,
+    defaultMessage: 'Olá {cliente}! Tudo bem? O Restaurante Prato Mineiro tem uma oferta especial para você hoje.',
+  },
+  ui: {
+    theme: 'dark',
+    operatorName: 'Administrador',
+    operatorRole: 'Admin',
+  },
   dailyLimit: 250,
   intervalMin: 4,
   intervalMax: 12,
@@ -459,7 +535,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSJ9.mockKeyString',
   waSessionStatus: 'connected',
   operatorRole: 'Admin',
-  operatorName: 'Thiago Admin',
+  operatorName: 'Administrador',
   theme: 'dark'
 };
 

@@ -156,7 +156,95 @@ export interface Campaign {
   channel?: Channel; 
 }
 
+export interface RestaurantSettings {
+  name: string;
+  brandName: string;
+  systemName: string;
+  legalName: string;
+  cnpj: string;
+  phone: string;
+  whatsapp: string;
+  email: string;
+  address: {
+    street: string;
+    number: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  social: {
+    instagram: string;
+    website: string;
+  };
+}
+
+export interface OperationSettings {
+  isOpen: boolean;
+  timezone: string;
+  averagePreparationMinutes: number;
+  acceptPublicOrders: boolean;
+  acceptTableOrders: boolean;
+}
+
+export interface DeliverySettings {
+  defaultFee: number;
+  freeDeliveryAbove: number | null;
+  defaultEtaMinutes: number;
+  maxDelayAlertMinutes: number;
+  maxRadiusKm: number | null;
+  allowedNeighborhoods: string[];
+}
+
+export interface CashierSettings {
+  suggestedInitialBalance: number;
+  defaultPaymentMethod: string;
+  acceptedPaymentMethods: string[];
+  requireDailyClosing: boolean;
+  differenceTolerance: number;
+}
+
+export interface WhatsAppSettings {
+  sessionStatus: 'connected' | 'disconnected' | 'connecting';
+  quickTemplates: string[];
+  statusMessages: {
+    orderCreated: string;
+    production: string;
+    ready: string;
+    outForDelivery: string;
+    closed: string;
+  };
+}
+
+export interface DispatcherSettings {
+  dailyLimit: number;
+  intervalMin: number;
+  intervalMax: number;
+  autoPause: boolean;
+  autoPauseAfter: number;
+  defaultChannel: 'todos' | 'whatsapp' | 'rcs';
+  excludeGroups: boolean;
+  excludeBlocked: boolean;
+  excludeAlreadySent: boolean;
+  defaultMessage: string;
+}
+
+export interface UiSettings {
+  theme: 'light' | 'dark';
+  operatorName: string;
+  operatorRole: 'Admin' | 'Sales' | 'Marketing';
+}
+
 export interface AppSettings {
+  restaurant: RestaurantSettings;
+  operation: OperationSettings;
+  delivery: DeliverySettings;
+  cashier: CashierSettings;
+  whatsapp: WhatsAppSettings;
+  dispatcher: DispatcherSettings;
+  ui: UiSettings;
+
+  // Legacy flat fields kept for compatibility with existing views.
   dailyLimit: number;
   intervalMin: number; // in seconds
   intervalMax: number; // in seconds
