@@ -3,7 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Client, Message, HistoryEvent, Order, Campaign, AutomationRule, AppSettings, FunnelStageConfig, ProductDigitalMenu, Cardapio, DeliveryOrder } from '../types';
+import {
+  Client,
+  Message,
+  HistoryEvent,
+  Order,
+  Campaign,
+  AutomationRule,
+  AppSettings,
+  FunnelStageConfig,
+  ProductDigitalMenu,
+  Cardapio,
+  DeliveryOrder,
+  CommercialSegment,
+  CampaignTemplate,
+  CampaignSchedule,
+  CampaignResult,
+} from '../types';
 
 export const FUNNEL_STAGES: FunnelStageConfig[] = [
   { id: 'Rascunho', label: 'Rascunho', color: 'text-slate-400', bgColor: 'bg-slate-100 dark:bg-slate-800/50', borderColor: 'border-slate-300 dark:border-slate-700' },
@@ -199,37 +215,12 @@ export const INITIAL_HISTORY: HistoryEvent[] = [
   { id: 'h6', clientId: '8', type: 'stage_change', title: 'Pedido para Produção', description: 'Etapa atualizada para Produção após aprovação.', timestamp: '2026-05-25T16:20:00Z', operatorName: 'Clara Produção' },
 ];
 
-export const INITIAL_CAMPAIGNS: Campaign[] = [
-  {
-    id: 'c1',
-    name: 'Lançamento de Inverno ❄️',
-    messageTemplate: 'Olá {cliente}! Tudo bem? Nosso catálogo de inverno acaba de sair do forno com peças incríveis em linho. Quer dar uma olhada e garantir frete grátis usando o cupom INVERNO10?',
-    sentCount: 145,
-    responseCount: 68,
-    status: 'concluido',
-    createdAt: '2026-05-15T12:00:00Z',
-    lastRun: '2026-05-15T16:30:00Z'
-  },
-  {
-    id: 'c2',
-    name: 'Recuperação de Boleto Gerado 📉',
-    messageTemplate: 'Oi {cliente}, passando para lembrar que seu boleto com desconto especial vence hoje. Se tiver qualquer dúvida sobre o pedido, me chame aqui!',
-    sentCount: 42,
-    responseCount: 22,
-    status: 'ativo',
-    createdAt: '2026-05-20T10:00:00Z',
-    lastRun: '2026-05-26T10:00:00Z'
-  },
-  {
-    id: 'c3',
-    name: 'Campanha Dia dos Namorados ❤️',
-    messageTemplate: 'Olá {cliente}! Procurando o presente ideal para a pessoa amada? Garanta nosso combo namorados com acabamento personalizado. Responda SIM e eu te envio a lista agora.',
-    sentCount: 0,
-    responseCount: 0,
-    status: 'rascunho',
-    createdAt: '2026-05-26T21:00:00Z'
-  }
-];
+export const INITIAL_CAMPAIGNS: Campaign[] = [];
+
+export const INITIAL_COMMERCIAL_SEGMENTS: CommercialSegment[] = [];
+export const INITIAL_CAMPAIGN_TEMPLATES: CampaignTemplate[] = [];
+export const INITIAL_CAMPAIGN_SCHEDULES: CampaignSchedule[] = [];
+export const INITIAL_CAMPAIGN_RESULTS: CampaignResult[] = [];
 
 export const INITIAL_ORDERS: Order[] = [
   {
