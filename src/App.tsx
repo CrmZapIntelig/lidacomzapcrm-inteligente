@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   loadData,
   saveData,
@@ -21,8 +21,30 @@ import {
   INITIAL_ROUTES,
   INITIAL_COURIER_REVIEWS,
   INITIAL_DELIVERY_HISTORIES,
+  INITIAL_COMMERCIAL_SEGMENTS,
+  INITIAL_CAMPAIGN_TEMPLATES,
+  INITIAL_CAMPAIGN_SCHEDULES,
+  INITIAL_CAMPAIGN_RESULTS,
 } from './utils/mockData';
-import { Client, Message, HistoryEvent, Order, Campaign, AutomationRule, AppSettings, FunnelStage, Courier, DeliveryRoute, CourierReview, DeliveryHistory } from './types';
+import { generateCustomerCommercialProfiles } from './utils/commercialSegmentation';
+import {
+  Client,
+  Message,
+  HistoryEvent,
+  Order,
+  Campaign,
+  AutomationRule,
+  AppSettings,
+  FunnelStage,
+  Courier,
+  DeliveryRoute,
+  CourierReview,
+  DeliveryHistory,
+  CommercialSegment,
+  CampaignTemplate,
+  CampaignSchedule,
+  CampaignResult,
+} from './types';
 
 // Import Views
 import Sidebar from './components/Sidebar';
@@ -44,6 +66,7 @@ import RastreamentoView from './components/RastreamentoView';
 import ClientesView from './components/ClientesView';
 import AutomationsView from './components/AutomationsView';
 import CentralInteligenteView from './components/CentralInteligenteView';
+import CommercialIntelligenceView from './components/CommercialIntelligenceView';
 import RelatoriosView from './components/RelatoriosView';
 import ConfiguracoesView from './components/ConfiguracoesView';
 import OrderModal from './components/OrderModal';
@@ -54,7 +77,7 @@ import { AuthSession, User, CaixaSession, CaixaTransaction } from './types';
 
 import { db, auth as firebaseAuth } from './lib/firebase';
 import { onAuthStateChanged, signOut, type User as FirebaseAuthUser } from 'firebase/auth';
-import { collection, doc, setDoc, onSnapshot, type DocumentData, type QuerySnapshot } from 'firebase/firestore';
+import { collection, deleteDoc, doc, setDoc, onSnapshot, type DocumentData, type QuerySnapshot } from 'firebase/firestore';
 
 const mapSnapshotWithId = <T,>(snapshot: QuerySnapshot<DocumentData>): T[] =>
   snapshot.docs.map((docSnap) => ({
@@ -307,6 +330,130 @@ export default function App() {
       }
     );
   
+    return unsubscribe;
+  }, []);
+
+  const [commercialSegments, setCommercialSegments] = useState<CommercialSegment[]>(INITIAL_COMMERCIAL_SEGMENTS);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, 'commercialSegments'),
+      (snapshot) => {
+        const firestoreSegments = mapSnapshotWithId<CommercialSegment>(snapshot);
+        const loadedSegments =
+          firestoreSegments.length > 0
+            ? firestoreSegments
+            : INITIAL_COMMERCIAL_SEGMENTS;
+
+        setCommercialSegments(loadedSegments);
+
+        console.log(
+          `FIRESTORE COMMERCIAL SEGMENTS SINCRONIZADAS: ${loadedSegments.length}`
+        );
+      },
+      (error) => {
+        console.error(
+          'ERRO AO CARREGAR COMMERCIAL SEGMENTS FIRESTORE:',
+          error
+        );
+
+        setCommercialSegments(INITIAL_COMMERCIAL_SEGMENTS);
+      }
+    );
+
+    return unsubscribe;
+  }, []);
+
+  const [campaignTemplates, setCampaignTemplates] = useState<CampaignTemplate[]>(INITIAL_CAMPAIGN_TEMPLATES);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, 'campaignTemplates'),
+      (snapshot) => {
+        const firestoreTemplates = mapSnapshotWithId<CampaignTemplate>(snapshot);
+        const loadedTemplates =
+          firestoreTemplates.length > 0
+            ? firestoreTemplates
+            : INITIAL_CAMPAIGN_TEMPLATES;
+
+        setCampaignTemplates(loadedTemplates);
+
+        console.log(
+          `FIRESTORE CAMPAIGN TEMPLATES SINCRONIZADOS: ${loadedTemplates.length}`
+        );
+      },
+      (error) => {
+        console.error(
+          'ERRO AO CARREGAR CAMPAIGN TEMPLATES FIRESTORE:',
+          error
+        );
+
+        setCampaignTemplates(INITIAL_CAMPAIGN_TEMPLATES);
+      }
+    );
+
+    return unsubscribe;
+  }, []);
+
+  const [campaignSchedules, setCampaignSchedules] = useState<CampaignSchedule[]>(INITIAL_CAMPAIGN_SCHEDULES);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, 'campaignSchedules'),
+      (snapshot) => {
+        const firestoreSchedules = mapSnapshotWithId<CampaignSchedule>(snapshot);
+        const loadedSchedules =
+          firestoreSchedules.length > 0
+            ? firestoreSchedules
+            : INITIAL_CAMPAIGN_SCHEDULES;
+
+        setCampaignSchedules(loadedSchedules);
+
+        console.log(
+          `FIRESTORE CAMPAIGN SCHEDULES SINCRONIZADOS: ${loadedSchedules.length}`
+        );
+      },
+      (error) => {
+        console.error(
+          'ERRO AO CARREGAR CAMPAIGN SCHEDULES FIRESTORE:',
+          error
+        );
+
+        setCampaignSchedules(INITIAL_CAMPAIGN_SCHEDULES);
+      }
+    );
+
+    return unsubscribe;
+  }, []);
+
+  const [campaignResults, setCampaignResults] = useState<CampaignResult[]>(INITIAL_CAMPAIGN_RESULTS);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, 'campaignResults'),
+      (snapshot) => {
+        const firestoreResults = mapSnapshotWithId<CampaignResult>(snapshot);
+        const loadedResults =
+          firestoreResults.length > 0
+            ? firestoreResults
+            : INITIAL_CAMPAIGN_RESULTS;
+
+        setCampaignResults(loadedResults);
+
+        console.log(
+          `FIRESTORE CAMPAIGN RESULTS SINCRONIZADOS: ${loadedResults.length}`
+        );
+      },
+      (error) => {
+        console.error(
+          'ERRO AO CARREGAR CAMPAIGN RESULTS FIRESTORE:',
+          error
+        );
+
+        setCampaignResults(INITIAL_CAMPAIGN_RESULTS);
+      }
+    );
+
     return unsubscribe;
   }, []);
   
@@ -665,6 +812,22 @@ export default function App() {
   }, [campaigns]);
 
   useEffect(() => {
+    saveData('commercialSegments', commercialSegments);
+  }, [commercialSegments]);
+
+  useEffect(() => {
+    saveData('campaignTemplates', campaignTemplates);
+  }, [campaignTemplates]);
+
+  useEffect(() => {
+    saveData('campaignSchedules', campaignSchedules);
+  }, [campaignSchedules]);
+
+  useEffect(() => {
+    saveData('campaignResults', campaignResults);
+  }, [campaignResults]);
+
+  useEffect(() => {
     saveData('orders', orders);
   }, [orders]);
 
@@ -752,6 +915,10 @@ export default function App() {
     setMessages(INITIAL_MESSAGES);
     setHistory(INITIAL_HISTORY);
     setCampaigns(INITIAL_CAMPAIGNS);
+    setCommercialSegments(INITIAL_COMMERCIAL_SEGMENTS);
+    setCampaignTemplates(INITIAL_CAMPAIGN_TEMPLATES);
+    setCampaignSchedules(INITIAL_CAMPAIGN_SCHEDULES);
+    setCampaignResults(INITIAL_CAMPAIGN_RESULTS);
     setOrders(INITIAL_ORDERS);
     setAutomations(INITIAL_AUTOMATIONS);
     setSettings(DEFAULT_SETTINGS);
@@ -782,6 +949,73 @@ const handleAddHistoryEvent = async (clientId: string, type: any, title: string,
   } catch (error) {
     console.error('ERRO AO ATUALIZAR HISTORY FIRESTORE:', error);
   }
+};
+
+const saveFirestoreDocument = async <T extends { id: string }>(
+  collectionName: string,
+  item: T,
+  logLabel: string
+) => {
+  try {
+    const cleanItem = JSON.parse(JSON.stringify(item));
+    await setDoc(doc(db, collectionName, item.id), cleanItem, { merge: true });
+    console.log(`${logLabel} ATUALIZADO FIRESTORE: ${item.id}`);
+  } catch (error) {
+    console.error(`ERRO AO ATUALIZAR ${logLabel} FIRESTORE:`, error);
+  }
+};
+
+const deleteFirestoreDocument = async (
+  collectionName: string,
+  itemId: string,
+  logLabel: string
+) => {
+  try {
+    await deleteDoc(doc(db, collectionName, itemId));
+    console.log(`${logLabel} REMOVIDO FIRESTORE: ${itemId}`);
+  } catch (error) {
+    console.error(`ERRO AO REMOVER ${logLabel} FIRESTORE:`, error);
+  }
+};
+
+const handleSaveSegment = async (segment: CommercialSegment) => {
+  setCommercialSegments((prev) => [segment, ...prev.filter((item) => item.id !== segment.id)]);
+  await saveFirestoreDocument('commercialSegments', segment, 'COMMERCIAL SEGMENT');
+};
+
+const handleDeleteSegment = async (segmentId: string) => {
+  setCommercialSegments((prev) => prev.filter((item) => item.id !== segmentId));
+  await deleteFirestoreDocument('commercialSegments', segmentId, 'COMMERCIAL SEGMENT');
+};
+
+const handleSaveTemplate = async (template: CampaignTemplate) => {
+  setCampaignTemplates((prev) => [template, ...prev.filter((item) => item.id !== template.id)]);
+  await saveFirestoreDocument('campaignTemplates', template, 'CAMPAIGN TEMPLATE');
+};
+
+const handleDeleteTemplate = async (templateId: string) => {
+  setCampaignTemplates((prev) => prev.filter((item) => item.id !== templateId));
+  await deleteFirestoreDocument('campaignTemplates', templateId, 'CAMPAIGN TEMPLATE');
+};
+
+const handleSaveCampaign = async (campaign: Campaign) => {
+  setCampaigns((prev) => [campaign, ...prev.filter((item) => item.id !== campaign.id)]);
+  await saveFirestoreDocument('campaigns', campaign, 'CAMPAIGN');
+};
+
+const handleDeleteCampaign = async (campaignId: string) => {
+  setCampaigns((prev) => prev.filter((item) => item.id !== campaignId));
+  await deleteFirestoreDocument('campaigns', campaignId, 'CAMPAIGN');
+};
+
+const handleSaveSchedule = async (schedule: CampaignSchedule) => {
+  setCampaignSchedules((prev) => [schedule, ...prev.filter((item) => item.id !== schedule.id)]);
+  await saveFirestoreDocument('campaignSchedules', schedule, 'CAMPAIGN SCHEDULE');
+};
+
+const handleDeleteSchedule = async (scheduleId: string) => {
+  setCampaignSchedules((prev) => prev.filter((item) => item.id !== scheduleId));
+  await deleteFirestoreDocument('campaignSchedules', scheduleId, 'CAMPAIGN SCHEDULE');
 };
 
   // 4. Client modification callback
@@ -1282,6 +1516,11 @@ const handleUpdateDeliveryOrders = async (updater: any) => {
   });
 };
 
+  const customerCommercialProfiles = useMemo(
+    () => generateCustomerCommercialProfiles(clients, orders, deliveryOrders),
+    [clients, orders, deliveryOrders]
+  );
+
 // 7. Calculate overall pipeline value
   const totalPipeline = clients
     .filter((c) => c.stage !== 'Fechado')
@@ -1380,19 +1619,28 @@ if (publicCardapioMatch) {
 {currentTab === 'campanhas' && (
   <CampanhasView
     campaigns={campaigns}
-    onAddCampaign={async (camp) => {
-      setCampaigns((prev) => [camp, ...prev]);
-
-      try {
-        const cleanCampaign = JSON.parse(JSON.stringify(camp));
-        await setDoc(doc(db, 'campaigns', camp.id), cleanCampaign, { merge: true });
-        console.log(`CAMPAIGN ATUALIZADA FIRESTORE: ${camp.id}`);
-      } catch (error) {
-        console.error('ERRO AO ATUALIZAR CAMPAIGN FIRESTORE:', error);
-      }
-    }}
+    onAddCampaign={handleSaveCampaign}
   />
 )}
+
+          {currentTab === 'inteligencia_comercial' && (
+            <CommercialIntelligenceView
+              commercialSegments={commercialSegments}
+              campaignTemplates={campaignTemplates}
+              campaigns={campaigns}
+              campaignSchedules={campaignSchedules}
+              campaignResults={campaignResults}
+              customerCommercialProfiles={customerCommercialProfiles}
+              onSaveSegment={handleSaveSegment}
+              onDeleteSegment={handleDeleteSegment}
+              onSaveTemplate={handleSaveTemplate}
+              onDeleteTemplate={handleDeleteTemplate}
+              onSaveCampaign={handleSaveCampaign}
+              onDeleteCampaign={handleDeleteCampaign}
+              onSaveSchedule={handleSaveSchedule}
+              onDeleteSchedule={handleDeleteSchedule}
+            />
+          )}
           {currentTab === 'disparador' && (
             <DisparadorView
               clients={clients}

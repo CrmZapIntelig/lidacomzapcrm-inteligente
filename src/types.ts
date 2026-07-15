@@ -154,6 +154,85 @@ export interface Campaign {
   createdAt: string;
   lastRun?: string;
   channel?: Channel; 
+  segmentId?: string;
+  templateId?: string;
+  updatedAt?: string;
+}
+
+export interface CommercialSegment {
+  id: string;
+  name: string;
+  description: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CampaignTemplate {
+  id: string;
+  name: string;
+  category: string;
+  message: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CampaignSchedule {
+  id: string;
+  campaignId: string;
+  date: string;
+  time: string;
+  status: 'agendado' | 'pausado' | 'executado' | 'cancelado';
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CampaignResult {
+  id: string;
+  campaignId: string;
+  executedAt: string;
+  reachedCustomers: number;
+  conversions: number;
+  revenue: number;
+  createdAt: string;
+}
+
+export interface CustomerScore {
+  id: string;
+  customerId: string;
+  score: number;
+  segmentIds: string[];
+  lastCalculatedAt: string;
+  recommendation?: string;
+}
+
+export type CustomerCommercialClassification =
+  | 'VIP'
+  | 'RECORRENTE'
+  | 'ATIVO'
+  | 'NOVO'
+  | 'EM RISCO'
+  | 'INATIVO'
+  | 'PERDIDO';
+
+export interface CustomerCommercialProfile {
+  customerId: string;
+  customerName: string;
+  totalOrders: number;
+  totalSpent: number;
+  averageTicket: number;
+  lastPurchase: string | null;
+  daysWithoutPurchase: number | null;
+  firstPurchase: string | null;
+  favoritePaymentMethod: string;
+  favoriteProducts: string[];
+  preferredPurchaseTime: string;
+  preferredWeekday: string;
+  purchaseFrequency: number;
+  score: number;
+  classification: CustomerCommercialClassification;
+  segments: string[];
 }
 
 export interface RestaurantSettings {
