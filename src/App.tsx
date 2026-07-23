@@ -26,7 +26,7 @@ import {
   INITIAL_CAMPAIGN_SCHEDULES,
   INITIAL_CAMPAIGN_RESULTS,
 } from './utils/mockData';
-import { generateCustomerCommercialProfiles } from './utils/commercialSegmentation';
+import { generateCustomerCommercialProfiles, DEFAULT_COMMERCIAL_RULES } from './utils/commercialSegmentation';
 import {
   Client,
   Message,
@@ -1516,9 +1516,11 @@ const handleUpdateDeliveryOrders = async (updater: any) => {
   });
 };
 
+  const [commercialRules, setCommercialRules] = useState(DEFAULT_COMMERCIAL_RULES);
+
   const customerCommercialProfiles = useMemo(
-    () => generateCustomerCommercialProfiles(clients, orders, deliveryOrders),
-    [clients, orders, deliveryOrders]
+    () => generateCustomerCommercialProfiles(clients, orders, deliveryOrders, commercialRules),
+    [clients, orders, deliveryOrders, commercialRules]
   );
 
 // 7. Calculate overall pipeline value
@@ -1625,21 +1627,23 @@ if (publicCardapioMatch) {
 
           {currentTab === 'inteligencia_comercial' && (
             <CommercialIntelligenceView
-              commercialSegments={commercialSegments}
-              campaignTemplates={campaignTemplates}
-              campaigns={campaigns}
-              campaignSchedules={campaignSchedules}
-              campaignResults={campaignResults}
-              customerCommercialProfiles={customerCommercialProfiles}
-              onSaveSegment={handleSaveSegment}
-              onDeleteSegment={handleDeleteSegment}
-              onSaveTemplate={handleSaveTemplate}
-              onDeleteTemplate={handleDeleteTemplate}
-              onSaveCampaign={handleSaveCampaign}
-              onDeleteCampaign={handleDeleteCampaign}
-              onSaveSchedule={handleSaveSchedule}
-              onDeleteSchedule={handleDeleteSchedule}
-            />
+            commercialSegments={commercialSegments}
+            campaignTemplates={campaignTemplates}
+            campaigns={campaigns}
+            campaignSchedules={campaignSchedules}
+            campaignResults={campaignResults}
+            customerCommercialProfiles={customerCommercialProfiles}
+            rules={commercialRules}
+            onSaveRules={setCommercialRules}
+            onSaveSegment={handleSaveCommercialSegment}
+            onDeleteSegment={handleDeleteCommercialSegment}
+            onSaveTemplate={handleSaveCampaignTemplate}
+            onDeleteTemplate={handleDeleteCampaignTemplate}
+            onSaveCampaign={handleSaveCampaign}
+            onDeleteCampaign={handleDeleteCampaign}
+            onSaveSchedule={handleSaveCampaignSchedule}
+            onDeleteSchedule={handleDeleteCampaignSchedule}
+        />
           )}
           {currentTab === 'disparador' && (
             <DisparadorView
