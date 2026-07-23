@@ -489,6 +489,11 @@ export default function App() {
   }, []);
 
   const [automations, setAutomations] = useState<AutomationRule[]>([]);
+  const [commercialRules, setCommercialRules] = useState<AutomationRule[]>(INITIAL_AUTOMATIONS);
+
+  useEffect(() => {
+    setCommercialRules(automations);
+  }, [automations]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -921,6 +926,7 @@ export default function App() {
     setCampaignResults(INITIAL_CAMPAIGN_RESULTS);
     setOrders(INITIAL_ORDERS);
     setAutomations(INITIAL_AUTOMATIONS);
+    setCommercialRules(INITIAL_AUTOMATIONS);
     setSettings(DEFAULT_SETTINGS);
     setProductsDigitalMenu(INITIAL_PRODUCTS_DIGITAL_MENU);
     setCardapios(INITIAL_CARDAPIOS);
@@ -1631,6 +1637,8 @@ if (publicCardapioMatch) {
               campaignSchedules={campaignSchedules}
               campaignResults={campaignResults}
               customerCommercialProfiles={customerCommercialProfiles}
+              rules={commercialRules}
+              onSaveRules={setCommercialRules}
               onSaveSegment={handleSaveSegment}
               onDeleteSegment={handleDeleteSegment}
               onSaveTemplate={handleSaveTemplate}
