@@ -1635,14 +1635,14 @@ if (publicCardapioMatch) {
             customerCommercialProfiles={customerCommercialProfiles}
             rules={commercialRules}
             onSaveRules={setCommercialRules}
-            onSaveSegment={handleSaveCommercialSegment}
-            onDeleteSegment={handleDeleteCommercialSegment}
-            onSaveTemplate={handleSaveCampaignTemplate}
-            onDeleteTemplate={handleDeleteCampaignTemplate}
+            onSaveSegment={handleSaveSegment}
+            onDeleteSegment={handleDeleteSegment}
+            onSaveTemplate={handleSaveTemplate}
+            onDeleteTemplate={handleDeleteTemplate}
             onSaveCampaign={handleSaveCampaign}
             onDeleteCampaign={handleDeleteCampaign}
-            onSaveSchedule={handleSaveCampaignSchedule}
-            onDeleteSchedule={handleDeleteCampaignSchedule}
+            onSaveSchedule={handleSaveSchedule}
+            onDeleteSchedule={handleDeleteSchedule}
         />
           )}
           {currentTab === 'disparador' && (
