@@ -44,8 +44,10 @@ export default function ConfiguracoesView({
     listToText(settings.whatsapp.quickTemplates)
   );
 
-  const handleSaveConfigsSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveConfigsSubmit = (
+    event: React.FormEvent | React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
 
     const nextDelivery = {
       ...delivery,
@@ -59,24 +61,26 @@ export default function ConfiguracoesView({
       ...whatsapp,
       quickTemplates: parseList(quickTemplatesText),
     };
+    const nextDispatcher = { ...dispatcher };
+    const nextUi = { ...ui };
 
     onUpdateSettings({
-      restaurant,
-      operation,
+      restaurant: { ...restaurant },
+      operation: { ...operation },
       delivery: nextDelivery,
       cashier: nextCashier,
       whatsapp: nextWhatsapp,
-      dispatcher,
-      ui,
-      dailyLimit: dispatcher.dailyLimit,
-      intervalMin: dispatcher.intervalMin,
-      intervalMax: dispatcher.intervalMax,
-      autoPause: dispatcher.autoPause,
-      autoPauseAfter: dispatcher.autoPauseAfter,
+      dispatcher: nextDispatcher,
+      ui: nextUi,
+      dailyLimit: nextDispatcher.dailyLimit,
+      intervalMin: nextDispatcher.intervalMin,
+      intervalMax: nextDispatcher.intervalMax,
+      autoPause: nextDispatcher.autoPause,
+      autoPauseAfter: nextDispatcher.autoPauseAfter,
       waSessionStatus: nextWhatsapp.sessionStatus,
-      operatorRole: ui.operatorRole,
-      operatorName: ui.operatorName,
-      theme: ui.theme,
+      operatorRole: nextUi.operatorRole,
+      operatorName: nextUi.operatorName,
+      theme: nextUi.theme,
     });
     alert('Configurações salvas e aplicadas em tempo real na operação!');
   };
@@ -404,7 +408,8 @@ export default function ConfiguracoesView({
           </section>
 
           <button
-            type="submit"
+            type="button"
+            onClick={handleSaveConfigsSubmit}
             className="w-full bg-emerald-505 bg-emerald-505 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 px-4 rounded-2xl shadow-md shadow-emerald-505/10 transition flex items-center justify-center gap-1.5 font-bold"
           >
             <Check className="w-4.5 h-4.5" />
