@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   BarChart3,
   CalendarClock,
@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import {
   Campaign,
+  CampaignAudiencePreview,
+  Client,
   CampaignResult,
   CampaignSchedule,
   CampaignTemplate,
@@ -28,7 +30,7 @@ import {
   CustomerCommercialClassification,
   CustomerCommercialProfile,
 } from '../types';
-import { CommercialRulesConfig } from '../utils/commercialSegmentation';
+import { CommercialRulesConfig, resolveCampaignAudiencePreview } from '../utils/commercialSegmentation';
 
 type TabId = 'dashboard' | 'smartCustomers' | 'segments' | 'campaigns' | 'templates' | 'schedules' | 'results' | 'settings';
 type ModalId = 'segment' | 'template' | 'campaign' | 'schedule' | null;
@@ -36,6 +38,7 @@ type ModalId = 'segment' | 'template' | 'campaign' | 'schedule' | null;
 interface CommercialIntelligenceViewProps {
   commercialSegments: CommercialSegment[];
   availableAudienceOptions: CommercialAudienceOption[];
+  clients: Client[];
   campaignTemplates: CampaignTemplate[];
   campaigns: Campaign[];
   campaignSchedules: CampaignSchedule[];
@@ -67,6 +70,7 @@ const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
 export default function CommercialIntelligenceView({
   commercialSegments,
   availableAudienceOptions,
+  clients,
   campaignTemplates,
   campaigns,
   campaignSchedules,
@@ -85,11 +89,39 @@ export default function CommercialIntelligenceView({
 }: CommercialIntelligenceViewProps) {
   const [activeTab, setActiveTab] = useState<TabId>('dashboard');
   const [activeModal, setActiveModal] = useState<ModalId>(null);
+  const [previewCampaign, setPreviewCampaign] = useState<Campaign | null>(null);
+  const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
+  const [isPreviewRefreshing, setIsPreviewRefreshing] = useState(false);
+  const [previewUpdated, setPreviewUpdated] = useState(false);
 
   const executedCampaigns = campaignResults.length;
   const reachedCustomers = campaignResults.reduce((sum, result) => sum + result.reachedCustomers, 0);
   const conversions = campaignResults.reduce((sum, result) => sum + result.conversions, 0);
   const revenue = campaignResults.reduce((sum, result) => sum + result.revenue, 0);
+  const preview = useMemo(
+    () => previewCampaign
+      ? resolveCampaignAudiencePreview(previewCampaign, availableAudienceOptions, customerCommercialProfiles, clients)
+      : null,
+    [previewCampaign, availableAudienceOptions, customerCommercialProfiles, clients, previewRefreshKey]
+  );
+  const handleOpenPreview = (campaign: Campaign) => {
+    setPreviewUpdated(false);
+    setPreviewCampaign(campaign);
+  };
+  const handleRefreshPreview = () => {
+    setPreviewUpdated(false);
+    setIsPreviewRefreshing(true);
+    setPreviewRefreshKey((current) => current + 1);
+    window.setTimeout(() => {
+      setIsPreviewRefreshing(false);
+      setPreviewUpdated(true);
+    }, 200);
+  };
+  const handleClosePreview = () => {
+    setPreviewCampaign(null);
+    setPreviewUpdated(false);
+    setIsPreviewRefreshing(false);
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -180,7 +212,18 @@ export default function CommercialIntelligenceView({
               <td className="py-3.5 px-4">{findName(availableAudienceOptions, campaign.segmentId)}</td>
               <td className="py-3.5 px-4">{findName(campaignTemplates, campaign.templateId)}</td>
               <td className="py-3.5 px-4"><CampaignStatusBadge status={campaign.status} /></td>
-              <td className="py-3.5 px-4"><DeleteButton onClick={() => onDeleteCampaign(campaign.id)} /></td>
+              <td className="py-3.5 px-4">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenPreview(campaign)}
+                    className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-cyan-50 text-cyan-700 hover:bg-cyan-100 dark:bg-cyan-950/30 dark:text-cyan-300 dark:hover:bg-cyan-950/50 transition-colors"
+                  >
+                    Ver Público
+                  </button>
+                  <DeleteButton onClick={() => onDeleteCampaign(campaign.id)} />
+                </div>
+              </td>
             </tr>
           ))}
         </TableSection>
@@ -257,6 +300,16 @@ export default function CommercialIntelligenceView({
           campaigns={campaigns}
           onClose={() => setActiveModal(null)}
           onSave={onSaveSchedule}
+        />
+      )}
+      {previewCampaign && preview && (
+        <CampaignAudiencePreviewModal
+          campaign={previewCampaign}
+          preview={preview}
+          isRefreshing={isPreviewRefreshing}
+          updated={previewUpdated}
+          onRefresh={handleRefreshPreview}
+          onClose={handleClosePreview}
         />
       )}
     </div>
@@ -593,6 +646,115 @@ function TemplateModal({ onClose, onSave }: { onClose: () => void; onSave: (temp
   );
 }
 
+function CampaignAudiencePreviewModal({
+  campaign,
+  preview,
+  isRefreshing,
+  updated,
+  onRefresh,
+  onClose,
+}: {
+  campaign: Campaign;
+  preview: CampaignAudiencePreview;
+  isRefreshing: boolean;
+  updated: boolean;
+  onRefresh: () => void;
+  onClose: () => void;
+}) {
+  const hasCustomers = preview.status === 'ready' && preview.customers.length > 0;
+
+  return (
+    <BaseModal title="Prévia do Público" onClose={onClose} size="wide">
+      <div className="space-y-4 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <PreviewInfo label="Campanha" value={campaign.name} />
+          <PreviewInfo label="Público" value={preview.audience?.name || '-'} />
+          <div>
+            <span className="block text-slate-400 font-bold mb-1 uppercase tracking-wider text-[9px]">Origem</span>
+            {preview.audience ? <AudienceSourceBadge source={preview.audience.source} /> : <span className="text-slate-400">-</span>}
+          </div>
+          <PreviewInfo label="Clientes" value={preview.customerCount.toString()} />
+          <PreviewInfo label="Consulta" value={formatDateTime(preview.generatedAt)} />
+        </div>
+
+        <div className="rounded-xl border border-cyan-100 dark:border-cyan-900/50 bg-cyan-50/60 dark:bg-cyan-950/20 px-3 py-2 text-cyan-800 dark:text-cyan-200">
+          Público dinâmico, calculado no momento da consulta.
+        </div>
+
+        {preview.status !== 'ready' && (
+          <p className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 p-4 text-slate-600 dark:text-slate-300">
+            {preview.message}
+          </p>
+        )}
+
+        {preview.status === 'ready' && !hasCustomers && (
+          <p className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 p-4 text-slate-600 dark:text-slate-300">
+            Nenhum cliente pertence a este público no momento.
+          </p>
+        )}
+
+        {hasCustomers && (
+          <div className="overflow-x-auto border border-slate-100 dark:border-slate-800 rounded-xl">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-mono text-slate-400 tracking-wider">
+                  {['Cliente', 'Telefone', 'Classificação', 'Score', 'Última Compra', 'Dias sem Comprar', 'Total Gasto', 'Ticket Médio', 'Segmentos'].map((column) => (
+                    <th key={column} className="py-3 px-4 whitespace-nowrap">{column}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                {preview.customers.map((customer) => (
+                  <tr key={customer.customerId}>
+                    <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">{customer.name}</td>
+                    <td className="py-3.5 px-4 font-mono whitespace-nowrap">{customer.phone || '-'}</td>
+                    <td className="py-3.5 px-4"><ClassificationBadge classification={customer.classification} /></td>
+                    <td className="py-3.5 px-4 font-mono font-bold">{customer.score}</td>
+                    <td className="py-3.5 px-4 font-mono whitespace-nowrap">{customer.lastPurchase ? formatDate(customer.lastPurchase) : 'Nunca'}</td>
+                    <td className="py-3.5 px-4 font-mono">{customer.daysWithoutPurchase ?? '-'}</td>
+                    <td className="py-3.5 px-4 font-mono font-bold text-emerald-500 whitespace-nowrap">{formatCurrency(customer.totalSpent)}</td>
+                    <td className="py-3.5 px-4 font-mono whitespace-nowrap">{formatCurrency(customer.averageTicket)}</td>
+                    <td className="py-3.5 px-4 min-w-[220px]">
+                      <div className="flex flex-wrap gap-1.5">
+                        {customer.segments.length ? customer.segments.map((segment) => (
+                          <span key={segment} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-700 dark:bg-cyan-950/30 dark:text-cyan-300">
+                            {segment}
+                          </span>
+                        )) : (
+                          <span className="text-slate-400">-</span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 pt-2">
+          {updated && (
+            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+              Prévia atualizada
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={onRefresh}
+            disabled={isRefreshing}
+            className="bg-cyan-50 text-cyan-700 hover:bg-cyan-100 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-cyan-950/30 dark:text-cyan-300 dark:hover:bg-cyan-950/50 px-4 py-2 rounded-xl text-xs font-bold"
+          >
+            {isRefreshing ? 'Atualizando...' : 'Atualizar Prévia'}
+          </button>
+          <button type="button" onClick={onClose} className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-bold">
+            Fechar
+          </button>
+        </div>
+      </div>
+    </BaseModal>
+  );
+}
+
 function CampaignModal({
   audiences,
   templates,
@@ -683,10 +845,10 @@ function ScheduleModal({
   );
 }
 
-function BaseModal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+function BaseModal({ title, onClose, children, size = 'default' }: { title: string; onClose: () => void; children: React.ReactNode; size?: 'default' | 'wide' }) {
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-md p-6 relative shadow-2xl">
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full p-6 relative shadow-2xl ${size === 'wide' ? 'max-w-5xl' : 'max-w-md'}`}>
         <button onClick={onClose} className="absolute top-4 right-4 p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
           <X className="w-5 h-5" />
         </button>
@@ -775,6 +937,15 @@ function StatusBadge({ active }: { active: boolean }) {
   );
 }
 
+function PreviewInfo({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <span className="block text-slate-400 font-bold mb-1 uppercase tracking-wider text-[9px]">{label}</span>
+      <span className="block font-bold text-slate-800 dark:text-slate-100">{value}</span>
+    </div>
+  );
+}
+
 function AudienceSourceBadge({ source }: { source: CommercialAudienceOption['source'] }) {
   return (
     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${source === 'automatic' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'}`}>
@@ -825,6 +996,12 @@ function formatDate(value: string | null) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '-';
   return date.toLocaleDateString('pt-BR');
+}
+
+function formatDateTime(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '-';
+  return `${date.toLocaleDateString('pt-BR')} ${date.toLocaleTimeString('pt-BR', { hour12: false })}.${String(date.getMilliseconds()).padStart(3, '0')}`;
 }
 
 function DeleteButton({ onClick }: { onClick: () => void }) {

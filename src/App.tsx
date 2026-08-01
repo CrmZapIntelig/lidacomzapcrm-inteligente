@@ -1654,6 +1654,7 @@ if (publicCardapioMatch) {
             <CommercialIntelligenceView
             commercialSegments={commercialSegments}
             availableAudienceOptions={availableAudienceOptions}
+            clients={clients}
             campaignTemplates={campaignTemplates}
             campaigns={campaigns}
             campaignSchedules={campaignSchedules}

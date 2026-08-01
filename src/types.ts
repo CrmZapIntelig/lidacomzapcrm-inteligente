@@ -179,6 +179,30 @@ export interface CommercialAudienceOption {
   customerIds?: string[];
 }
 
+export type CampaignAudiencePreviewStatus = 'ready' | 'manual-unresolved' | 'not-found';
+
+export interface CampaignAudiencePreviewCustomer {
+  customerId: string;
+  name: string;
+  phone?: string;
+  classification: CustomerCommercialClassification;
+  score: number;
+  segments: string[];
+  lastPurchase: string | null;
+  daysWithoutPurchase: number | null;
+  totalSpent: number;
+  averageTicket: number;
+}
+
+export interface CampaignAudiencePreview {
+  status: CampaignAudiencePreviewStatus;
+  audience?: CommercialAudienceOption;
+  generatedAt: string;
+  customerCount: number;
+  customers: CampaignAudiencePreviewCustomer[];
+  message?: string;
+}
+
 export interface CampaignTemplate {
   id: string;
   name: string;

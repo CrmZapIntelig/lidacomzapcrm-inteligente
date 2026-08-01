@@ -4,6 +4,8 @@
  */
 
 import {
+  Campaign,
+  CampaignAudiencePreview,
   Client,
   CommercialAudienceOption,
   CustomerCommercialClassification,
@@ -111,6 +113,63 @@ export function generateAutomaticAudienceOptions(
       };
     })
     .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+}
+
+export function resolveCampaignAudiencePreview(
+  campaign: Campaign,
+  audiences: CommercialAudienceOption[],
+  profiles: CustomerCommercialProfile[],
+  clients: Client[]
+): CampaignAudiencePreview {
+  const generatedAt = new Date().toISOString();
+  const audience = audiences.find((item) => item.id === campaign.segmentId);
+
+  if (!audience) {
+    return {
+      status: 'not-found',
+      generatedAt,
+      customerCount: 0,
+      customers: [],
+      message: 'Público da campanha não encontrado.',
+    };
+  }
+
+  if (audience.source === 'manual') {
+    return {
+      status: 'manual-unresolved',
+      audience,
+      generatedAt,
+      customerCount: 0,
+      customers: [],
+      message: 'Este segmento manual ainda não possui uma regra ou lista de clientes associada.',
+    };
+  }
+
+  const customerIds = new Set(audience.customerIds || []);
+  const clientsById = new Map(clients.map((client) => [client.id, client]));
+  const customers = profiles
+    .filter((profile) => customerIds.has(profile.customerId))
+    .map((profile) => ({
+      customerId: profile.customerId,
+      name: profile.customerName,
+      phone: clientsById.get(profile.customerId)?.phone,
+      classification: profile.classification,
+      score: profile.score,
+      segments: profile.segments,
+      lastPurchase: profile.lastPurchase,
+      daysWithoutPurchase: profile.daysWithoutPurchase,
+      totalSpent: profile.totalSpent,
+      averageTicket: profile.averageTicket,
+    }))
+    .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name, 'pt-BR'));
+
+  return {
+    status: 'ready',
+    audience,
+    generatedAt,
+    customerCount: customers.length,
+    customers,
+  };
 }
 
 function normalizeCrmOrder(order: Order): CommercialOrderSnapshot {
