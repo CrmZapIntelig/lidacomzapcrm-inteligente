@@ -23,6 +23,7 @@ import {
   CampaignResult,
   CampaignSchedule,
   CampaignTemplate,
+  CommercialAudienceOption,
   CommercialSegment,
   CustomerCommercialClassification,
   CustomerCommercialProfile,
@@ -34,6 +35,7 @@ type ModalId = 'segment' | 'template' | 'campaign' | 'schedule' | null;
 
 interface CommercialIntelligenceViewProps {
   commercialSegments: CommercialSegment[];
+  availableAudienceOptions: CommercialAudienceOption[];
   campaignTemplates: CampaignTemplate[];
   campaigns: Campaign[];
   campaignSchedules: CampaignSchedule[];
@@ -64,6 +66,7 @@ const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
 
 export default function CommercialIntelligenceView({
   commercialSegments,
+  availableAudienceOptions,
   campaignTemplates,
   campaigns,
   campaignSchedules,
@@ -141,15 +144,23 @@ export default function CommercialIntelligenceView({
           title="Segmentações"
           actionLabel="Nova Segmentação"
           onAction={() => setActiveModal('segment')}
-          columns={['Nome', 'Descrição', 'Status', 'Ações']}
+          columns={['Nome', 'Descrição', 'Origem', 'Clientes', 'Status', 'Ações']}
           emptyText="Nenhuma segmentação cadastrada."
         >
-          {commercialSegments.map((segment) => (
-            <tr key={segment.id}>
-              <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">{segment.name}</td>
-              <td className="py-3.5 px-4 text-slate-600 dark:text-slate-350">{segment.description}</td>
-              <td className="py-3.5 px-4"><StatusBadge active={segment.active} /></td>
-              <td className="py-3.5 px-4"><DeleteButton onClick={() => onDeleteSegment(segment.id)} /></td>
+          {availableAudienceOptions.map((audience) => (
+            <tr key={audience.id}>
+              <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">{audience.name}</td>
+              <td className="py-3.5 px-4 text-slate-600 dark:text-slate-350">{audience.description}</td>
+              <td className="py-3.5 px-4"><AudienceSourceBadge source={audience.source} /></td>
+              <td className="py-3.5 px-4 font-mono">{audience.customerCount}</td>
+              <td className="py-3.5 px-4"><StatusBadge active={audience.active} /></td>
+              <td className="py-3.5 px-4">
+                {audience.source === 'manual' ? (
+                  <DeleteButton onClick={() => onDeleteSegment(audience.id)} />
+                ) : (
+                  <span className="text-slate-400">-</span>
+                )}
+              </td>
             </tr>
           ))}
         </TableSection>
@@ -166,7 +177,7 @@ export default function CommercialIntelligenceView({
           {campaigns.map((campaign) => (
             <tr key={campaign.id}>
               <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">{campaign.name}</td>
-              <td className="py-3.5 px-4">{findName(commercialSegments, campaign.segmentId)}</td>
+              <td className="py-3.5 px-4">{findName(availableAudienceOptions, campaign.segmentId)}</td>
               <td className="py-3.5 px-4">{findName(campaignTemplates, campaign.templateId)}</td>
               <td className="py-3.5 px-4"><CampaignStatusBadge status={campaign.status} /></td>
               <td className="py-3.5 px-4"><DeleteButton onClick={() => onDeleteCampaign(campaign.id)} /></td>
@@ -235,7 +246,7 @@ export default function CommercialIntelligenceView({
       )}
       {activeModal === 'campaign' && (
         <CampaignModal
-          segments={commercialSegments}
+          audiences={availableAudienceOptions}
           templates={campaignTemplates}
           onClose={() => setActiveModal(null)}
           onSave={onSaveCampaign}
@@ -583,18 +594,18 @@ function TemplateModal({ onClose, onSave }: { onClose: () => void; onSave: (temp
 }
 
 function CampaignModal({
-  segments,
+  audiences,
   templates,
   onClose,
   onSave,
 }: {
-  segments: CommercialSegment[];
+  audiences: CommercialAudienceOption[];
   templates: CampaignTemplate[];
   onClose: () => void;
   onSave: (campaign: Campaign) => void;
 }) {
   const [name, setName] = useState('');
-  const [segmentId, setSegmentId] = useState(segments[0]?.id || '');
+  const [segmentId, setSegmentId] = useState(audiences[0]?.id || '');
   const [templateId, setTemplateId] = useState(templates[0]?.id || '');
   const [status, setStatus] = useState<Campaign['status']>('rascunho');
 
@@ -621,7 +632,7 @@ function CampaignModal({
     <BaseModal title="Nova Campanha" onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4 text-xs">
         <TextInput label="Nome" value={name} onChange={setName} required />
-        <SelectInput label="Segmentação" value={segmentId} onChange={setSegmentId} options={segments.map((item) => ({ value: item.id, label: item.name }))} />
+        <SelectInput label="Segmentação/Público" value={segmentId} onChange={setSegmentId} options={audiences.map((item) => ({ value: item.id, label: `${item.name} — ${item.customerCount} clientes` }))} />
         <SelectInput label="Template" value={templateId} onChange={setTemplateId} options={templates.map((item) => ({ value: item.id, label: item.name }))} />
         <SelectInput
           label="Status"
@@ -760,6 +771,14 @@ function StatusBadge({ active }: { active: boolean }) {
   return (
     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${active ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}`}>
       {active ? 'ATIVA' : 'INATIVA'}
+    </span>
+  );
+}
+
+function AudienceSourceBadge({ source }: { source: CommercialAudienceOption['source'] }) {
+  return (
+    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${source === 'automatic' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'}`}>
+      {source === 'automatic' ? 'Automático' : 'Manual'}
     </span>
   );
 }

@@ -26,7 +26,7 @@ import {
   INITIAL_CAMPAIGN_SCHEDULES,
   INITIAL_CAMPAIGN_RESULTS,
 } from './utils/mockData';
-import { generateCustomerCommercialProfiles, DEFAULT_COMMERCIAL_RULES } from './utils/commercialSegmentation';
+import { generateAutomaticAudienceOptions, generateCustomerCommercialProfiles, DEFAULT_COMMERCIAL_RULES } from './utils/commercialSegmentation';
 import {
   Client,
   Message,
@@ -41,6 +41,7 @@ import {
   CourierReview,
   DeliveryHistory,
   CommercialSegment,
+  CommercialAudienceOption,
   CampaignTemplate,
   CampaignSchedule,
   CampaignResult,
@@ -1523,6 +1524,30 @@ const handleUpdateDeliveryOrders = async (updater: any) => {
     [clients, orders, deliveryOrders, commercialRules]
   );
 
+  const automaticAudienceOptions = useMemo(
+    () => generateAutomaticAudienceOptions(customerCommercialProfiles),
+    [customerCommercialProfiles]
+  );
+
+  const manualAudienceOptions = useMemo<CommercialAudienceOption[]>(
+    () => commercialSegments.map((segment) => ({
+      id: segment.id,
+      name: segment.name,
+      description: segment.description,
+      source: 'manual',
+      dynamic: false,
+      active: segment.active,
+      customerCount: 0,
+      customerIds: [],
+    })),
+    [commercialSegments]
+  );
+
+  const availableAudienceOptions = useMemo(
+    () => [...automaticAudienceOptions, ...manualAudienceOptions],
+    [automaticAudienceOptions, manualAudienceOptions]
+  );
+
 // 7. Calculate overall pipeline value
   const totalPipeline = clients
     .filter((c) => c.stage !== 'Fechado')
@@ -1628,6 +1653,7 @@ if (publicCardapioMatch) {
           {currentTab === 'inteligencia_comercial' && (
             <CommercialIntelligenceView
             commercialSegments={commercialSegments}
+            availableAudienceOptions={availableAudienceOptions}
             campaignTemplates={campaignTemplates}
             campaigns={campaigns}
             campaignSchedules={campaignSchedules}

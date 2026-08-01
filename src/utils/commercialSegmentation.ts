@@ -5,6 +5,7 @@
 
 import {
   Client,
+  CommercialAudienceOption,
   CustomerCommercialClassification,
   CustomerCommercialProfile,
   DeliveryOrder,
@@ -21,6 +22,21 @@ interface CommercialOrderSnapshot {
 }
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
+const AUTOMATIC_SEGMENT_NAMES = [
+  'Almoço',
+  'Clientes Alto Ticket',
+  'Clientes Cartão',
+  'Clientes Dinheiro',
+  'Clientes Em Risco',
+  'Clientes Frequentes',
+  'Clientes Inativos',
+  'Clientes Novos',
+  'Clientes Perdidos',
+  'Clientes PIX',
+  'Fim de Semana',
+  'Jantar',
+  'VIP',
+];
 
 export interface CommercialRulesConfig {
   daysRisk: number;
@@ -60,6 +76,41 @@ export function generateCustomerCommercialProfiles(
       rules
     ))
     .sort((a, b) => b.score - a.score || b.totalSpent - a.totalSpent);
+}
+
+export function generateAutomaticAudienceOptions(
+  profiles: CustomerCommercialProfile[]
+): CommercialAudienceOption[] {
+  const customerIdsBySegment = new Map<string, Set<string>>();
+
+  AUTOMATIC_SEGMENT_NAMES.forEach((segmentName) => {
+    customerIdsBySegment.set(segmentName, new Set<string>());
+  });
+
+  profiles.forEach((profile) => {
+    profile.segments.forEach((segmentName) => {
+      const customerIds = customerIdsBySegment.get(segmentName) || new Set<string>();
+      customerIds.add(profile.customerId);
+      customerIdsBySegment.set(segmentName, customerIds);
+    });
+  });
+
+  return Array.from(customerIdsBySegment.entries())
+    .map(([name, customerIdsSet]) => {
+      const customerIds = Array.from(customerIdsSet);
+
+      return {
+        id: `auto:${normalizeAudienceId(name)}`,
+        name,
+        description: `Público automático baseado em ${name}.`,
+        source: 'automatic' as const,
+        dynamic: true,
+        active: true,
+        customerCount: customerIds.length,
+        customerIds,
+      };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
 }
 
 function normalizeCrmOrder(order: Order): CommercialOrderSnapshot {
@@ -218,6 +269,15 @@ function calculateDaysWithoutPurchase(dateValue: string) {
   const date = new Date(dateValue);
   if (Number.isNaN(date.getTime())) return null;
   return Math.max(0, Math.floor((Date.now() - date.getTime()) / MS_PER_DAY));
+}
+
+function normalizeAudienceId(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 function calculatePurchaseFrequency(firstPurchase: string | null, lastPurchase: string | null, totalOrders: number) {

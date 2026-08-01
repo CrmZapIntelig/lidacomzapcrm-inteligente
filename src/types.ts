@@ -168,6 +168,17 @@ export interface CommercialSegment {
   updatedAt?: string;
 }
 
+export interface CommercialAudienceOption {
+  id: string;
+  name: string;
+  description: string;
+  source: 'automatic' | 'manual';
+  dynamic: boolean;
+  active: boolean;
+  customerCount: number;
+  customerIds?: string[];
+}
+
 export interface CampaignTemplate {
   id: string;
   name: string;
