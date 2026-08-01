@@ -21,7 +21,9 @@ import {
 import {
   Campaign,
   CampaignAudiencePreview,
+  CampaignExecutionPreview,
   Client,
+  AppSettings,
   CampaignResult,
   CampaignSchedule,
   CampaignTemplate,
@@ -30,6 +32,7 @@ import {
   CustomerCommercialClassification,
   CustomerCommercialProfile,
 } from '../types';
+import { prepareCampaignExecutionPreview } from '../utils/campaignPreparation';
 import { CommercialRulesConfig, resolveCampaignAudiencePreview } from '../utils/commercialSegmentation';
 
 type TabId = 'dashboard' | 'smartCustomers' | 'segments' | 'campaigns' | 'templates' | 'schedules' | 'results' | 'settings';
@@ -39,6 +42,7 @@ interface CommercialIntelligenceViewProps {
   commercialSegments: CommercialSegment[];
   availableAudienceOptions: CommercialAudienceOption[];
   clients: Client[];
+  settings: AppSettings;
   campaignTemplates: CampaignTemplate[];
   campaigns: Campaign[];
   campaignSchedules: CampaignSchedule[];
@@ -71,6 +75,7 @@ export default function CommercialIntelligenceView({
   commercialSegments,
   availableAudienceOptions,
   clients,
+  settings,
   campaignTemplates,
   campaigns,
   campaignSchedules,
@@ -93,6 +98,10 @@ export default function CommercialIntelligenceView({
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
   const [isPreviewRefreshing, setIsPreviewRefreshing] = useState(false);
   const [previewUpdated, setPreviewUpdated] = useState(false);
+  const [preparationCampaign, setPreparationCampaign] = useState<Campaign | null>(null);
+  const [preparationRefreshKey, setPreparationRefreshKey] = useState(0);
+  const [isPreparationRefreshing, setIsPreparationRefreshing] = useState(false);
+  const [preparationUpdated, setPreparationUpdated] = useState(false);
 
   const executedCampaigns = campaignResults.length;
   const reachedCustomers = campaignResults.reduce((sum, result) => sum + result.reachedCustomers, 0);
@@ -104,9 +113,26 @@ export default function CommercialIntelligenceView({
       : null,
     [previewCampaign, availableAudienceOptions, customerCommercialProfiles, clients, previewRefreshKey]
   );
+  const preparation = useMemo(
+    () => preparationCampaign
+      ? prepareCampaignExecutionPreview(
+        preparationCampaign,
+        campaignTemplates,
+        availableAudienceOptions,
+        customerCommercialProfiles,
+        clients,
+        settings
+      )
+      : null,
+    [preparationCampaign, campaignTemplates, availableAudienceOptions, customerCommercialProfiles, clients, settings, preparationRefreshKey]
+  );
   const handleOpenPreview = (campaign: Campaign) => {
     setPreviewUpdated(false);
     setPreviewCampaign(campaign);
+  };
+  const handleOpenPreparation = (campaign: Campaign) => {
+    setPreparationUpdated(false);
+    setPreparationCampaign(campaign);
   };
   const handleRefreshPreview = () => {
     setPreviewUpdated(false);
@@ -121,6 +147,20 @@ export default function CommercialIntelligenceView({
     setPreviewCampaign(null);
     setPreviewUpdated(false);
     setIsPreviewRefreshing(false);
+  };
+  const handleRefreshPreparation = () => {
+    setPreparationUpdated(false);
+    setIsPreparationRefreshing(true);
+    setPreparationRefreshKey((current) => current + 1);
+    window.setTimeout(() => {
+      setIsPreparationRefreshing(false);
+      setPreparationUpdated(true);
+    }, 200);
+  };
+  const handleClosePreparation = () => {
+    setPreparationCampaign(null);
+    setPreparationUpdated(false);
+    setIsPreparationRefreshing(false);
   };
 
   return (
@@ -221,6 +261,13 @@ export default function CommercialIntelligenceView({
                   >
                     Ver Público
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenPreparation(campaign)}
+                    className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-300 dark:hover:bg-emerald-950/50 transition-colors"
+                  >
+                    Preparar
+                  </button>
                   <DeleteButton onClick={() => onDeleteCampaign(campaign.id)} />
                 </div>
               </td>
@@ -310,6 +357,15 @@ export default function CommercialIntelligenceView({
           updated={previewUpdated}
           onRefresh={handleRefreshPreview}
           onClose={handleClosePreview}
+        />
+      )}
+      {preparationCampaign && preparation && (
+        <CampaignPreparationModal
+          preparation={preparation}
+          isRefreshing={isPreparationRefreshing}
+          updated={preparationUpdated}
+          onRefresh={handleRefreshPreparation}
+          onClose={handleClosePreparation}
         />
       )}
     </div>
@@ -755,6 +811,111 @@ function CampaignAudiencePreviewModal({
   );
 }
 
+function CampaignPreparationModal({
+  preparation,
+  isRefreshing,
+  updated,
+  onRefresh,
+  onClose,
+}: {
+  preparation: CampaignExecutionPreview;
+  isRefreshing: boolean;
+  updated: boolean;
+  onRefresh: () => void;
+  onClose: () => void;
+}) {
+  const canShowMessages = preparation.status === 'ready' || preparation.status === 'ready-with-snapshot';
+
+  return (
+    <BaseModal title="Preparação da Campanha" onClose={onClose} size="wide">
+      <div className="space-y-4 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <PreviewInfo label="Campanha" value={preparation.campaign.name} />
+          <PreviewInfo label="Público" value={preparation.audience?.name || '-'} />
+          <div>
+            <span className="block text-slate-400 font-bold mb-1 uppercase tracking-wider text-[9px]">Origem</span>
+            {preparation.audience ? <AudienceSourceBadge source={preparation.audience.source} /> : <span className="text-slate-400">-</span>}
+          </div>
+          <PreviewInfo label="Template" value={preparation.template?.name || '-'} />
+          <PreviewInfo label="Fonte do Conteúdo" value={preparation.usedSnapshot ? 'Snapshot da campanha' : 'Template ativo'} />
+          <PreviewInfo label="Preparação" value={formatDateTime(preparation.generatedAt)} />
+          <PreviewInfo label="Destinatários" value={preparation.totalRecipients.toString()} />
+          <PreviewInfo label="Válidas" value={preparation.validMessagesCount.toString()} />
+          <PreviewInfo label="Inválidas" value={preparation.invalidMessagesCount.toString()} />
+        </div>
+
+        <div className="rounded-xl border border-emerald-100 dark:border-emerald-900/50 bg-emerald-50/60 dark:bg-emerald-950/20 px-3 py-2 text-emerald-800 dark:text-emerald-200">
+          Esta é apenas uma preparação. Nenhuma mensagem foi enviada ou salva.
+        </div>
+
+        {preparation.status === 'ready-with-snapshot' && (
+          <div className="rounded-xl border border-amber-100 dark:border-amber-900/50 bg-amber-50/60 dark:bg-amber-950/20 px-3 py-2 text-amber-800 dark:text-amber-200">
+            Conteúdo carregado do snapshot textual da campanha.
+          </div>
+        )}
+
+        {preparation.unresolvedVariables.length > 0 && (
+          <div className="rounded-xl border border-rose-100 dark:border-rose-900/50 bg-rose-50/60 dark:bg-rose-950/20 px-3 py-2 text-rose-800 dark:text-rose-200">
+            Variáveis ausentes: {preparation.unresolvedVariables.join(', ')}
+          </div>
+        )}
+
+        {!canShowMessages && (
+          <p className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 p-4 text-slate-600 dark:text-slate-300">
+            {preparation.message}
+          </p>
+        )}
+
+        {canShowMessages && (
+          <div className="max-h-[55vh] overflow-auto border border-slate-100 dark:border-slate-800 rounded-xl">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-mono text-slate-400 tracking-wider">
+                  {['Cliente', 'Telefone', 'Status', 'Conteúdo', 'Variáveis Ausentes'].map((column) => (
+                    <th key={column} className="py-3 px-4 whitespace-nowrap">{column}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                {preparation.preparedMessages.map((message) => (
+                  <tr key={message.customerId}>
+                    <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">{message.customerName}</td>
+                    <td className="py-3.5 px-4 font-mono whitespace-nowrap">{message.phone || '-'}</td>
+                    <td className="py-3.5 px-4"><MessageValidityBadge valid={message.valid} /></td>
+                    <td className="py-3.5 px-4 min-w-[360px] text-slate-600 dark:text-slate-300">{message.content}</td>
+                    <td className="py-3.5 px-4 min-w-[180px] text-slate-500 dark:text-slate-400">
+                      {message.unresolvedVariables.length ? message.unresolvedVariables.join(', ') : '-'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 pt-2">
+          {updated && (
+            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+              Preparação atualizada
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={onRefresh}
+            disabled={isRefreshing}
+            className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-emerald-950/30 dark:text-emerald-300 dark:hover:bg-emerald-950/50 px-4 py-2 rounded-xl text-xs font-bold"
+          >
+            {isRefreshing ? 'Atualizando...' : 'Atualizar Preparação'}
+          </button>
+          <button type="button" onClick={onClose} className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-bold">
+            Fechar
+          </button>
+        </div>
+      </div>
+    </BaseModal>
+  );
+}
+
 function CampaignModal({
   audiences,
   templates,
@@ -950,6 +1111,14 @@ function AudienceSourceBadge({ source }: { source: CommercialAudienceOption['sou
   return (
     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${source === 'automatic' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'}`}>
       {source === 'automatic' ? 'Automático' : 'Manual'}
+    </span>
+  );
+}
+
+function MessageValidityBadge({ valid }: { valid: boolean }) {
+  return (
+    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${valid ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300'}`}>
+      {valid ? 'Válida' : 'Inválida'}
     </span>
   );
 }

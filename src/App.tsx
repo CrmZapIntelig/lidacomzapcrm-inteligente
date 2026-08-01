@@ -1655,6 +1655,7 @@ if (publicCardapioMatch) {
             commercialSegments={commercialSegments}
             availableAudienceOptions={availableAudienceOptions}
             clients={clients}
+            settings={settings}
             campaignTemplates={campaignTemplates}
             campaigns={campaigns}
             campaignSchedules={campaignSchedules}

@@ -203,6 +203,40 @@ export interface CampaignAudiencePreview {
   message?: string;
 }
 
+export type CampaignExecutionPreviewStatus =
+  | 'ready'
+  | 'ready-with-snapshot'
+  | 'audience-not-found'
+  | 'manual-audience-unresolved'
+  | 'template-not-found'
+  | 'template-empty'
+  | 'template-inactive'
+  | 'no-recipients';
+
+export interface PreparedCampaignMessage {
+  customerId: string;
+  customerName: string;
+  phone?: string;
+  content: string;
+  unresolvedVariables: string[];
+  valid: boolean;
+}
+
+export interface CampaignExecutionPreview {
+  status: CampaignExecutionPreviewStatus;
+  campaign: Campaign;
+  template?: CampaignTemplate;
+  audience?: CommercialAudienceOption;
+  generatedAt: string;
+  totalRecipients: number;
+  validMessagesCount: number;
+  invalidMessagesCount: number;
+  preparedMessages: PreparedCampaignMessage[];
+  unresolvedVariables: string[];
+  message?: string;
+  usedSnapshot: boolean;
+}
+
 export interface CampaignTemplate {
   id: string;
   name: string;
