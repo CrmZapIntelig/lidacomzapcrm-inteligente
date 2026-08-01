@@ -188,26 +188,28 @@ function generateAutomaticSegments(profile: {
   preferredWeekday: string;
   score: number;
   classification: CustomerCommercialClassification;
-}, rules: CommercialRulesConfig) {
+}, _rules: CommercialRulesConfig) {
   const segments = new Set<string>();
 
-  if (
-    profile.classification === 'VIP'
-    || (profile.totalSpent >= rules.vipMinSpent && profile.totalOrders >= rules.vipMinOrders)
-  ) {
-    segments.add('VIP');
+  switch (profile.classification) {
+    case 'VIP': segments.add('VIP'); break;
+    case 'NOVO': segments.add('Clientes Novos'); break;
+    case 'EM RISCO': segments.add('Clientes Em Risco'); break;
+    case 'INATIVO': segments.add('Clientes Inativos'); break;
+    case 'PERDIDO': segments.add('Clientes Perdidos'); break;
   }
-  if (profile.totalOrders > 5) segments.add('Clientes Frequentes');
-  if (profile.totalOrders <= 1) segments.add('Clientes Novos');
-  if ((profile.daysWithoutPurchase ?? 0) > rules.daysRisk) segments.add('Clientes Inativos');
-  if ((profile.daysWithoutPurchase ?? 0) > rules.daysInactive) segments.add('Clientes Perdidos');
-  if (profile.averageTicket >= 80) segments.add('Clientes Alto Ticket');
-  if (profile.favoritePaymentMethod === 'Pix') segments.add('Clientes PIX');
-  if (profile.favoritePaymentMethod.includes('Cartão')) segments.add('Clientes Cartão');
-  if (profile.favoritePaymentMethod === 'Dinheiro') segments.add('Clientes Dinheiro');
-  if (profile.preferredPurchaseTime === 'Almoço') segments.add('Almoço');
-  if (profile.preferredPurchaseTime === 'Jantar') segments.add('Jantar');
-  if (profile.preferredWeekday === 'sábado' || profile.preferredWeekday === 'domingo') segments.add('Fim de Semana');
+
+  const frequentEligible = ['ATIVO', 'RECORRENTE', 'VIP'].includes(profile.classification);
+  if (frequentEligible && profile.totalOrders > 5) segments.add('Clientes Frequentes');
+
+  const hasMinimumSample = profile.totalOrders >= 2;
+  if (hasMinimumSample && profile.averageTicket >= 80) segments.add('Clientes Alto Ticket');
+  if (hasMinimumSample && profile.favoritePaymentMethod === 'Pix') segments.add('Clientes PIX');
+  if (hasMinimumSample && profile.favoritePaymentMethod.includes('Cartão')) segments.add('Clientes Cartão');
+  if (hasMinimumSample && profile.favoritePaymentMethod === 'Dinheiro') segments.add('Clientes Dinheiro');
+  if (hasMinimumSample && profile.preferredPurchaseTime === 'Almoço') segments.add('Almoço');
+  if (hasMinimumSample && profile.preferredPurchaseTime === 'Jantar') segments.add('Jantar');
+  if (hasMinimumSample && (profile.preferredWeekday === 'sábado' || profile.preferredWeekday === 'domingo')) segments.add('Fim de Semana');
 
   return Array.from(segments);
 }
