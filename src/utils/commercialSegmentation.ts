@@ -25,6 +25,7 @@ const MS_PER_DAY = 1000 * 60 * 60 * 24;
 export interface CommercialRulesConfig {
   daysRisk: number;
   daysInactive: number;
+  daysLost?: number;
   vipMinSpent: number;
   vipMinOrders: number;
 }
@@ -32,6 +33,7 @@ export interface CommercialRulesConfig {
 export const DEFAULT_COMMERCIAL_RULES: CommercialRulesConfig = {
   daysRisk: 30,
   daysInactive: 90,
+  daysLost: 180,
   vipMinSpent: 1000,
   vipMinOrders: 10,
 };
@@ -165,8 +167,11 @@ function classifyCustomer(
   daysWithoutPurchase: number | null,
   rules: CommercialRulesConfig
 ): CustomerCommercialClassification {
-  if (daysWithoutPurchase !== null && daysWithoutPurchase > rules.daysInactive) return 'PERDIDO';
-  if (daysWithoutPurchase !== null && daysWithoutPurchase > rules.daysRisk) return 'EM RISCO';
+  const daysLost = rules.daysLost ?? rules.daysInactive * 2;
+
+  if (daysWithoutPurchase !== null && daysWithoutPurchase >= daysLost) return 'PERDIDO';
+  if (daysWithoutPurchase !== null && daysWithoutPurchase >= rules.daysInactive) return 'INATIVO';
+  if (daysWithoutPurchase !== null && daysWithoutPurchase >= rules.daysRisk) return 'EM RISCO';
   if (totalSpent >= rules.vipMinSpent && totalOrders >= rules.vipMinOrders) return 'VIP';
   if (totalOrders > rules.vipMinOrders) return 'RECORRENTE';
   if (totalOrders <= 1) return 'NOVO';
