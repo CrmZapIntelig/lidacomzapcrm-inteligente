@@ -237,6 +237,57 @@ export interface CampaignExecutionPreview {
   usedSnapshot: boolean;
 }
 
+export type CampaignExecutionItemStatus =
+  | 'pending'
+  | 'processing'
+  | 'simulated-success'
+  | 'invalid'
+  | 'skipped';
+
+export type CampaignExecutionStatus =
+  | 'ready'
+  | 'running'
+  | 'paused'
+  | 'completed'
+  | 'cancelled';
+
+export interface CampaignExecutionItem {
+  id: string;
+  customerId: string;
+  customerName: string;
+  phone?: string;
+  content: string;
+  valid: boolean;
+  unresolvedVariables: string[];
+  status: CampaignExecutionItemStatus;
+  processedAt?: string;
+  error?: string;
+}
+
+export interface CampaignExecutionSession {
+  id: string;
+  campaignId: string;
+  campaignName: string;
+  preparationGeneratedAt: string;
+
+  status: CampaignExecutionStatus;
+  createdAt: string;
+  startedAt?: string;
+  pausedAt?: string;
+  completedAt?: string;
+  cancelledAt?: string;
+
+  currentIndex: number;
+  totalItems: number;
+  validItems: number;
+  invalidItems: number;
+  processedItems: number;
+  successItems: number;
+  skippedItems: number;
+
+  items: CampaignExecutionItem[];
+}
+
 export interface CampaignTemplate {
   id: string;
   name: string;

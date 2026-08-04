@@ -21,7 +21,10 @@ import {
 import {
   Campaign,
   CampaignAudiencePreview,
+  CampaignExecutionItemStatus,
   CampaignExecutionPreview,
+  CampaignExecutionSession,
+  CampaignExecutionStatus,
   Client,
   AppSettings,
   CampaignResult,
@@ -33,10 +36,22 @@ import {
   CustomerCommercialProfile,
 } from '../types';
 import { prepareCampaignExecutionPreview } from '../utils/campaignPreparation';
+import {
+  cancelExecutionSession,
+  createCampaignExecutionSession,
+  getCampaignExecutionProgress,
+  isCampaignExecutionRunnable,
+  pauseExecutionSession,
+  processNextExecutionItem,
+  resumeExecutionSession,
+  startExecutionSession,
+} from '../utils/campaignExecution';
 import { CommercialRulesConfig, resolveCampaignAudiencePreview } from '../utils/commercialSegmentation';
 
 type TabId = 'dashboard' | 'smartCustomers' | 'segments' | 'campaigns' | 'templates' | 'schedules' | 'results' | 'settings';
 type ModalId = 'segment' | 'template' | 'campaign' | 'schedule' | null;
+
+const CAMPAIGN_SIMULATION_INTERVAL_MS = 500;
 
 interface CommercialIntelligenceViewProps {
   commercialSegments: CommercialSegment[];
@@ -102,6 +117,8 @@ export default function CommercialIntelligenceView({
   const [preparationRefreshKey, setPreparationRefreshKey] = useState(0);
   const [isPreparationRefreshing, setIsPreparationRefreshing] = useState(false);
   const [preparationUpdated, setPreparationUpdated] = useState(false);
+  const [executionSession, setExecutionSession] = useState<CampaignExecutionSession | null>(null);
+  const [isExecutionModalOpen, setIsExecutionModalOpen] = useState(false);
 
   const executedCampaigns = campaignResults.length;
   const reachedCustomers = campaignResults.reduce((sum, result) => sum + result.reachedCustomers, 0);
@@ -162,6 +179,52 @@ export default function CommercialIntelligenceView({
     setPreparationUpdated(false);
     setIsPreparationRefreshing(false);
   };
+  const handleExecuteSimulation = (executionPreview: CampaignExecutionPreview) => {
+    if (!isCampaignExecutionRunnable(executionPreview)) return;
+
+    const createdAt = new Date().toISOString();
+    const sessionId = `campaign-simulation:${executionPreview.campaign.id}:${Date.now()}`;
+    const session = createCampaignExecutionSession(executionPreview, sessionId, createdAt);
+
+    setExecutionSession(session);
+    handleClosePreparation();
+    setIsExecutionModalOpen(true);
+  };
+  const handleStartExecution = () => {
+    const startedAt = new Date().toISOString();
+    setExecutionSession((current) => current ? startExecutionSession(current, startedAt) : current);
+  };
+  const handlePauseExecution = () => {
+    const pausedAt = new Date().toISOString();
+    setExecutionSession((current) => current ? pauseExecutionSession(current, pausedAt) : current);
+  };
+  const handleResumeExecution = () => {
+    setExecutionSession((current) => current ? resumeExecutionSession(current) : current);
+  };
+  const handleCancelExecution = () => {
+    const cancelledAt = new Date().toISOString();
+    setExecutionSession((current) => current ? cancelExecutionSession(current, cancelledAt) : current);
+  };
+  const handleCloseExecution = () => {
+    if (executionSession?.status === 'running' || executionSession?.status === 'paused') return;
+
+    setIsExecutionModalOpen(false);
+    setExecutionSession(null);
+  };
+
+  useEffect(() => {
+    if (!isExecutionModalOpen || executionSession?.status !== 'running') return;
+
+    const timeoutId = window.setTimeout(() => {
+      const processedAt = new Date().toISOString();
+      setExecutionSession((current) => {
+        if (!current || current.status !== 'running') return current;
+        return processNextExecutionItem(current, processedAt);
+      });
+    }, CAMPAIGN_SIMULATION_INTERVAL_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [executionSession, isExecutionModalOpen]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -365,7 +428,18 @@ export default function CommercialIntelligenceView({
           isRefreshing={isPreparationRefreshing}
           updated={preparationUpdated}
           onRefresh={handleRefreshPreparation}
+          onExecuteSimulation={handleExecuteSimulation}
           onClose={handleClosePreparation}
+        />
+      )}
+      {isExecutionModalOpen && executionSession && (
+        <CampaignExecutionSimulationModal
+          session={executionSession}
+          onStart={handleStartExecution}
+          onPause={handlePauseExecution}
+          onResume={handleResumeExecution}
+          onCancel={handleCancelExecution}
+          onClose={handleCloseExecution}
         />
       )}
     </div>
@@ -816,15 +890,18 @@ function CampaignPreparationModal({
   isRefreshing,
   updated,
   onRefresh,
+  onExecuteSimulation,
   onClose,
 }: {
   preparation: CampaignExecutionPreview;
   isRefreshing: boolean;
   updated: boolean;
   onRefresh: () => void;
+  onExecuteSimulation: (preparation: CampaignExecutionPreview) => void;
   onClose: () => void;
 }) {
   const canShowMessages = preparation.status === 'ready' || preparation.status === 'ready-with-snapshot';
+  const canExecuteSimulation = isCampaignExecutionRunnable(preparation) && !isRefreshing;
 
   return (
     <BaseModal title="Preparação da Campanha" onClose={onClose} size="wide">
@@ -901,6 +978,15 @@ function CampaignPreparationModal({
           )}
           <button
             type="button"
+            onClick={() => onExecuteSimulation(preparation)}
+            disabled={!canExecuteSimulation}
+            title={canExecuteSimulation ? 'Criar execução simulada em memória' : 'A simulação exige ao menos uma mensagem válida'}
+            className="bg-indigo-500 text-white hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-xl text-xs font-bold transition-colors"
+          >
+            Executar Simulação
+          </button>
+          <button
+            type="button"
             onClick={onRefresh}
             disabled={isRefreshing}
             className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-emerald-950/30 dark:text-emerald-300 dark:hover:bg-emerald-950/50 px-4 py-2 rounded-xl text-xs font-bold"
@@ -908,6 +994,157 @@ function CampaignPreparationModal({
             {isRefreshing ? 'Atualizando...' : 'Atualizar Preparação'}
           </button>
           <button type="button" onClick={onClose} className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-bold">
+            Fechar
+          </button>
+        </div>
+      </div>
+    </BaseModal>
+  );
+}
+
+function CampaignExecutionSimulationModal({
+  session,
+  onStart,
+  onPause,
+  onResume,
+  onCancel,
+  onClose,
+}: {
+  session: CampaignExecutionSession;
+  onStart: () => void;
+  onPause: () => void;
+  onResume: () => void;
+  onCancel: () => void;
+  onClose: () => void;
+}) {
+  const progress = getCampaignExecutionProgress(session);
+  const normalizedProgress = Math.min(100, Math.max(0, progress));
+  const roundedProgress = Math.round(normalizedProgress);
+  const closeDisabled = session.status === 'running' || session.status === 'paused';
+  const canCancel = session.status === 'ready' || session.status === 'running' || session.status === 'paused';
+
+  return (
+    <BaseModal
+      title="Execução Simulada da Campanha"
+      onClose={onClose}
+      size="wide"
+      closeDisabled={closeDisabled}
+    >
+      <div className="max-h-[82vh] overflow-y-auto pr-1 space-y-4 text-xs">
+        <div className="grid gap-2 sm:grid-cols-2">
+          <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 font-bold text-indigo-800 dark:border-indigo-900/60 dark:bg-indigo-950/30 dark:text-indigo-200">
+            Execução simulada em memória.
+          </div>
+          <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 font-bold text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
+            Nenhuma mensagem será enviada.
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-600 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-300">
+          Esta sessão existe apenas nesta tela e será apagada ao recarregar a página.
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <PreviewInfo label="Campanha" value={session.campaignName} />
+          <div>
+            <span className="block text-slate-400 font-bold mb-1 uppercase tracking-wider text-[9px]">Status da sessão</span>
+            <CampaignExecutionStatusBadge status={session.status} />
+          </div>
+          <PreviewInfo label="Criada em" value={formatDateTime(session.createdAt)} />
+          <PreviewInfo label="Iniciada em" value={session.startedAt ? formatDateTime(session.startedAt) : '-'} />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+          <ExecutionMetric label="Total" value={session.totalItems} />
+          <ExecutionMetric label="Válidas" value={session.validItems} />
+          <ExecutionMetric label="Inválidas" value={session.invalidItems} />
+          <ExecutionMetric label="Processadas" value={session.processedItems} />
+          <ExecutionMetric label="Sucessos simulados" value={session.successItems} />
+          <ExecutionMetric label="Ignoradas" value={session.skippedItems} />
+          <ExecutionMetric label="Progresso" value={`${roundedProgress}%`} />
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between font-bold text-slate-600 dark:text-slate-300">
+            <span>Progresso da simulação</span>
+            <span>{roundedProgress}%</span>
+          </div>
+          <div
+            className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
+            role="progressbar"
+            aria-label="Progresso da execução simulada"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={roundedProgress}
+          >
+            <div
+              className="h-full bg-indigo-500 transition-all duration-300"
+              style={{ width: `${normalizedProgress}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="max-h-[42vh] overflow-auto rounded-xl border border-slate-100 dark:border-slate-800">
+          <table className="w-full border-collapse text-left text-xs">
+            <thead>
+              <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:border-slate-800 dark:bg-slate-800/50">
+                {['Cliente', 'Telefone', 'Status', 'Conteúdo', 'Erro/Variáveis'].map((column) => (
+                  <th key={column} className="whitespace-nowrap px-4 py-3">{column}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+              {session.items.map((item) => (
+                <tr key={item.id}>
+                  <td className="whitespace-nowrap px-4 py-3.5 font-bold text-slate-900 dark:text-white">{item.customerName}</td>
+                  <td className="whitespace-nowrap px-4 py-3.5 font-mono">{item.phone || '-'}</td>
+                  <td className="px-4 py-3.5"><CampaignExecutionItemStatusBadge status={item.status} /></td>
+                  <td className="min-w-[360px] px-4 py-3.5 text-slate-600 dark:text-slate-300">{item.content || '-'}</td>
+                  <td className="min-w-[220px] px-4 py-3.5 text-slate-500 dark:text-slate-400">
+                    <div>{item.error || '-'}</div>
+                    {item.unresolvedVariables.length > 0 && (
+                      <div className="mt-1">Variáveis: {item.unresolvedVariables.join(', ')}</div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {closeDisabled && (
+          <p className="text-right text-[10px] font-bold text-amber-700 dark:text-amber-300">
+            Continue ou cancele a simulação antes de fechar.
+          </p>
+        )}
+
+        <div className="flex flex-wrap items-center justify-end gap-2 pt-1 font-bold">
+          {session.status === 'ready' && (
+            <button type="button" onClick={onStart} className="rounded-xl bg-indigo-500 px-5 py-2 text-white hover:bg-indigo-600">
+              Iniciar
+            </button>
+          )}
+          {session.status === 'running' && (
+            <button type="button" onClick={onPause} className="rounded-xl bg-amber-500 px-5 py-2 text-white hover:bg-amber-600">
+              Pausar
+            </button>
+          )}
+          {session.status === 'paused' && (
+            <button type="button" onClick={onResume} className="rounded-xl bg-indigo-500 px-5 py-2 text-white hover:bg-indigo-600">
+              Continuar
+            </button>
+          )}
+          {canCancel && (
+            <button type="button" onClick={onCancel} className="rounded-xl bg-rose-50 px-4 py-2 text-rose-700 hover:bg-rose-100 dark:bg-rose-950/30 dark:text-rose-300 dark:hover:bg-rose-950/50">
+              Cancelar
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={closeDisabled}
+            className="rounded-xl bg-slate-100 px-4 py-2 hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-800 dark:hover:bg-slate-700"
+          >
             Fechar
           </button>
         </div>
@@ -1006,11 +1243,30 @@ function ScheduleModal({
   );
 }
 
-function BaseModal({ title, onClose, children, size = 'default' }: { title: string; onClose: () => void; children: React.ReactNode; size?: 'default' | 'wide' }) {
+function BaseModal({
+  title,
+  onClose,
+  children,
+  size = 'default',
+  closeDisabled = false,
+}: {
+  title: string;
+  onClose: () => void;
+  children: React.ReactNode;
+  size?: 'default' | 'wide';
+  closeDisabled?: boolean;
+}) {
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
       <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full p-6 relative shadow-2xl ${size === 'wide' ? 'max-w-5xl' : 'max-w-md'}`}>
-        <button onClick={onClose} className="absolute top-4 right-4 p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={closeDisabled}
+          aria-label="Fechar modal"
+          title={closeDisabled ? 'Conclua ou cancele a simulação antes de fechar' : 'Fechar'}
+          className="absolute top-4 right-4 p-1 text-slate-400 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:text-slate-200"
+        >
           <X className="w-5 h-5" />
         </button>
         <h3 className="font-bold text-slate-950 dark:text-white text-sm pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">{title}</h3>
@@ -1119,6 +1375,61 @@ function MessageValidityBadge({ valid }: { valid: boolean }) {
   return (
     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${valid ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300'}`}>
       {valid ? 'Válida' : 'Inválida'}
+    </span>
+  );
+}
+
+function ExecutionMetric({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-2 dark:border-slate-800 dark:bg-slate-800/40">
+      <span className="block text-[9px] font-bold uppercase tracking-wider text-slate-400">{label}</span>
+      <span className="mt-1 block text-sm font-bold text-slate-900 dark:text-white">{value}</span>
+    </div>
+  );
+}
+
+function CampaignExecutionStatusBadge({ status }: { status: CampaignExecutionStatus }) {
+  const labels: Record<CampaignExecutionStatus, string> = {
+    ready: 'Pronta',
+    running: 'Simulação em andamento',
+    paused: 'Simulação pausada',
+    completed: 'Concluída',
+    cancelled: 'Cancelada',
+  };
+  const colors: Record<CampaignExecutionStatus, string> = {
+    ready: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-300',
+    running: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300',
+    paused: 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300',
+    completed: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300',
+    cancelled: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
+  };
+
+  return (
+    <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold ${colors[status]}`}>
+      {labels[status]}
+    </span>
+  );
+}
+
+function CampaignExecutionItemStatusBadge({ status }: { status: CampaignExecutionItemStatus }) {
+  const labels: Record<CampaignExecutionItemStatus, string> = {
+    pending: 'Aguardando simulação',
+    processing: 'Processando simulação',
+    'simulated-success': 'Sucesso simulado',
+    invalid: 'Inválida',
+    skipped: 'Ignorada por cancelamento',
+  };
+  const colors: Record<CampaignExecutionItemStatus, string> = {
+    pending: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
+    processing: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300',
+    'simulated-success': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300',
+    invalid: 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300',
+    skipped: 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300',
+  };
+
+  return (
+    <span className={`inline-flex whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-bold ${colors[status]}`}>
+      {labels[status]}
     </span>
   );
 }
