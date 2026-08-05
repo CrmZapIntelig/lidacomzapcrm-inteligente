@@ -222,6 +222,32 @@ export interface PreparedCampaignMessage {
   valid: boolean;
 }
 
+export type WhatsAppRecipientReadinessStatus =
+  | 'phone-ready'
+  | 'missing-phone'
+  | 'invalid-phone'
+  | 'blocked-contact'
+  | 'group-contact'
+  | 'invalid-prepared-message';
+
+export interface WhatsAppRecipientReadiness {
+  customerId: string;
+  customerName: string;
+  originalPhone?: string;
+  normalizedPhone?: string;
+  readiness: WhatsAppRecipientReadinessStatus;
+  preparedMessageValid: boolean;
+}
+
+export interface WhatsAppCampaignReadiness {
+  status: 'not-ready-for-real-send';
+  backendAvailable: false;
+  providerConfigured: false;
+  consentModelAvailable: false;
+  counts: Record<WhatsAppRecipientReadinessStatus, number>;
+  items: WhatsAppRecipientReadiness[];
+}
+
 export interface CampaignExecutionPreview {
   status: CampaignExecutionPreviewStatus;
   campaign: Campaign;

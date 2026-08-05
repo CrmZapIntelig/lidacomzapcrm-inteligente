@@ -34,8 +34,11 @@ import {
   CommercialSegment,
   CustomerCommercialClassification,
   CustomerCommercialProfile,
+  WhatsAppRecipientReadinessStatus,
+  WhatsAppCampaignReadiness,
 } from '../types';
 import { prepareCampaignExecutionPreview } from '../utils/campaignPreparation';
+import { buildWhatsAppCampaignReadiness } from '../utils/whatsappReadiness';
 import {
   cancelExecutionSession,
   createCampaignExecutionSession,
@@ -142,6 +145,11 @@ export default function CommercialIntelligenceView({
       )
       : null,
     [preparationCampaign, campaignTemplates, availableAudienceOptions, customerCommercialProfiles, clients, settings, preparationRefreshKey]
+  );
+
+  const whatsappReadiness = useMemo(
+    () => preparation ? buildWhatsAppCampaignReadiness(preparation.preparedMessages, clients) : null,
+    [preparation, clients]
   );
   const handleOpenPreview = (campaign: Campaign) => {
     setPreviewUpdated(false);
@@ -422,9 +430,10 @@ export default function CommercialIntelligenceView({
           onClose={handleClosePreview}
         />
       )}
-      {preparationCampaign && preparation && (
+      {preparationCampaign && preparation && whatsappReadiness && (
         <CampaignPreparationModal
           preparation={preparation}
+          whatsappReadiness={whatsappReadiness}
           isRefreshing={isPreparationRefreshing}
           updated={preparationUpdated}
           onRefresh={handleRefreshPreparation}
@@ -887,6 +896,7 @@ function CampaignAudiencePreviewModal({
 
 function CampaignPreparationModal({
   preparation,
+  whatsappReadiness,
   isRefreshing,
   updated,
   onRefresh,
@@ -894,6 +904,7 @@ function CampaignPreparationModal({
   onClose,
 }: {
   preparation: CampaignExecutionPreview;
+  whatsappReadiness: WhatsAppCampaignReadiness;
   isRefreshing: boolean;
   updated: boolean;
   onRefresh: () => void;
@@ -925,6 +936,68 @@ function CampaignPreparationModal({
           Esta é apenas uma preparação. Nenhuma mensagem foi enviada ou salva.
         </div>
 
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 p-4 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <span className="block text-slate-400 font-bold uppercase tracking-wider text-[9px]">Prontidão para integração WhatsApp</span>
+              <span className="block text-slate-900 dark:text-slate-100 font-bold">Não pronta para envio real</span>
+            </div>
+            <span className="inline-flex rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 px-3 py-1 text-[10px] font-bold uppercase">
+              Não pronta para envio real
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-slate-600 dark:text-slate-300">
+            <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-3">
+              <div className="font-bold text-slate-900 dark:text-slate-100">Backend seguro</div>
+              <div>Não disponível</div>
+            </div>
+            <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-3">
+              <div className="font-bold text-slate-900 dark:text-slate-100">Provedor WhatsApp</div>
+              <div>Não configurado</div>
+            </div>
+            <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-3">
+              <div className="font-bold text-slate-900 dark:text-slate-100">Consentimento/opt-out</div>
+              <div>Ainda não modelado</div>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-amber-100 dark:border-amber-900/50 bg-amber-50/60 dark:bg-amber-950/20 px-3 py-2 text-amber-800 dark:text-amber-200 text-sm">
+            Esta análise verifica apenas telefone e conteúdo. Ela não autoriza contato e não realiza envio.
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
+            <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+              <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Total analisado</div>
+              <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{Object.values(whatsappReadiness.counts).reduce((s, v) => s + v, 0)}</div>
+            </div>
+            <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+              <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Telefone e conteúdo aptos</div>
+              <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{whatsappReadiness.counts['phone-ready']}</div>
+            </div>
+            <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+              <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Telefone ausente</div>
+              <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{whatsappReadiness.counts['missing-phone']}</div>
+            </div>
+            <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+              <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Telefone inválido</div>
+              <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{whatsappReadiness.counts['invalid-phone']}</div>
+            </div>
+            <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+              <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Contatos bloqueados</div>
+              <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{whatsappReadiness.counts['blocked-contact']}</div>
+            </div>
+            <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+              <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Grupos</div>
+              <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{whatsappReadiness.counts['group-contact']}</div>
+            </div>
+            <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+              <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Mensagens preparadas inválidas</div>
+              <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{whatsappReadiness.counts['invalid-prepared-message']}</div>
+            </div>
+          </div>
+        </div>
+
         {preparation.status === 'ready-with-snapshot' && (
           <div className="rounded-xl border border-amber-100 dark:border-amber-900/50 bg-amber-50/60 dark:bg-amber-950/20 px-3 py-2 text-amber-800 dark:text-amber-200">
             Conteúdo carregado do snapshot textual da campanha.
@@ -948,23 +1021,28 @@ function CampaignPreparationModal({
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-mono text-slate-400 tracking-wider">
-                  {['Cliente', 'Telefone', 'Status', 'Conteúdo', 'Variáveis Ausentes'].map((column) => (
+                  {['Cliente', 'Telefone', 'Telefone Normalizado', 'Prontidão', 'Conteúdo', 'Variáveis Ausentes'].map((column) => (
                     <th key={column} className="py-3 px-4 whitespace-nowrap">{column}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-                {preparation.preparedMessages.map((message) => (
-                  <tr key={message.customerId}>
-                    <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">{message.customerName}</td>
-                    <td className="py-3.5 px-4 font-mono whitespace-nowrap">{message.phone || '-'}</td>
-                    <td className="py-3.5 px-4"><MessageValidityBadge valid={message.valid} /></td>
-                    <td className="py-3.5 px-4 min-w-[360px] text-slate-600 dark:text-slate-300">{message.content}</td>
-                    <td className="py-3.5 px-4 min-w-[180px] text-slate-500 dark:text-slate-400">
-                      {message.unresolvedVariables.length ? message.unresolvedVariables.join(', ') : '-'}
-                    </td>
-                  </tr>
-                ))}
+                {preparation.preparedMessages.map((message) => {
+                  const recipientReadiness = whatsappReadiness.items.find((item) => item.customerId === message.customerId);
+
+                  return (
+                    <tr key={message.customerId}>
+                      <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">{message.customerName}</td>
+                      <td className="py-3.5 px-4 font-mono whitespace-nowrap">{message.phone || '-'}</td>
+                      <td className="py-3.5 px-4 font-mono whitespace-nowrap">{recipientReadiness?.normalizedPhone || '-'}</td>
+                      <td className="py-3.5 px-4"><WhatsAppReadinessBadge status={recipientReadiness?.readiness || 'missing-phone'} /></td>
+                      <td className="py-3.5 px-4 min-w-[360px] text-slate-600 dark:text-slate-300">{message.content}</td>
+                      <td className="py-3.5 px-4 min-w-[180px] text-slate-500 dark:text-slate-400">
+                        {message.unresolvedVariables.length ? message.unresolvedVariables.join(', ') : '-'}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -1377,6 +1455,45 @@ function MessageValidityBadge({ valid }: { valid: boolean }) {
       {valid ? 'Válida' : 'Inválida'}
     </span>
   );
+}
+
+function WhatsAppReadinessBadge({ status }: { status: WhatsAppRecipientReadinessStatus }) {
+  const labels: Record<WhatsAppRecipientReadinessStatus, string> = {
+    'phone-ready': 'Telefone apto',
+    'missing-phone': 'Telefone ausente',
+    'invalid-phone': 'Telefone inválido',
+    'blocked-contact': 'Contato bloqueado',
+    'group-contact': 'Grupo',
+    'invalid-prepared-message': 'Mensagem inválida',
+  };
+
+  const colors: Record<WhatsAppRecipientReadinessStatus, string> = {
+    'phone-ready': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300',
+    'missing-phone': 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
+    'invalid-phone': 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300',
+    'blocked-contact': 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300',
+    'group-contact': 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300',
+    'invalid-prepared-message': 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300',
+  };
+
+  return (
+    <span className={`inline-flex whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-bold ${colors[status]}`}>
+      {labels[status]}
+    </span>
+  );
+}
+
+function formatWhatsAppStatusLabel(status: WhatsAppRecipientReadinessStatus) {
+  const labels: Record<WhatsAppRecipientReadinessStatus, string> = {
+    'phone-ready': 'Telefone apto',
+    'missing-phone': 'Telefone ausente',
+    'invalid-phone': 'Telefone inválido',
+    'blocked-contact': 'Contato bloqueado',
+    'group-contact': 'Grupo',
+    'invalid-prepared-message': 'Mensagem inválida',
+  };
+
+  return labels[status];
 }
 
 function ExecutionMetric({ label, value }: { label: string; value: number | string }) {
