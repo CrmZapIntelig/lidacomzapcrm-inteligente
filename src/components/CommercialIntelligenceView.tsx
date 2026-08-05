@@ -27,6 +27,8 @@ import {
   CampaignExecutionStatus,
   Client,
   AppSettings,
+  CampaignContactEligibilitySummary,
+  CampaignContactEligibilityStatus,
   CampaignResult,
   CampaignSchedule,
   CampaignTemplate,
@@ -38,6 +40,7 @@ import {
   WhatsAppCampaignReadiness,
 } from '../types';
 import { prepareCampaignExecutionPreview } from '../utils/campaignPreparation';
+import { buildCampaignContactEligibilitySummary } from '../utils/contactEligibility';
 import { buildWhatsAppCampaignReadiness } from '../utils/whatsappReadiness';
 import {
   cancelExecutionSession,
@@ -148,7 +151,11 @@ export default function CommercialIntelligenceView({
   );
 
   const whatsappReadiness = useMemo(
-    () => preparation ? buildWhatsAppCampaignReadiness(preparation.preparedMessages, clients) : null,
+    () => preparation ? buildWhatsAppCampaignReadiness(preparation.preparedMessages, clients, undefined, true) : null,
+    [preparation, clients]
+  );
+  const contactEligibility = useMemo(
+    () => preparation ? buildCampaignContactEligibilitySummary(preparation.preparedMessages, clients, preparation.generatedAt) : null,
     [preparation, clients]
   );
   const handleOpenPreview = (campaign: Campaign) => {
@@ -430,10 +437,11 @@ export default function CommercialIntelligenceView({
           onClose={handleClosePreview}
         />
       )}
-      {preparationCampaign && preparation && whatsappReadiness && (
+      {preparationCampaign && preparation && whatsappReadiness && contactEligibility && (
         <CampaignPreparationModal
           preparation={preparation}
           whatsappReadiness={whatsappReadiness}
+          contactEligibility={contactEligibility}
           isRefreshing={isPreparationRefreshing}
           updated={preparationUpdated}
           onRefresh={handleRefreshPreparation}
@@ -897,6 +905,7 @@ function CampaignAudiencePreviewModal({
 function CampaignPreparationModal({
   preparation,
   whatsappReadiness,
+  contactEligibility,
   isRefreshing,
   updated,
   onRefresh,
@@ -905,6 +914,7 @@ function CampaignPreparationModal({
 }: {
   preparation: CampaignExecutionPreview;
   whatsappReadiness: WhatsAppCampaignReadiness;
+  contactEligibility: CampaignContactEligibilitySummary;
   isRefreshing: boolean;
   updated: boolean;
   onRefresh: () => void;
@@ -913,6 +923,10 @@ function CampaignPreparationModal({
 }) {
   const canShowMessages = preparation.status === 'ready' || preparation.status === 'ready-with-snapshot';
   const canExecuteSimulation = isCampaignExecutionRunnable(preparation) && !isRefreshing;
+  const eligibilityByCustomerId = useMemo(
+    () => new Map(contactEligibility.recipients.map((item) => [item.customerId, item])),
+    [contactEligibility]
+  );
 
   return (
     <BaseModal title="Preparação da Campanha" onClose={onClose} size="wide">
@@ -957,13 +971,54 @@ function CampaignPreparationModal({
               <div>Não configurado</div>
             </div>
             <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-3">
-              <div className="font-bold text-slate-900 dark:text-slate-100">Consentimento/opt-out</div>
-              <div>Ainda não modelado</div>
+              <div className="font-bold text-slate-900 dark:text-slate-100">Preferências de contato</div>
+              <div>Modelo disponível</div>
             </div>
           </div>
 
           <div className="rounded-xl border border-amber-100 dark:border-amber-900/50 bg-amber-50/60 dark:bg-amber-950/20 px-3 py-2 text-amber-800 dark:text-amber-200 text-sm">
             Esta análise verifica apenas telefone e conteúdo. Ela não autoriza contato e não realiza envio.
+          </div>
+
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-4 space-y-3">
+            <div>
+              <span className="block text-slate-400 font-bold uppercase tracking-wider text-[9px]">Elegibilidade para campanha de marketing</span>
+              <span className="block text-slate-900 dark:text-slate-100 font-bold">Classificação interna</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-8 gap-2 text-xs">
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+                <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Total avaliados</div>
+                <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{contactEligibility.totalRecipients}</div>
+              </div>
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+                <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Elegíveis</div>
+                <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{contactEligibility.eligibleRecipients}</div>
+              </div>
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+                <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Sem informação</div>
+                <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{contactEligibility.unknownRecipients}</div>
+              </div>
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+                <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Marketing não permitido</div>
+                <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{contactEligibility.deniedRecipients}</div>
+              </div>
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+                <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Marketing revogado</div>
+                <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{contactEligibility.revokedRecipients}</div>
+              </div>
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+                <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Bloqueados</div>
+                <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{contactEligibility.blockedRecipients}</div>
+              </div>
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+                <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Grupos</div>
+                <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{contactEligibility.groupRecipients}</div>
+              </div>
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-3">
+                <div className="font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Canal não preferido</div>
+                <div className="mt-1 text-slate-600 dark:text-slate-300 font-bold">{contactEligibility.channelNotPreferredRecipients}</div>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
@@ -1021,7 +1076,7 @@ function CampaignPreparationModal({
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-mono text-slate-400 tracking-wider">
-                  {['Cliente', 'Telefone', 'Telefone Normalizado', 'Prontidão', 'Conteúdo', 'Variáveis Ausentes'].map((column) => (
+                  {['Cliente', 'Telefone', 'Telefone Normalizado', 'Prontidão', 'Elegibilidade', 'Conteúdo', 'Variáveis Ausentes'].map((column) => (
                     <th key={column} className="py-3 px-4 whitespace-nowrap">{column}</th>
                   ))}
                 </tr>
@@ -1029,6 +1084,7 @@ function CampaignPreparationModal({
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
                 {preparation.preparedMessages.map((message) => {
                   const recipientReadiness = whatsappReadiness.items.find((item) => item.customerId === message.customerId);
+                  const eligibility = eligibilityByCustomerId.get(message.customerId);
 
                   return (
                     <tr key={message.customerId}>
@@ -1036,6 +1092,7 @@ function CampaignPreparationModal({
                       <td className="py-3.5 px-4 font-mono whitespace-nowrap">{message.phone || '-'}</td>
                       <td className="py-3.5 px-4 font-mono whitespace-nowrap">{recipientReadiness?.normalizedPhone || '-'}</td>
                       <td className="py-3.5 px-4"><WhatsAppReadinessBadge status={recipientReadiness?.readiness || 'missing-phone'} /></td>
+                      <td className="py-3.5 px-4"><ContactEligibilityBadge status={eligibility?.status || 'unknown'} reason={eligibility?.reason} /></td>
                       <td className="py-3.5 px-4 min-w-[360px] text-slate-600 dark:text-slate-300">{message.content}</td>
                       <td className="py-3.5 px-4 min-w-[180px] text-slate-500 dark:text-slate-400">
                         {message.unresolvedVariables.length ? message.unresolvedVariables.join(', ') : '-'}
@@ -1453,6 +1510,27 @@ function MessageValidityBadge({ valid }: { valid: boolean }) {
   return (
     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${valid ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300'}`}>
       {valid ? 'Válida' : 'Inválida'}
+    </span>
+  );
+}
+
+function ContactEligibilityBadge({ status, reason }: { status: CampaignContactEligibilityStatus; reason?: string }) {
+  const config = {
+    eligible: { label: 'Elegível', classes: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' },
+    unknown: { label: 'Sem informação', classes: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' },
+    blocked: { label: 'Bloqueado', classes: 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300' },
+    'marketing-denied': { label: 'Marketing não permitido', classes: 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300' },
+    'marketing-revoked': { label: 'Marketing revogado', classes: 'bg-orange-100 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300' },
+    'group-contact': { label: 'Grupo', classes: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300' },
+    'channel-not-preferred': { label: 'Canal não preferido', classes: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-300' },
+  }[status] || { label: 'Sem informação', classes: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' };
+
+  return (
+    <span
+      title={reason}
+      className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${config.classes}`}
+    >
+      {config.label}
     </span>
   );
 }

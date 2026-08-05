@@ -84,6 +84,24 @@ export interface FunnelStageConfig {
 
 export type ContactType = 'salvo' | 'nao_salvo' | 'grupo' | 'bloqueado';
 
+export type GlobalContactStatus = 'unknown' | 'allowed' | 'blocked';
+export type MarketingContactStatus = 'unknown' | 'allowed' | 'denied' | 'revoked';
+export type OperationalContactStatus = 'unknown' | 'allowed' | 'denied';
+export type PreferredContactChannel = 'unknown' | 'whatsapp' | 'phone' | 'rcs' | 'none';
+export type ContactPreferenceSource = 'unknown' | 'customer-request' | 'operator-entry' | 'imported' | 'existing-record';
+
+export interface ContactPreferences {
+  globalStatus?: GlobalContactStatus;
+  marketingStatus?: MarketingContactStatus;
+  operationalStatus?: OperationalContactStatus;
+  preferredChannel?: PreferredContactChannel;
+  source?: ContactPreferenceSource;
+  recordedAt?: string;
+  updatedAt?: string;
+  revokedAt?: string;
+  reason?: string;
+}
+
 export type Channel = 'whatsapp' | 'rcs' | 'ambos' | 'delivery' | 'balcao' | 'mesa_qr';
 
 export interface Message {
@@ -112,6 +130,7 @@ export interface Client {
   dispatched: boolean; // flag for Disparador
   avatarColor: string;
   channel?: Channel; // Origem
+  contactPreferences?: ContactPreferences;
 }
 
 export interface HistoryEvent {
@@ -222,6 +241,36 @@ export interface PreparedCampaignMessage {
   valid: boolean;
 }
 
+export type CampaignContactEligibilityStatus =
+  | 'eligible'
+  | 'unknown'
+  | 'blocked'
+  | 'marketing-denied'
+  | 'marketing-revoked'
+  | 'group-contact'
+  | 'channel-not-preferred';
+
+export interface CampaignContactEligibility {
+  customerId: string;
+  customerName: string;
+  status: CampaignContactEligibilityStatus;
+  eligibleForMarketing: boolean;
+  reason: string;
+}
+
+export interface CampaignContactEligibilitySummary {
+  generatedAt: string;
+  totalRecipients: number;
+  eligibleRecipients: number;
+  unknownRecipients: number;
+  blockedRecipients: number;
+  deniedRecipients: number;
+  revokedRecipients: number;
+  groupRecipients: number;
+  channelNotPreferredRecipients: number;
+  recipients: CampaignContactEligibility[];
+}
+
 export type WhatsAppRecipientReadinessStatus =
   | 'phone-ready'
   | 'missing-phone'
@@ -243,7 +292,7 @@ export interface WhatsAppCampaignReadiness {
   status: 'not-ready-for-real-send';
   backendAvailable: false;
   providerConfigured: false;
-  consentModelAvailable: false;
+  consentModelAvailable: boolean;
   counts: Record<WhatsAppRecipientReadinessStatus, number>;
   items: WhatsAppRecipientReadiness[];
 }

@@ -18,7 +18,7 @@ import {
   PlusCircle,
   FileText
 } from 'lucide-react';
-import { Client, FunnelStage } from '../types';
+import { Client, ContactPreferences, FunnelStage, GlobalContactStatus, MarketingContactStatus, OperationalContactStatus, PreferredContactChannel, ContactPreferenceSource } from '../types';
 import { FUNNEL_STAGES } from '../utils/mockData';
 
 interface ClientesViewProps {
@@ -43,6 +43,12 @@ export default function ClientesView({
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [editName, setEditName] = useState('');
   const [editPhone, setEditPhone] = useState('');
+  const [editGlobalStatus, setEditGlobalStatus] = useState<GlobalContactStatus>('unknown');
+  const [editMarketingStatus, setEditMarketingStatus] = useState<MarketingContactStatus>('unknown');
+  const [editOperationalStatus, setEditOperationalStatus] = useState<OperationalContactStatus>('unknown');
+  const [editPreferredChannel, setEditPreferredChannel] = useState<PreferredContactChannel>('unknown');
+  const [editPreferenceSource, setEditPreferenceSource] = useState<ContactPreferenceSource>('unknown');
+  const [editPreferenceReason, setEditPreferenceReason] = useState('');
 
   // Quick simulated export trigger
   const handleExportCSV = () => {
@@ -81,22 +87,46 @@ export default function ClientesView({
     setEditingClient(client);
     setEditName(client.name);
     setEditPhone(client.phone);
+    setEditGlobalStatus(client.contactPreferences?.globalStatus ?? 'unknown');
+    setEditMarketingStatus(client.contactPreferences?.marketingStatus ?? 'unknown');
+    setEditOperationalStatus(client.contactPreferences?.operationalStatus ?? 'unknown');
+    setEditPreferredChannel(client.contactPreferences?.preferredChannel ?? 'unknown');
+    setEditPreferenceSource(client.contactPreferences?.source ?? 'unknown');
+    setEditPreferenceReason(client.contactPreferences?.reason ?? '');
   };
 
   const handleSaveEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingClient || !editName.trim() || !editPhone.trim()) return;
-    console.log('EDITNAME NO SUBMIT:', editName);
-    console.log('EDITPHONE NO SUBMIT:', editPhone);
-    console.log('EDITINGCLIENT NO SUBMIT:', editingClient);
+
+    const previousPreferences = editingClient.contactPreferences;
+    const nextRecordedAt = previousPreferences?.recordedAt || new Date().toISOString();
+    const nextUpdatedAt = new Date().toISOString();
+    const nextRevokedAt = editMarketingStatus === 'revoked'
+      ? (previousPreferences?.marketingStatus === 'revoked' ? previousPreferences.revokedAt || nextUpdatedAt : nextUpdatedAt)
+      : undefined;
+
+    const nextContactPreferences: ContactPreferences = {
+      ...previousPreferences,
+      globalStatus: editGlobalStatus,
+      marketingStatus: editMarketingStatus,
+      operationalStatus: editOperationalStatus,
+      preferredChannel: editPreferredChannel,
+      source: editPreferenceSource,
+      reason: editPreferenceReason.trim() || undefined,
+      recordedAt: nextRecordedAt,
+      updatedAt: nextUpdatedAt,
+      revokedAt: nextRevokedAt,
+    };
+
     const updated = {
       ...editingClient,
       name: editName.trim(),
       phone: editPhone.trim(),
+      contactPreferences: nextContactPreferences,
     };
-    console.log('UPDATED GERADO:', updated);
+
     onUpdateClient(updated);
-    onAddHistoryEvent(editingClient.id, 'system_alert', 'Lead Editado', `Modificações de cadastro: Nome / Celular revisados.`);
     setEditingClient(null);
   };
 
@@ -385,6 +415,96 @@ export default function ClientesView({
                   onChange={(e) => setEditPhone(e.target.value)}
                   className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl text-slate-800 dark:text-slate-100 focus:outline-none focus:border-emerald-500"
                 />
+              </div>
+
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-3 space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="font-bold text-slate-700 dark:text-slate-200">Preferências de contato</p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">Estas preferências controlam a elegibilidade interna do CRM. Elas não realizam envio e não configuram um provedor de mensagens.</p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 font-bold mb-1">Status global</label>
+                  <select
+                    value={editGlobalStatus}
+                    onChange={(e) => setEditGlobalStatus(e.target.value as GlobalContactStatus)}
+                    className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl text-slate-800 dark:text-slate-100 focus:outline-none"
+                  >
+                    <option value="unknown">Não informado</option>
+                    <option value="allowed">Permitido</option>
+                    <option value="blocked">Bloqueado</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 font-bold mb-1">Marketing</label>
+                  <select
+                    value={editMarketingStatus}
+                    onChange={(e) => setEditMarketingStatus(e.target.value as MarketingContactStatus)}
+                    className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl text-slate-800 dark:text-slate-100 focus:outline-none"
+                  >
+                    <option value="unknown">Não informado</option>
+                    <option value="allowed">Permitido</option>
+                    <option value="denied">Não permitido</option>
+                    <option value="revoked">Revogado</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 font-bold mb-1">Contato operacional</label>
+                  <select
+                    value={editOperationalStatus}
+                    onChange={(e) => setEditOperationalStatus(e.target.value as OperationalContactStatus)}
+                    className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl text-slate-800 dark:text-slate-100 focus:outline-none"
+                  >
+                    <option value="unknown">Não informado</option>
+                    <option value="allowed">Permitido</option>
+                    <option value="denied">Não permitido</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 font-bold mb-1">Canal preferido</label>
+                  <select
+                    value={editPreferredChannel}
+                    onChange={(e) => setEditPreferredChannel(e.target.value as PreferredContactChannel)}
+                    className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl text-slate-800 dark:text-slate-100 focus:outline-none"
+                  >
+                    <option value="unknown">Não informado</option>
+                    <option value="whatsapp">WhatsApp</option>
+                    <option value="phone">Telefone</option>
+                    <option value="rcs">RCS</option>
+                    <option value="none">Nenhum</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 font-bold mb-1">Origem do registro</label>
+                  <select
+                    value={editPreferenceSource}
+                    onChange={(e) => setEditPreferenceSource(e.target.value as ContactPreferenceSource)}
+                    className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl text-slate-800 dark:text-slate-100 focus:outline-none"
+                  >
+                    <option value="unknown">Não informada</option>
+                    <option value="customer-request">Solicitação do cliente</option>
+                    <option value="operator-entry">Registro do operador</option>
+                    <option value="imported">Importação</option>
+                    <option value="existing-record">Cadastro existente</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-400 font-bold mb-1">Motivo / observação</label>
+                  <textarea
+                    value={editPreferenceReason}
+                    onChange={(e) => setEditPreferenceReason(e.target.value)}
+                    rows={2}
+                    className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl text-slate-800 dark:text-slate-100 focus:outline-none"
+                    placeholder="Opcional"
+                  />
+                </div>
               </div>
 
               <div className="flex justify-end gap-2.5 pt-2 text-xs font-bold">

@@ -55,7 +55,9 @@ export function evaluateWhatsAppRecipientReadiness(
 
 export function buildWhatsAppCampaignReadiness(
   preparedMessages: PreparedCampaignMessage[],
-  clients: Client[]
+  clients: Client[],
+  _generatedAt?: string,
+  consentModelAvailable = false
 ): WhatsAppCampaignReadiness {
   const clientsById = new Map(clients.map((client) => [client.id, client]));
   const items = preparedMessages.map((message) => evaluateWhatsAppRecipientReadiness(message, clientsById.get(message.customerId)));
@@ -79,7 +81,7 @@ export function buildWhatsAppCampaignReadiness(
     status: 'not-ready-for-real-send',
     backendAvailable: false,
     providerConfigured: false,
-    consentModelAvailable: false,
+    consentModelAvailable,
     counts,
     items,
   };
