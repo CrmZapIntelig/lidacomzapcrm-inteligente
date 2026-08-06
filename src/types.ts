@@ -312,6 +312,74 @@ export interface CampaignExecutionPreview {
   usedSnapshot: boolean;
 }
 
+export type CampaignDispatchDraftItemStatus =
+  | 'candidate'
+  | 'blocked-technical'
+  | 'blocked-eligibility'
+  | 'blocked-content'
+  | 'duplicate-recipient';
+
+export type CampaignDispatchDraftBlockReason =
+  | 'technical-readiness-missing'
+  | 'phone-not-ready'
+  | 'contact-eligibility-missing'
+  | 'contact-not-eligible'
+  | 'empty-content'
+  | 'duplicate-normalized-phone';
+
+export interface CampaignDispatchDraftItem {
+  id: string;
+
+  campaignId: string;
+  customerId: string;
+  customerName: string;
+
+  channel: 'whatsapp';
+  purpose: 'marketing';
+
+  rawPhone?: string;
+  normalizedPhone?: string;
+  content: string;
+
+  technicalStatus?: WhatsAppRecipientReadinessStatus;
+  eligibilityStatus?: CampaignContactEligibilityStatus;
+
+  technicallyReady: boolean;
+  eligibleForMarketing: boolean;
+
+  status: CampaignDispatchDraftItemStatus;
+  blockReasons: CampaignDispatchDraftBlockReason[];
+
+  deduplicationFingerprint: string;
+}
+
+export interface CampaignDispatchDraft {
+  id: string;
+
+  campaignId: string;
+  campaignName: string;
+  preparationGeneratedAt: string;
+  createdAt: string;
+
+  status: 'draft-only-not-queued';
+
+  backendAvailable: false;
+  providerConfigured: false;
+  queuePersisted: false;
+  idempotencyEnforced: false;
+
+  totalItems: number;
+  candidateItems: number;
+  blockedItems: number;
+  technicalBlockedItems: number;
+  eligibilityBlockedItems: number;
+  contentBlockedItems: number;
+  duplicateItems: number;
+
+  batchFingerprint: string;
+  items: CampaignDispatchDraftItem[];
+}
+
 export type CampaignExecutionItemStatus =
   | 'pending'
   | 'processing'

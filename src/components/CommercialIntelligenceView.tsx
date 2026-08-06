@@ -30,6 +30,7 @@ import {
   CampaignContactEligibilitySummary,
   CampaignContactEligibilityStatus,
   CampaignResult,
+  CampaignDispatchDraft,
   CampaignSchedule,
   CampaignTemplate,
   CommercialAudienceOption,
@@ -39,6 +40,7 @@ import {
   WhatsAppRecipientReadinessStatus,
   WhatsAppCampaignReadiness,
 } from '../types';
+import { createCampaignDispatchDraft, getCampaignDispatchDraftWarnings } from '../utils/campaignDispatchContract';
 import { prepareCampaignExecutionPreview } from '../utils/campaignPreparation';
 import { buildCampaignContactEligibilitySummary } from '../utils/contactEligibility';
 import { buildWhatsAppCampaignReadiness } from '../utils/whatsappReadiness';
@@ -240,6 +242,16 @@ export default function CommercialIntelligenceView({
 
     return () => window.clearTimeout(timeoutId);
   }, [executionSession, isExecutionModalOpen]);
+
+  // Dispatch contract draft state and memoized draft
+  const [isDispatchContractModalOpen, setIsDispatchContractModalOpen] = useState(false);
+  const dispatchDraft = useMemo(() => {
+    if (!preparation || !whatsappReadiness || !contactEligibility) return null;
+    if (!preparation.campaign) return null;
+    const draftId = `draft:${preparation.campaign.id}:${preparation.generatedAt}`;
+    const createdAt = preparation.generatedAt;
+    return createCampaignDispatchDraft(preparation.campaign, preparation, whatsappReadiness, contactEligibility, draftId, createdAt);
+  }, [preparation, whatsappReadiness, contactEligibility]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -444,10 +456,18 @@ export default function CommercialIntelligenceView({
           contactEligibility={contactEligibility}
           isRefreshing={isPreparationRefreshing}
           updated={preparationUpdated}
+          canReviewDispatchContract={Boolean(dispatchDraft)}
+          onReviewDispatchContract={() => {
+            if (!dispatchDraft) return;
+            setIsDispatchContractModalOpen(true);
+          }}
           onRefresh={handleRefreshPreparation}
           onExecuteSimulation={handleExecuteSimulation}
           onClose={handleClosePreparation}
         />
+      )}
+      {isDispatchContractModalOpen && dispatchDraft && (
+        <CampaignDispatchContractModal draft={dispatchDraft} onClose={() => setIsDispatchContractModalOpen(false)} />
       )}
       {isExecutionModalOpen && executionSession && (
         <CampaignExecutionSimulationModal
@@ -908,6 +928,8 @@ function CampaignPreparationModal({
   contactEligibility,
   isRefreshing,
   updated,
+  canReviewDispatchContract,
+  onReviewDispatchContract,
   onRefresh,
   onExecuteSimulation,
   onClose,
@@ -917,6 +939,8 @@ function CampaignPreparationModal({
   contactEligibility: CampaignContactEligibilitySummary;
   isRefreshing: boolean;
   updated: boolean;
+  canReviewDispatchContract: boolean;
+  onReviewDispatchContract: () => void;
   onRefresh: () => void;
   onExecuteSimulation: (preparation: CampaignExecutionPreview) => void;
   onClose: () => void;
@@ -1119,6 +1143,14 @@ function CampaignPreparationModal({
             className="bg-indigo-500 text-white hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-xl text-xs font-bold transition-colors"
           >
             Executar Simulação
+          </button>
+          <button
+            type="button"
+            onClick={onReviewDispatchContract}
+            disabled={!canReviewDispatchContract}
+            className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-bold"
+          >
+            Revisar contrato de lote
           </button>
           <button
             type="button"
@@ -1532,6 +1564,110 @@ function ContactEligibilityBadge({ status, reason }: { status: CampaignContactEl
     >
       {config.label}
     </span>
+  );
+}
+
+function CampaignDispatchContractModal({ draft, onClose }: { draft: CampaignDispatchDraft; onClose: () => void }) {
+  const warnings = useMemo(() => getCampaignDispatchDraftWarnings(draft), [draft]);
+
+  const statusLabels: Record<string, string> = {
+    'candidate': 'Candidato ao backend',
+    'blocked-technical': 'Bloqueado tecnicamente',
+    'blocked-eligibility': 'Bloqueado por elegibilidade',
+    'blocked-content': 'Conteúdo bloqueado',
+    'duplicate-recipient': 'Telefone duplicado no lote',
+  };
+
+  const reasonLabels: Record<string, string> = {
+    'technical-readiness-missing': 'Prontidão técnica não encontrada',
+    'phone-not-ready': 'Telefone ou mensagem tecnicamente inapta',
+    'contact-eligibility-missing': 'Elegibilidade não encontrada',
+    'contact-not-eligible': 'Contato não elegível para marketing',
+    'empty-content': 'Conteúdo vazio',
+    'duplicate-normalized-phone': 'Telefone normalizado duplicado',
+  };
+
+  return (
+    <BaseModal title="Contrato de Lote — Rascunho Local" onClose={onClose} size="wide">
+      <div className="space-y-4 text-xs">
+        <div className="rounded-xl border border-rose-100 dark:border-rose-900/50 bg-rose-50/60 dark:bg-rose-950/20 px-3 py-2 text-rose-800 dark:text-rose-200">
+          <div className="font-bold">Avisos</div>
+          <ul className="list-disc pl-5 mt-2">
+            {warnings.map((w, i) => (
+              <li key={i}>{w}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <div>
+            <div className="font-bold">Campanha</div>
+            <div className="mt-1 font-semibold">{draft.campaignName}</div>
+          </div>
+          <div>
+            <div className="font-bold">Status</div>
+            <div className="mt-1">Rascunho não enfileirado</div>
+          </div>
+          <div>
+            <div className="font-bold">Criado em</div>
+            <div className="mt-1 font-mono">{draft.createdAt}</div>
+          </div>
+          <div>
+            <div className="font-bold">Batch Fingerprint</div>
+            <div className="mt-1 font-mono break-words">{draft.batchFingerprint}</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 text-xs">
+          <div><div className="font-bold">Total</div><div className="mt-1 font-mono">{draft.totalItems}</div></div>
+          <div><div className="font-bold">Candidatos</div><div className="mt-1 font-mono">{draft.candidateItems}</div></div>
+          <div><div className="font-bold">Bloqueados</div><div className="mt-1 font-mono">{draft.blockedItems}</div></div>
+          <div><div className="font-bold">Bloqueados tecnicamente</div><div className="mt-1 font-mono">{draft.technicalBlockedItems}</div></div>
+          <div><div className="font-bold">Bloqueados por elegibilidade</div><div className="mt-1 font-mono">{draft.eligibilityBlockedItems}</div></div>
+          <div><div className="font-bold">Conteúdo bloqueado</div><div className="mt-1 font-mono">{draft.contentBlockedItems}</div></div>
+        </div>
+
+        <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-3">
+          <div className="font-bold text-[12px]">Infraestrutura</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs mt-2">
+            <div><div className="font-semibold">Backend seguro</div><div>Não disponível</div></div>
+            <div><div className="font-semibold">Provedor WhatsApp</div><div>Não configurado</div></div>
+            <div><div className="font-semibold">Fila persistida</div><div>Não</div></div>
+            <div><div className="font-semibold">Idempotência autoritativa</div><div>Não</div></div>
+          </div>
+        </div>
+
+        <div className="max-h-[50vh] overflow-auto border border-slate-100 dark:border-slate-800 rounded-xl">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-mono text-slate-400 tracking-wider">
+                {['Cliente', 'Telefone original', 'Telefone normalizado', 'Prontidão técnica', 'Elegibilidade', 'Status do contrato', 'Motivos', 'Fingerprint'].map((col) => (
+                  <th key={col} className="py-3 px-4">{col}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+              {draft.items.map((item) => (
+                <tr key={item.id}>
+                  <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">{item.customerName || '-'}</td>
+                  <td className="py-3.5 px-4 font-mono whitespace-nowrap">{item.rawPhone || '-'}</td>
+                  <td className="py-3.5 px-4 font-mono whitespace-nowrap">{item.normalizedPhone || '-'}</td>
+                  <td className="py-3.5 px-4">{item.technicalStatus ? <WhatsAppReadinessBadge status={item.technicalStatus as WhatsAppRecipientReadinessStatus} /> : 'Não encontrada'}</td>
+                  <td className="py-3.5 px-4">{item.eligibilityStatus ? <ContactEligibilityBadge status={item.eligibilityStatus as CampaignContactEligibilityStatus} /> : 'Não encontrada'}</td>
+                  <td className="py-3.5 px-4">{statusLabels[item.status] || item.status}</td>
+                  <td className="py-3.5 px-4">{(item.blockReasons && item.blockReasons.length) ? item.blockReasons.map((r) => reasonLabels[r] || r).join(', ') : '-'}</td>
+                  <td className="py-3.5 px-4 font-mono text-[11px] break-words">{item.deduplicationFingerprint}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex justify-end pt-2">
+          <button onClick={onClose} className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-bold">Fechar</button>
+        </div>
+      </div>
+    </BaseModal>
   );
 }
 
