@@ -31,6 +31,7 @@ import {
   CampaignContactEligibilityStatus,
   CampaignResult,
   CampaignDispatchDraft,
+  CampaignDispatchRequestPreview,
   CampaignSchedule,
   CampaignTemplate,
   CommercialAudienceOption,
@@ -41,6 +42,10 @@ import {
   WhatsAppCampaignReadiness,
 } from '../types';
 import { createCampaignDispatchDraft, getCampaignDispatchDraftWarnings } from '../utils/campaignDispatchContract';
+import {
+  createCampaignDispatchRequestPreview,
+  getCampaignDispatchRequestWarnings,
+} from '../utils/campaignDispatchRequest';
 import { prepareCampaignExecutionPreview } from '../utils/campaignPreparation';
 import { buildCampaignContactEligibilitySummary } from '../utils/contactEligibility';
 import { buildWhatsAppCampaignReadiness } from '../utils/whatsappReadiness';
@@ -245,6 +250,7 @@ export default function CommercialIntelligenceView({
 
   // Dispatch contract draft state and memoized draft
   const [isDispatchContractModalOpen, setIsDispatchContractModalOpen] = useState(false);
+  const [isDispatchRequestModalOpen, setIsDispatchRequestModalOpen] = useState(false);
   const dispatchDraft = useMemo(() => {
     if (!preparation || !whatsappReadiness || !contactEligibility) return null;
     if (!preparation.campaign) return null;
@@ -252,6 +258,15 @@ export default function CommercialIntelligenceView({
     const createdAt = preparation.generatedAt;
     return createCampaignDispatchDraft(preparation.campaign, preparation, whatsappReadiness, contactEligibility, draftId, createdAt);
   }, [preparation, whatsappReadiness, contactEligibility]);
+  const dispatchRequestPreview = useMemo(() => {
+    if (!dispatchDraft) return null;
+
+    return createCampaignDispatchRequestPreview(
+      dispatchDraft,
+      `request:${dispatchDraft.id}`,
+      dispatchDraft.createdAt
+    );
+  }, [dispatchDraft]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -467,7 +482,23 @@ export default function CommercialIntelligenceView({
         />
       )}
       {isDispatchContractModalOpen && dispatchDraft && (
-        <CampaignDispatchContractModal draft={dispatchDraft} onClose={() => setIsDispatchContractModalOpen(false)} />
+        <CampaignDispatchContractModal
+          draft={dispatchDraft}
+          canReviewBackendRequest={Boolean(dispatchRequestPreview)}
+          onReviewBackendRequest={() => {
+            if (!dispatchRequestPreview) return;
+
+            setIsDispatchContractModalOpen(false);
+            setIsDispatchRequestModalOpen(true);
+          }}
+          onClose={() => setIsDispatchContractModalOpen(false)}
+        />
+      )}
+      {isDispatchRequestModalOpen && dispatchRequestPreview && (
+        <CampaignDispatchRequestModal
+          request={dispatchRequestPreview}
+          onClose={() => setIsDispatchRequestModalOpen(false)}
+        />
       )}
       {isExecutionModalOpen && executionSession && (
         <CampaignExecutionSimulationModal
@@ -1567,7 +1598,17 @@ function ContactEligibilityBadge({ status, reason }: { status: CampaignContactEl
   );
 }
 
-function CampaignDispatchContractModal({ draft, onClose }: { draft: CampaignDispatchDraft; onClose: () => void }) {
+function CampaignDispatchContractModal({
+  draft,
+  canReviewBackendRequest,
+  onReviewBackendRequest,
+  onClose,
+}: {
+  draft: CampaignDispatchDraft;
+  canReviewBackendRequest: boolean;
+  onReviewBackendRequest: () => void;
+  onClose: () => void;
+}) {
   const warnings = useMemo(() => getCampaignDispatchDraftWarnings(draft), [draft]);
 
   const statusLabels: Record<string, string> = {
@@ -1659,6 +1700,147 @@ function CampaignDispatchContractModal({ draft, onClose }: { draft: CampaignDisp
                   <td className="py-3.5 px-4 font-mono text-[11px] break-words">{item.deduplicationFingerprint}</td>
                 </tr>
               ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-end gap-2 pt-2">
+          <button
+            type="button"
+            onClick={onReviewBackendRequest}
+            disabled={!canReviewBackendRequest}
+            className="bg-cyan-600 text-white hover:bg-cyan-700 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-2 rounded-xl text-xs font-bold"
+          >
+            Revisar solicitação backend
+          </button>
+          <button onClick={onClose} className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-bold">Fechar</button>
+        </div>
+      </div>
+    </BaseModal>
+  );
+}
+
+function CampaignDispatchRequestModal({ request, onClose }: { request: CampaignDispatchRequestPreview; onClose: () => void }) {
+  const warnings = useMemo(() => getCampaignDispatchRequestWarnings(request), [request]);
+
+  return (
+    <BaseModal title="Solicitação ao Backend — Prévia Local" onClose={onClose} size="wide">
+      <div className="space-y-4 text-xs">
+        <div className="rounded-xl border border-cyan-100 dark:border-cyan-900/50 bg-cyan-50/70 dark:bg-cyan-950/20 px-3 py-2 text-cyan-800 dark:text-cyan-200">
+          <div className="font-bold">Avisos</div>
+          <ul className="list-disc pl-5 mt-2">
+            {warnings.map((warning, index) => (
+              <li key={`${warning}-${index}`}>{warning}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+          <div>
+            <div className="font-bold">Status</div>
+            <div className="mt-1">Prévia não submetida</div>
+          </div>
+          <div>
+            <div className="font-bold">Versão do esquema</div>
+            <div className="mt-1 font-mono">{request.schemaVersion}</div>
+          </div>
+          <div>
+            <div className="font-bold">ID da solicitação</div>
+            <div className="mt-1 font-mono break-words">{request.requestId}</div>
+          </div>
+          <div>
+            <div className="font-bold">Chave idempotente proposta</div>
+            <div className="mt-1 font-mono break-words">{request.idempotencyKey}</div>
+          </div>
+          <div>
+            <div className="font-bold">Campanha</div>
+            <div className="mt-1 font-semibold">{request.campaignName}</div>
+          </div>
+          <div>
+            <div className="font-bold">Canal</div>
+            <div className="mt-1">{request.channel}</div>
+          </div>
+          <div>
+            <div className="font-bold">Finalidade</div>
+            <div className="mt-1">{request.purpose}</div>
+          </div>
+          <div>
+            <div className="font-bold">Criado em</div>
+            <div className="mt-1 font-mono">{request.createdAt}</div>
+          </div>
+          <div>
+            <div className="font-bold">Fingerprint do lote de origem</div>
+            <div className="mt-1 font-mono break-words">{request.sourceBatchFingerprint}</div>
+          </div>
+          <div>
+            <div className="font-bold">Total no rascunho</div>
+            <div className="mt-1 font-mono">{request.totalDraftItems}</div>
+          </div>
+          <div>
+            <div className="font-bold">Incluídos no payload</div>
+            <div className="mt-1 font-mono">{request.includedItems}</div>
+          </div>
+          <div>
+            <div className="font-bold">Excluídos do payload</div>
+            <div className="mt-1 font-mono">{request.excludedItems}</div>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-3">
+          <div className="font-bold text-[12px]">Infraestrutura</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs mt-2">
+            <div><div className="font-semibold">Backend seguro</div><div>Não disponível</div></div>
+            <div><div className="font-semibold">Solicitação submetida</div><div>Não</div></div>
+            <div><div className="font-semibold">Solicitação persistida</div><div>Não</div></div>
+            <div><div className="font-semibold">Idempotência autoritativa</div><div>Não</div></div>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-3">
+          <div className="font-bold text-[12px]">Validação</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs mt-2">
+            <div><div className="font-semibold">Estruturalmente válida</div><div>{request.validation.structurallyValid ? 'Sim' : 'Não'}</div></div>
+            <div><div className="font-semibold">Quantidade de problemas</div><div>{request.validation.issueCount}</div></div>
+          </div>
+          <div className="mt-3 space-y-2">
+            {request.validation.issues.length > 0 ? (
+              request.validation.issues.map((issue, index) => (
+                <div key={`${issue.code}-${index}`} className="rounded-lg border border-rose-100 dark:border-rose-900/50 bg-rose-50/70 dark:bg-rose-950/20 px-2 py-2">
+                  <div className="font-semibold">{issue.message}</div>
+                  {issue.itemId ? <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Item: {issue.itemId}</div> : null}
+                </div>
+              ))
+            ) : (
+              <div className="rounded-lg border border-emerald-100 dark:border-emerald-900/50 bg-emerald-50/70 dark:bg-emerald-950/20 px-2 py-2 text-emerald-700 dark:text-emerald-300">
+                Nenhum problema estrutural encontrado.
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="max-h-[42vh] overflow-auto border border-slate-100 dark:border-slate-800 rounded-xl">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-mono text-slate-400 tracking-wider">
+                {['Cliente', 'Telefone normalizado', 'Conteúdo', 'Item do rascunho', 'Fingerprint de origem'].map((column) => (
+                  <th key={column} className="py-3 px-4 whitespace-nowrap">{column}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+              {request.items.length > 0 ? request.items.map((item) => (
+                <tr key={item.id}>
+                  <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">{item.customerName || '-'}</td>
+                  <td className="py-3.5 px-4 font-mono whitespace-nowrap">{item.normalizedPhone || '-'}</td>
+                  <td className="py-3.5 px-4 min-w-[260px] text-slate-600 dark:text-slate-300">{item.content || '-'}</td>
+                  <td className="py-3.5 px-4 font-mono text-[11px] break-words">{item.sourceDraftItemId}</td>
+                  <td className="py-3.5 px-4 font-mono text-[11px] break-words">{item.sourceItemFingerprint}</td>
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan={5} className="py-4 px-4 text-slate-500 dark:text-slate-400">Nenhum candidato foi incluído nesta prévia.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

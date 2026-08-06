@@ -380,6 +380,76 @@ export interface CampaignDispatchDraft {
   items: CampaignDispatchDraftItem[];
 }
 
+export type CampaignDispatchRequestValidationIssueCode =
+  | 'invalid-draft-status'
+  | 'missing-request-id'
+  | 'missing-idempotency-key'
+  | 'missing-batch-fingerprint'
+  | 'candidate-count-mismatch'
+  | 'missing-normalized-phone'
+  | 'empty-content'
+  | 'missing-item-fingerprint'
+  | 'duplicate-normalized-phone';
+
+export interface CampaignDispatchRequestValidationIssue {
+  code: CampaignDispatchRequestValidationIssueCode;
+  message: string;
+  itemId?: string;
+}
+
+export interface CampaignDispatchRequestItem {
+  id: string;
+  customerId: string;
+  customerName: string;
+
+  channel: 'whatsapp';
+  purpose: 'marketing';
+
+  normalizedPhone: string;
+  content: string;
+
+  sourceDraftItemId: string;
+  sourceItemFingerprint: string;
+}
+
+export interface CampaignDispatchRequestValidation {
+  structurallyValid: boolean;
+  issueCount: number;
+  issues: CampaignDispatchRequestValidationIssue[];
+}
+
+export interface CampaignDispatchRequestPreview {
+  schemaVersion: 'campaign-dispatch-request.v1';
+
+  requestId: string;
+  idempotencyKey: string;
+
+  status: 'preview-only-not-submitted';
+
+  createdAt: string;
+
+  sourceDraftId: string;
+  campaignId: string;
+  campaignName: string;
+
+  channel: 'whatsapp';
+  purpose: 'marketing';
+
+  sourceBatchFingerprint: string;
+
+  backendAvailable: false;
+  requestSubmitted: false;
+  requestPersisted: false;
+  idempotencyEnforced: false;
+
+  totalDraftItems: number;
+  includedItems: number;
+  excludedItems: number;
+
+  items: CampaignDispatchRequestItem[];
+  validation: CampaignDispatchRequestValidation;
+}
+
 export type CampaignExecutionItemStatus =
   | 'pending'
   | 'processing'
