@@ -450,6 +450,107 @@ export interface CampaignDispatchRequestPreview {
   validation: CampaignDispatchRequestValidation;
 }
 
+export type CampaignDispatchTransportValidationIssueCode =
+  | 'invalid-source-request-status'
+  | 'invalid-source-request-schema'
+  | 'source-request-invalid'
+  | 'missing-source-request-id'
+  | 'missing-endpoint-path'
+  | 'invalid-endpoint-path'
+  | 'invalid-http-method'
+  | 'invalid-content-type'
+  | 'missing-idempotency-header'
+  | 'idempotency-key-mismatch'
+  | 'missing-body-fingerprint'
+  | 'body-fingerprint-mismatch'
+  | 'body-item-count-mismatch'
+  | 'no-items-to-transport'
+  | 'missing-normalized-phone'
+  | 'empty-content'
+  | 'missing-source-item-fingerprint'
+  | 'duplicate-normalized-phone'
+  | 'body-size-exceeded';
+
+export interface CampaignDispatchTransportValidationIssue {
+  code: CampaignDispatchTransportValidationIssueCode;
+  message: string;
+  itemId?: string;
+}
+
+export interface CampaignDispatchTransportItem {
+  id: string;
+  customerId: string;
+
+  channel: 'whatsapp';
+  purpose: 'marketing';
+
+  normalizedPhone: string;
+  content: string;
+
+  sourceDraftItemId: string;
+  sourceItemFingerprint: string;
+}
+
+export interface CampaignDispatchTransportBody {
+  schemaVersion: 'campaign-dispatch-request.v1';
+
+  requestId: string;
+  createdAt: string;
+
+  campaignId: string;
+
+  channel: 'whatsapp';
+  purpose: 'marketing';
+
+  sourceDraftId: string;
+  sourceBatchFingerprint: string;
+
+  items: CampaignDispatchTransportItem[];
+}
+
+export interface CampaignDispatchTransportValidation {
+  structurallyValid: boolean;
+  futureTransmissionEligible: boolean;
+  issueCount: number;
+  issues: CampaignDispatchTransportValidationIssue[];
+}
+
+export interface CampaignDispatchTransportEnvelopePreview {
+  schemaVersion: 'campaign-dispatch-transport.v1';
+
+  status: 'preview-only-not-transmitted';
+
+  createdAt: string;
+
+  sourceRequestId: string;
+  sourceRequestSchemaVersion: 'campaign-dispatch-request.v1';
+
+  proposedMethod: 'POST';
+  proposedEndpointPath: '/internal/campaign-dispatch-requests';
+  proposedContentType: 'application/json';
+
+  proposedIdempotencyHeaderName: 'Idempotency-Key';
+  proposedIdempotencyHeaderValue: string;
+
+  backendAvailable: false;
+  authenticationConfigured: false;
+  requestTransmitted: false;
+  responseReceived: false;
+  transportPersisted: false;
+  idempotencyEnforced: false;
+
+  body: CampaignDispatchTransportBody;
+  canonicalBody: string;
+  bodyFingerprint: string;
+  bodySizeBytes: number;
+  maximumBodySizeBytes: 262144;
+
+  totalSourceItems: number;
+  transportItems: number;
+
+  validation: CampaignDispatchTransportValidation;
+}
+
 export type CampaignExecutionItemStatus =
   | 'pending'
   | 'processing'

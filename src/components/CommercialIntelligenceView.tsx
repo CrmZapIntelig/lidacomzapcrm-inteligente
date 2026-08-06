@@ -32,6 +32,7 @@ import {
   CampaignResult,
   CampaignDispatchDraft,
   CampaignDispatchRequestPreview,
+  CampaignDispatchTransportEnvelopePreview,
   CampaignSchedule,
   CampaignTemplate,
   CommercialAudienceOption,
@@ -46,6 +47,10 @@ import {
   createCampaignDispatchRequestPreview,
   getCampaignDispatchRequestWarnings,
 } from '../utils/campaignDispatchRequest';
+import {
+  createCampaignDispatchTransportEnvelopePreview,
+  getCampaignDispatchTransportWarnings,
+} from '../utils/campaignDispatchTransport';
 import { prepareCampaignExecutionPreview } from '../utils/campaignPreparation';
 import { buildCampaignContactEligibilitySummary } from '../utils/contactEligibility';
 import { buildWhatsAppCampaignReadiness } from '../utils/whatsappReadiness';
@@ -251,6 +256,7 @@ export default function CommercialIntelligenceView({
   // Dispatch contract draft state and memoized draft
   const [isDispatchContractModalOpen, setIsDispatchContractModalOpen] = useState(false);
   const [isDispatchRequestModalOpen, setIsDispatchRequestModalOpen] = useState(false);
+  const [isDispatchTransportModalOpen, setIsDispatchTransportModalOpen] = useState(false);
   const dispatchDraft = useMemo(() => {
     if (!preparation || !whatsappReadiness || !contactEligibility) return null;
     if (!preparation.campaign) return null;
@@ -267,6 +273,14 @@ export default function CommercialIntelligenceView({
       dispatchDraft.createdAt
     );
   }, [dispatchDraft]);
+  const dispatchTransportEnvelope = useMemo(() => {
+    if (!dispatchRequestPreview) return null;
+
+    return createCampaignDispatchTransportEnvelopePreview(
+      dispatchRequestPreview,
+      dispatchRequestPreview.createdAt
+    );
+  }, [dispatchRequestPreview]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -497,7 +511,20 @@ export default function CommercialIntelligenceView({
       {isDispatchRequestModalOpen && dispatchRequestPreview && (
         <CampaignDispatchRequestModal
           request={dispatchRequestPreview}
+          canReviewTransportEnvelope={Boolean(dispatchTransportEnvelope)}
+          onReviewTransportEnvelope={() => {
+            if (!dispatchTransportEnvelope) return;
+
+            setIsDispatchRequestModalOpen(false);
+            setIsDispatchTransportModalOpen(true);
+          }}
           onClose={() => setIsDispatchRequestModalOpen(false)}
+        />
+      )}
+      {isDispatchTransportModalOpen && dispatchTransportEnvelope && (
+        <CampaignDispatchTransportModal
+          envelope={dispatchTransportEnvelope}
+          onClose={() => setIsDispatchTransportModalOpen(false)}
         />
       )}
       {isExecutionModalOpen && executionSession && (
@@ -1127,7 +1154,7 @@ function CampaignPreparationModal({
         )}
 
         {canShowMessages && (
-          <div className="max-h-[55vh] overflow-auto border border-slate-100 dark:border-slate-800 rounded-xl">
+          <div className="max-h-[55vh] overflow-x-auto overflow-y-auto border border-slate-100 dark:border-slate-800 rounded-xl">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-mono text-slate-400 tracking-wider">
@@ -1282,7 +1309,7 @@ function CampaignExecutionSimulationModal({
           </div>
         </div>
 
-        <div className="max-h-[42vh] overflow-auto rounded-xl border border-slate-100 dark:border-slate-800">
+        <div className="max-h-[42vh] overflow-x-auto overflow-y-auto rounded-xl border border-slate-100 dark:border-slate-800">
           <table className="w-full border-collapse text-left text-xs">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:border-slate-800 dark:bg-slate-800/50">
@@ -1455,20 +1482,27 @@ function BaseModal({
   closeDisabled?: boolean;
 }) {
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full p-6 relative shadow-2xl ${size === 'wide' ? 'max-w-5xl' : 'max-w-md'}`}>
-        <button
-          type="button"
-          onClick={onClose}
-          disabled={closeDisabled}
-          aria-label="Fechar modal"
-          title={closeDisabled ? 'Conclua ou cancele a simulação antes de fechar' : 'Fechar'}
-          className="absolute top-4 right-4 p-1 text-slate-400 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:text-slate-200"
-        >
-          <X className="w-5 h-5" />
-        </button>
-        <h3 className="font-bold text-slate-950 dark:text-white text-sm pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">{title}</h3>
-        {children}
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs p-4 sm:p-5">
+      <div
+        className={`mx-auto flex w-full max-w-[calc(100vw-2rem)] min-h-0 flex-col overflow-hidden rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl max-h-[calc(100vh-2rem)] ${size === 'wide' ? 'sm:max-w-5xl' : 'sm:max-w-md'}`}
+        style={{ maxHeight: 'calc(100dvh - 2rem)' }}
+      >
+        <div className="relative flex-none border-b border-slate-100 dark:border-slate-800 px-5 py-4 sm:px-6">
+          <h3 className="font-bold text-slate-950 dark:text-white text-sm">{title}</h3>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={closeDisabled}
+            aria-label="Fechar modal"
+            title={closeDisabled ? 'Conclua ou cancele a simulação antes de fechar' : 'Fechar'}
+            className="absolute right-4 top-4 p-1 text-slate-400 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:text-slate-200"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -1678,7 +1712,7 @@ function CampaignDispatchContractModal({
           </div>
         </div>
 
-        <div className="max-h-[50vh] overflow-auto border border-slate-100 dark:border-slate-800 rounded-xl">
+        <div className="max-h-[50vh] overflow-x-auto overflow-y-auto border border-slate-100 dark:border-slate-800 rounded-xl">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-mono text-slate-400 tracking-wider">
@@ -1720,7 +1754,17 @@ function CampaignDispatchContractModal({
   );
 }
 
-function CampaignDispatchRequestModal({ request, onClose }: { request: CampaignDispatchRequestPreview; onClose: () => void }) {
+function CampaignDispatchRequestModal({
+  request,
+  canReviewTransportEnvelope,
+  onReviewTransportEnvelope,
+  onClose,
+}: {
+  request: CampaignDispatchRequestPreview;
+  canReviewTransportEnvelope: boolean;
+  onReviewTransportEnvelope: () => void;
+  onClose: () => void;
+}) {
   const warnings = useMemo(() => getCampaignDispatchRequestWarnings(request), [request]);
 
   return (
@@ -1818,7 +1862,7 @@ function CampaignDispatchRequestModal({ request, onClose }: { request: CampaignD
           </div>
         </div>
 
-        <div className="max-h-[42vh] overflow-auto border border-slate-100 dark:border-slate-800 rounded-xl">
+        <div className="max-h-[42vh] overflow-x-auto overflow-y-auto border border-slate-100 dark:border-slate-800 rounded-xl">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-mono text-slate-400 tracking-wider">
@@ -1843,6 +1887,208 @@ function CampaignDispatchRequestModal({ request, onClose }: { request: CampaignD
               )}
             </tbody>
           </table>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-end gap-2 pt-2">
+          <button
+            type="button"
+            onClick={onReviewTransportEnvelope}
+            disabled={!canReviewTransportEnvelope}
+            className="bg-cyan-600 text-white hover:bg-cyan-700 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-2 rounded-xl text-xs font-bold"
+          >
+            Revisar envelope de transporte
+          </button>
+          <button onClick={onClose} className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-bold">Fechar</button>
+        </div>
+      </div>
+    </BaseModal>
+  );
+}
+
+function CampaignDispatchTransportModal({
+  envelope,
+  onClose,
+}: {
+  envelope: CampaignDispatchTransportEnvelopePreview;
+  onClose: () => void;
+}) {
+  const warnings = useMemo(() => getCampaignDispatchTransportWarnings(envelope), [envelope]);
+  const parsedCanonicalBody = useMemo(() => {
+    try {
+      return JSON.stringify(JSON.parse(envelope.canonicalBody), null, 2);
+    } catch {
+      return envelope.canonicalBody;
+    }
+  }, [envelope.canonicalBody]);
+
+  const statusLabel = envelope.status === 'preview-only-not-transmitted' ? 'Prévia não transmitida' : envelope.status;
+  const methodLabel = envelope.proposedMethod === 'POST' ? 'POST' : envelope.proposedMethod;
+  const contentTypeLabel = envelope.proposedContentType === 'application/json' ? 'application/json' : envelope.proposedContentType;
+  const structuralLabel = envelope.validation.structurallyValid ? 'Sim' : 'Não';
+  const futureEligibleLabel = envelope.validation.futureTransmissionEligible ? 'Sim' : 'Não';
+  const booleanLabel = (value: boolean) => (value ? 'Sim' : 'Não');
+
+  return (
+    <BaseModal title="Envelope de Transporte — Prévia Local" onClose={onClose} size="wide">
+      <div className="space-y-4 text-xs">
+        <div className="rounded-xl border border-cyan-100 dark:border-cyan-900/50 bg-cyan-50/70 dark:bg-cyan-950/20 px-3 py-2 text-cyan-800 dark:text-cyan-200">
+          <div className="font-bold">Avisos</div>
+          <ul className="list-disc pl-5 mt-2">
+            {warnings.map((warning, index) => (
+              <li key={`${warning}-${index}`}>{warning}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+          <div>
+            <div className="font-bold">Status</div>
+            <div className="mt-1">{statusLabel}</div>
+          </div>
+          <div>
+            <div className="font-bold">Versão do envelope</div>
+            <div className="mt-1 font-mono">{envelope.schemaVersion}</div>
+          </div>
+          <div>
+            <div className="font-bold">ID da solicitação de origem</div>
+            <div className="mt-1 font-mono break-words">{envelope.sourceRequestId}</div>
+          </div>
+          <div>
+            <div className="font-bold">Versão da solicitação de origem</div>
+            <div className="mt-1 font-mono">{envelope.sourceRequestSchemaVersion}</div>
+          </div>
+          <div>
+            <div className="font-bold">Criado em</div>
+            <div className="mt-1 font-mono">{envelope.createdAt}</div>
+          </div>
+          <div>
+            <div className="font-bold">Método proposto</div>
+            <div className="mt-1">{methodLabel}</div>
+          </div>
+          <div>
+            <div className="font-bold">Endpoint proposto</div>
+            <div className="mt-1 font-mono">{envelope.proposedEndpointPath}</div>
+          </div>
+          <div>
+            <div className="font-bold">Tipo de conteúdo</div>
+            <div className="mt-1">{contentTypeLabel}</div>
+          </div>
+          <div>
+            <div className="font-bold">Nome do cabeçalho idempotente</div>
+            <div className="mt-1 font-mono">{envelope.proposedIdempotencyHeaderName}</div>
+          </div>
+          <div>
+            <div className="font-bold">Valor do cabeçalho idempotente</div>
+            <div className="mt-1 font-mono break-words">{envelope.proposedIdempotencyHeaderValue}</div>
+          </div>
+          <div>
+            <div className="font-bold">Fingerprint do corpo</div>
+            <div className="mt-1 font-mono break-words">{envelope.bodyFingerprint}</div>
+          </div>
+          <div>
+            <div className="font-bold">Tamanho do corpo em bytes</div>
+            <div className="mt-1 font-mono">{envelope.bodySizeBytes}</div>
+          </div>
+          <div>
+            <div className="font-bold">Limite local em bytes</div>
+            <div className="mt-1 font-mono">{envelope.maximumBodySizeBytes}</div>
+          </div>
+          <div>
+            <div className="font-bold">Total de itens da solicitação</div>
+            <div className="mt-1 font-mono">{envelope.totalSourceItems}</div>
+          </div>
+          <div>
+            <div className="font-bold">Itens no envelope</div>
+            <div className="mt-1 font-mono">{envelope.transportItems}</div>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-3">
+          <div className="font-bold text-[12px]">Infraestrutura</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs mt-2">
+            <div><div className="font-semibold">Backend seguro</div><div>{booleanLabel(envelope.backendAvailable)}</div></div>
+            <div><div className="font-semibold">Autenticação configurada</div><div>{booleanLabel(envelope.authenticationConfigured)}</div></div>
+            <div><div className="font-semibold">Requisição transmitida</div><div>{booleanLabel(envelope.requestTransmitted)}</div></div>
+            <div><div className="font-semibold">Resposta recebida</div><div>{booleanLabel(envelope.responseReceived)}</div></div>
+            <div><div className="font-semibold">Envelope persistido</div><div>{booleanLabel(envelope.transportPersisted)}</div></div>
+            <div><div className="font-semibold">Idempotência autoritativa</div><div>{booleanLabel(envelope.idempotencyEnforced)}</div></div>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-3">
+          <div className="font-bold text-[12px]">Validação</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs mt-2">
+            <div><div className="font-semibold">Estruturalmente válido</div><div>{structuralLabel}</div></div>
+            <div><div className="font-semibold">Apto para futura transmissão</div><div>{futureEligibleLabel}</div></div>
+            <div><div className="font-semibold">Quantidade de problemas</div><div>{envelope.validation.issueCount}</div></div>
+          </div>
+          <div className="mt-3 space-y-2">
+            {envelope.validation.issues.length > 0 ? envelope.validation.issues.map((issue, index) => (
+              <div key={`${issue.code}-${index}`} className="rounded-lg border border-rose-100 dark:border-rose-900/50 bg-rose-50/70 dark:bg-rose-950/20 px-2 py-2">
+                <div className="font-semibold">{issue.message}</div>
+                {issue.itemId ? <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Item: {issue.itemId}</div> : null}
+              </div>
+            )) : (
+              <div className="rounded-lg border border-emerald-100 dark:border-emerald-900/50 bg-emerald-50/70 dark:bg-emerald-950/20 px-2 py-2 text-emerald-700 dark:text-emerald-300">
+                Nenhum problema estrutural encontrado.
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-3">
+          <div className="font-bold text-[12px]">Cabeçalhos propostos</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs mt-2">
+            <div><div className="font-semibold">Content-Type</div><div className="font-mono">application/json</div></div>
+            <div><div className="font-semibold">Idempotency-Key</div><div className="font-mono break-words">{envelope.proposedIdempotencyHeaderValue}</div></div>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-3">
+          <div className="font-bold text-[12px]">Itens do corpo</div>
+          {envelope.body.items.length > 0 ? (
+            <div className="max-h-[32vh] overflow-x-auto overflow-y-auto mt-3 border border-slate-100 dark:border-slate-800 rounded-xl">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-mono text-slate-400 tracking-wider">
+                    {['ID do item', 'Cliente', 'Telefone normalizado', 'Finalidade', 'Conteúdo', 'Item do rascunho', 'Fingerprint de origem'].map((column) => (
+                      <th key={column} className="py-3 px-4 whitespace-nowrap">{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                  {envelope.body.items.map((item) => (
+                    <tr key={item.id}>
+                      <td className="py-3.5 px-4 font-mono text-[11px] break-words">{item.id}</td>
+                      <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">{item.customerId}</td>
+                      <td className="py-3.5 px-4 font-mono whitespace-nowrap">{item.normalizedPhone || '-'}</td>
+                      <td className="py-3.5 px-4">{item.purpose}</td>
+                      <td className="py-3.5 px-4 min-w-[220px] text-slate-600 dark:text-slate-300">{item.content || '-'}</td>
+                      <td className="py-3.5 px-4 font-mono text-[11px] break-words">{item.sourceDraftItemId}</td>
+                      <td className="py-3.5 px-4 font-mono text-[11px] break-words">{item.sourceItemFingerprint}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="mt-3 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 p-3 text-slate-500 dark:text-slate-400">
+              Nenhum item foi incluído no corpo deste envelope.
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950/40 p-3">
+          <div className="font-bold text-[12px]">Corpo canônico local</div>
+          <pre className="mt-3 max-h-[28vh] overflow-x-auto overflow-y-auto max-w-full whitespace-pre-wrap break-all rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-950 text-slate-100 p-3 font-mono text-[11px]">
+{envelope.canonicalBody}
+          </pre>
+          <div className="mt-3">
+            <div className="font-semibold mb-1">Visualização legível</div>
+            <pre className="max-h-[18vh] overflow-x-auto overflow-y-auto max-w-full whitespace-pre-wrap break-all rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 p-3 font-mono text-[11px]">
+{parsedCanonicalBody}
+            </pre>
+          </div>
         </div>
 
         <div className="flex justify-end pt-2">
