@@ -54,7 +54,6 @@ import Header from './components/Header';
 import DashboardView from './components/DashboardView';
 import WhatsAppView from './components/WhatsAppView';
 import CrmKanbanView from './components/CrmKanbanView';
-import CampanhasView from './components/CampanhasView';
 import DisparadorView from './components/DisparadorView';
 import CardapioView from './components/CardapioView';
 import CozinhaView from './components/CozinhaView';
@@ -1643,15 +1642,10 @@ if (publicCardapioMatch) {
             />
           )}
 
-{currentTab === 'campanhas' && (
-  <CampanhasView
-    campaigns={campaigns}
-    onAddCampaign={handleSaveCampaign}
-  />
-)}
-
-          {currentTab === 'inteligencia_comercial' && (
+          {(currentTab === 'campanhas' || currentTab === 'inteligencia_comercial') && (
             <CommercialIntelligenceView
+            key={currentTab}
+            initialTab={currentTab === 'campanhas' ? 'campaigns' : 'dashboard'}
             commercialSegments={commercialSegments}
             availableAudienceOptions={availableAudienceOptions}
             clients={clients}

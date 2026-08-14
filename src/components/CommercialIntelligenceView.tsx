@@ -72,6 +72,7 @@ type ModalId = 'segment' | 'template' | 'campaign' | 'schedule' | null;
 const CAMPAIGN_SIMULATION_INTERVAL_MS = 500;
 
 interface CommercialIntelligenceViewProps {
+  initialTab?: TabId;
   commercialSegments: CommercialSegment[];
   availableAudienceOptions: CommercialAudienceOption[];
   clients: Client[];
@@ -105,6 +106,7 @@ const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
 ];
 
 export default function CommercialIntelligenceView({
+  initialTab = 'dashboard',
   commercialSegments,
   availableAudienceOptions,
   clients,
@@ -125,7 +127,7 @@ export default function CommercialIntelligenceView({
   onSaveSchedule,
   onDeleteSchedule,
 }: CommercialIntelligenceViewProps) {
-  const [activeTab, setActiveTab] = useState<TabId>('dashboard');
+  const [activeTab, setActiveTab] = useState<TabId>(initialTab);
   const [activeModal, setActiveModal] = useState<ModalId>(null);
   const [previewCampaign, setPreviewCampaign] = useState<Campaign | null>(null);
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
