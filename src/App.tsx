@@ -994,6 +994,11 @@ const handleSaveTemplate = async (template: CampaignTemplate) => {
 };
 
 const handleDeleteTemplate = async (templateId: string) => {
+  if (campaigns.some((campaign) => campaign.templateId === templateId)) {
+    alert('Este template está sendo utilizado por campanhas e não pode ser excluído. Inative-o em vez de excluí-lo.');
+    return;
+  }
+
   setCampaignTemplates((prev) => prev.filter((item) => item.id !== templateId));
   await deleteFirestoreDocument('campaignTemplates', templateId, 'CAMPAIGN TEMPLATE');
 };

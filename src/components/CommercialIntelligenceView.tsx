@@ -129,6 +129,7 @@ export default function CommercialIntelligenceView({
 }: CommercialIntelligenceViewProps) {
   const [activeTab, setActiveTab] = useState<TabId>(initialTab);
   const [activeModal, setActiveModal] = useState<ModalId>(null);
+  const [editingTemplate, setEditingTemplate] = useState<CampaignTemplate | null>(null);
   const [previewCampaign, setPreviewCampaign] = useState<Campaign | null>(null);
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
   const [isPreviewRefreshing, setIsPreviewRefreshing] = useState(false);
@@ -144,6 +145,25 @@ export default function CommercialIntelligenceView({
   const reachedCustomers = campaignResults.reduce((sum, result) => sum + result.reachedCustomers, 0);
   const conversions = campaignResults.reduce((sum, result) => sum + result.conversions, 0);
   const revenue = campaignResults.reduce((sum, result) => sum + result.revenue, 0);
+  const handleOpenNewTemplate = () => {
+    setEditingTemplate(null);
+    setActiveModal('template');
+  };
+  const handleOpenEditTemplate = (template: CampaignTemplate) => {
+    setEditingTemplate(template);
+    setActiveModal('template');
+  };
+  const handleCloseTemplateModal = () => {
+    setEditingTemplate(null);
+    setActiveModal(null);
+  };
+  const handleToggleTemplate = (template: CampaignTemplate) => {
+    onSaveTemplate({
+      ...template,
+      active: !template.active,
+      updatedAt: new Date().toISOString(),
+    });
+  };
   const preview = useMemo(
     () => previewCampaign
       ? resolveCampaignAudiencePreview(previewCampaign, availableAudienceOptions, customerCommercialProfiles, clients)
@@ -401,8 +421,8 @@ export default function CommercialIntelligenceView({
         <TableSection
           title="Templates"
           actionLabel="Novo Template"
-          onAction={() => setActiveModal('template')}
-          columns={['Nome', 'Categoria', 'Mensagem', 'Ações']}
+          onAction={handleOpenNewTemplate}
+          columns={['Nome', 'Categoria', 'Mensagem', 'Status', 'Ações']}
           emptyText="Nenhum template cadastrado."
         >
           {campaignTemplates.map((template) => (
@@ -410,7 +430,26 @@ export default function CommercialIntelligenceView({
               <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">{template.name}</td>
               <td className="py-3.5 px-4">{template.category}</td>
               <td className="py-3.5 px-4 max-w-[360px] truncate">{template.message}</td>
-              <td className="py-3.5 px-4"><DeleteButton onClick={() => onDeleteTemplate(template.id)} /></td>
+              <td className="py-3.5 px-4"><StatusBadge active={template.active} activeLabel="ATIVO" inactiveLabel="INATIVO" /></td>
+              <td className="py-3.5 px-4">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenEditTemplate(template)}
+                    className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-cyan-50 text-cyan-700 hover:bg-cyan-100 dark:bg-cyan-950/30 dark:text-cyan-300 dark:hover:bg-cyan-950/50 transition-colors"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleTemplate(template)}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-colors ${template.active ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-950/30 dark:text-amber-300 dark:hover:bg-amber-950/50' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-300 dark:hover:bg-emerald-950/50'}`}
+                  >
+                    {template.active ? 'Inativar' : 'Ativar'}
+                  </button>
+                  <DeleteButton onClick={() => onDeleteTemplate(template.id)} />
+                </div>
+              </td>
             </tr>
           ))}
         </TableSection>
@@ -453,12 +492,12 @@ export default function CommercialIntelligenceView({
         <SegmentModal onClose={() => setActiveModal(null)} onSave={onSaveSegment} />
       )}
       {activeModal === 'template' && (
-        <TemplateModal onClose={() => setActiveModal(null)} onSave={onSaveTemplate} />
+        <TemplateModal template={editingTemplate || undefined} onClose={handleCloseTemplateModal} onSave={onSaveTemplate} />
       )}
       {activeModal === 'campaign' && (
         <CampaignModal
           audiences={availableAudienceOptions}
-          templates={campaignTemplates}
+          templates={campaignTemplates.filter((template) => template.active === true)}
           onClose={() => setActiveModal(null)}
           onSave={onSaveCampaign}
         />
@@ -849,20 +888,30 @@ function SegmentModal({ onClose, onSave }: { onClose: () => void; onSave: (segme
   );
 }
 
-function TemplateModal({ onClose, onSave }: { onClose: () => void; onSave: (template: CampaignTemplate) => void }) {
-  const [name, setName] = useState('');
-  const [category, setCategory] = useState('');
-  const [message, setMessage] = useState('');
+function TemplateModal({
+  template,
+  onClose,
+  onSave,
+}: {
+  template?: CampaignTemplate;
+  onClose: () => void;
+  onSave: (template: CampaignTemplate) => void;
+}) {
+  const [name, setName] = useState(template?.name || '');
+  const [category, setCategory] = useState(template?.category || '');
+  const [message, setMessage] = useState(template?.message || '');
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     const now = new Date().toISOString();
-    onSave({ id: `tpl_${Date.now()}`, name, category, message, active: true, createdAt: now, updatedAt: now });
+    onSave(template
+      ? { ...template, name, category, message, updatedAt: now }
+      : { id: `tpl_${Date.now()}`, name, category, message, active: true, createdAt: now, updatedAt: now });
     onClose();
   };
 
   return (
-    <BaseModal title="Novo Template" onClose={onClose}>
+    <BaseModal title={template ? 'Editar Template' : 'Novo Template'} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4 text-xs">
         <TextInput label="Nome" value={name} onChange={setName} required />
         <TextInput label="Categoria" value={category} onChange={setCategory} required />
@@ -1580,10 +1629,18 @@ function ModalActions({ onClose }: { onClose: () => void }) {
   );
 }
 
-function StatusBadge({ active }: { active: boolean }) {
+function StatusBadge({
+  active,
+  activeLabel = 'ATIVA',
+  inactiveLabel = 'INATIVA',
+}: {
+  active: boolean;
+  activeLabel?: string;
+  inactiveLabel?: string;
+}) {
   return (
     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${active ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}`}>
-      {active ? 'ATIVA' : 'INATIVA'}
+      {active ? activeLabel : inactiveLabel}
     </span>
   );
 }
