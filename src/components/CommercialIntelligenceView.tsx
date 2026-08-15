@@ -164,6 +164,26 @@ export default function CommercialIntelligenceView({
       updatedAt: new Date().toISOString(),
     });
   };
+  const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
+  const handleOpenNewCampaign = () => {
+    setEditingCampaign(null);
+    setActiveModal('campaign');
+  };
+  const handleOpenEditCampaign = (campaign: Campaign) => {
+    setEditingCampaign(campaign);
+    setActiveModal('campaign');
+  };
+  const handleCloseCampaignModal = () => {
+    setEditingCampaign(null);
+    setActiveModal(null);
+  };
+  const handleChangeCampaignStatus = (campaign: Campaign, status: Campaign['status']) => {
+    onSaveCampaign({
+      ...campaign,
+      status,
+      updatedAt: new Date().toISOString(),
+    });
+  };
   const preview = useMemo(
     () => previewCampaign
       ? resolveCampaignAudiencePreview(previewCampaign, availableAudienceOptions, customerCommercialProfiles, clients)
@@ -383,37 +403,77 @@ export default function CommercialIntelligenceView({
         <TableSection
           title="Campanhas"
           actionLabel="Nova Campanha"
-          onAction={() => setActiveModal('campaign')}
+          onAction={handleOpenNewCampaign}
           columns={['Nome', 'Segmentação', 'Template', 'Status', 'Ações']}
           emptyText="Nenhuma campanha cadastrada."
         >
-          {campaigns.map((campaign) => (
-            <tr key={campaign.id}>
-              <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">{campaign.name}</td>
-              <td className="py-3.5 px-4">{findName(availableAudienceOptions, campaign.segmentId)}</td>
-              <td className="py-3.5 px-4">{findName(campaignTemplates, campaign.templateId)}</td>
-              <td className="py-3.5 px-4"><CampaignStatusBadge status={campaign.status} /></td>
-              <td className="py-3.5 px-4">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleOpenPreview(campaign)}
-                    className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-cyan-50 text-cyan-700 hover:bg-cyan-100 dark:bg-cyan-950/30 dark:text-cyan-300 dark:hover:bg-cyan-950/50 transition-colors"
-                  >
-                    Ver Público
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleOpenPreparation(campaign)}
-                    className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-300 dark:hover:bg-emerald-950/50 transition-colors"
-                  >
-                    Preparar
-                  </button>
-                  <DeleteButton onClick={() => onDeleteCampaign(campaign.id)} />
-                </div>
-              </td>
-            </tr>
-          ))}
+          {campaigns.map((campaign) => {
+            const isActive = campaign.status === 'ativo';
+            const isPaused = campaign.status === 'pausado';
+            const isDraft = campaign.status === 'rascunho';
+            const isCompleted = campaign.status === 'concluido';
+            return (
+              <tr key={campaign.id}>
+                <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">{campaign.name}</td>
+                <td className="py-3.5 px-4">{findName(availableAudienceOptions, campaign.segmentId)}</td>
+                <td className="py-3.5 px-4">{findName(campaignTemplates, campaign.templateId)}</td>
+                <td className="py-3.5 px-4"><CampaignStatusBadge status={campaign.status} /></td>
+                <td className="py-3.5 px-4">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditCampaign(campaign)}
+                      className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 transition-colors"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenPreview(campaign)}
+                      className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-cyan-50 text-cyan-700 hover:bg-cyan-100 dark:bg-cyan-950/30 dark:text-cyan-300 dark:hover:bg-cyan-950/50 transition-colors"
+                    >
+                      Ver Público
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenPreparation(campaign)}
+                      className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-300 dark:hover:bg-emerald-950/50 transition-colors"
+                    >
+                      Preparar
+                    </button>
+                    {!isActive && !isCompleted && (
+                      <button
+                        type="button"
+                        onClick={() => handleChangeCampaignStatus(campaign, 'ativo')}
+                        className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-300 dark:hover:bg-emerald-950/50 transition-colors"
+                      >
+                        Ativar
+                      </button>
+                    )}
+                    {(isActive || isDraft) && (
+                      <button
+                        type="button"
+                        onClick={() => handleChangeCampaignStatus(campaign, 'pausado')}
+                        className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-950/30 dark:text-amber-300 dark:hover:bg-amber-950/50 transition-colors"
+                      >
+                        Pausar
+                      </button>
+                    )}
+                    {(isActive || isPaused || isDraft) && (
+                      <button
+                        type="button"
+                        onClick={() => handleChangeCampaignStatus(campaign, 'concluido')}
+                        className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-950/30 dark:text-indigo-300 dark:hover:bg-indigo-950/50 transition-colors"
+                      >
+                        Concluir
+                      </button>
+                    )}
+                    <DeleteButton onClick={() => onDeleteCampaign(campaign.id)} />
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
         </TableSection>
       )}
 
@@ -496,9 +556,19 @@ export default function CommercialIntelligenceView({
       )}
       {activeModal === 'campaign' && (
         <CampaignModal
+          campaign={editingCampaign || undefined}
           audiences={availableAudienceOptions}
-          templates={campaignTemplates.filter((template) => template.active === true)}
-          onClose={() => setActiveModal(null)}
+          templates={(() => {
+            const activeTemplates: CampaignTemplate[] = campaignTemplates.filter((template): template is CampaignTemplate => template.active === true);
+            const boundTemplate = editingCampaign
+              ? campaignTemplates.find((template) => template.id === editingCampaign.templateId)
+              : undefined;
+            if (boundTemplate && !activeTemplates.some((template) => template.id === boundTemplate.id)) {
+              return [boundTemplate, ...activeTemplates];
+            }
+            return activeTemplates;
+          })()}
+          onClose={handleCloseCampaignModal}
           onSave={onSaveCampaign}
         />
       )}
@@ -1430,42 +1500,56 @@ function CampaignExecutionSimulationModal({
 }
 
 function CampaignModal({
+  campaign,
   audiences,
   templates,
   onClose,
   onSave,
 }: {
+  campaign?: Campaign;
   audiences: CommercialAudienceOption[];
   templates: CampaignTemplate[];
   onClose: () => void;
   onSave: (campaign: Campaign) => void;
 }) {
-  const [name, setName] = useState('');
-  const [segmentId, setSegmentId] = useState(audiences[0]?.id || '');
-  const [templateId, setTemplateId] = useState(templates[0]?.id || '');
-  const [status, setStatus] = useState<Campaign['status']>('rascunho');
+  const [name, setName] = useState(campaign?.name || '');
+  const [segmentId, setSegmentId] = useState(campaign?.segmentId || audiences[0]?.id || '');
+  const [templateId, setTemplateId] = useState(campaign?.templateId || templates[0]?.id || '');
+  const [status, setStatus] = useState<Campaign['status']>(campaign?.status || 'rascunho');
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     const template = templates.find((item) => item.id === templateId);
     const now = new Date().toISOString();
-    onSave({
-      id: `camp_${Date.now()}`,
-      name,
-      messageTemplate: template?.message || '',
-      sentCount: 0,
-      responseCount: 0,
-      status,
-      createdAt: now,
-      updatedAt: now,
-      segmentId,
-      templateId,
-    });
+    if (campaign) {
+      onSave({
+        ...campaign,
+        name,
+        segmentId,
+        templateId,
+        status,
+        messageTemplate: template?.message || campaign.messageTemplate,
+        updatedAt: now,
+      });
+    } else {
+      onSave({
+        id: `camp_${Date.now()}`,
+        name,
+        messageTemplate: template?.message || '',
+        sentCount: 0,
+        responseCount: 0,
+        status,
+        createdAt: now,
+        updatedAt: now,
+        segmentId,
+        templateId,
+      });
+    }
     onClose();
   };
 
   return (
-    <BaseModal title="Nova Campanha" onClose={onClose}>
+    <BaseModal title={campaign ? 'Editar Campanha' : 'Nova Campanha'} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4 text-xs">
         <TextInput label="Nome" value={name} onChange={setName} required />
         <SelectInput label="Segmentação/Público" value={segmentId} onChange={setSegmentId} options={audiences.map((item) => ({ value: item.id, label: `${item.name} — ${item.customerCount} clientes` }))} />
@@ -2253,9 +2337,27 @@ function CampaignExecutionItemStatusBadge({ status }: { status: CampaignExecutio
 }
 
 function CampaignStatusBadge({ status }: { status: string }) {
+  const labels: Record<string, string> = {
+    rascunho: 'Rascunho',
+    ativo: 'Ativa',
+    pausado: 'Pausada',
+    concluido: 'Concluída',
+    agendado: 'Agendado',
+    executado: 'Executado',
+    cancelado: 'Cancelado',
+  };
+  const colors: Record<string, string> = {
+    rascunho: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
+    ativo: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300',
+    pausado: 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300',
+    concluido: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300',
+    agendado: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/40 dark:text-cyan-300',
+    executado: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300',
+    cancelado: 'bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300',
+  };
   return (
-    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 uppercase">
-      {status}
+    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${colors[status] || 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'}`}>
+      {labels[status] || status}
     </span>
   );
 }
