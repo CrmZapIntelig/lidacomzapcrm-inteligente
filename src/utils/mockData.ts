@@ -19,6 +19,7 @@ import {
   CampaignTemplate,
   CampaignSchedule,
   CampaignResult,
+  CampaignReach,
 } from '../types';
 
 export const FUNNEL_STAGES: FunnelStageConfig[] = [
@@ -221,6 +222,8 @@ export const INITIAL_COMMERCIAL_SEGMENTS: CommercialSegment[] = [];
 export const INITIAL_CAMPAIGN_TEMPLATES: CampaignTemplate[] = [];
 export const INITIAL_CAMPAIGN_SCHEDULES: CampaignSchedule[] = [];
 export const INITIAL_CAMPAIGN_RESULTS: CampaignResult[] = [];
+
+export const INITIAL_CAMPAIGN_REACHES: CampaignReach[] = [];
 
 export const INITIAL_ORDERS: Order[] = [
   {

@@ -25,6 +25,7 @@ import {
   INITIAL_CAMPAIGN_TEMPLATES,
   INITIAL_CAMPAIGN_SCHEDULES,
   INITIAL_CAMPAIGN_RESULTS,
+  INITIAL_CAMPAIGN_REACHES,
 } from './utils/mockData';
 import { generateAutomaticAudienceOptions, generateCustomerCommercialProfiles, DEFAULT_COMMERCIAL_RULES } from './utils/commercialSegmentation';
 import {
@@ -45,6 +46,7 @@ import {
   CampaignTemplate,
   CampaignSchedule,
   CampaignResult,
+  CampaignReach,
 } from './types';
 
 // Import Views
@@ -456,7 +458,38 @@ export default function App() {
 
     return unsubscribe;
   }, []);
-  
+
+  const [campaignReaches, setCampaignReaches] = useState<CampaignReach[]>(INITIAL_CAMPAIGN_REACHES);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, 'campaignReaches'),
+      (snapshot) => {
+        const firestoreReaches = mapSnapshotWithId<CampaignReach>(snapshot);
+        const loadedReaches =
+          firestoreReaches.length > 0
+            ? firestoreReaches
+            : INITIAL_CAMPAIGN_REACHES;
+
+        setCampaignReaches(loadedReaches);
+
+        console.log(
+          `FIRESTORE CAMPAIGN REACHES SINCRONIZADOS: ${loadedReaches.length}`
+        );
+      },
+      (error) => {
+        console.error(
+          'ERRO AO CARREGAR CAMPAIGN REACHES FIRESTORE:',
+          error
+        );
+
+        setCampaignReaches(INITIAL_CAMPAIGN_REACHES);
+      }
+    );
+
+    return unsubscribe;
+  }, []);
+
   const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
@@ -828,6 +861,10 @@ export default function App() {
   }, [campaignResults]);
 
   useEffect(() => {
+    saveData('campaignReaches', campaignReaches);
+  }, [campaignReaches]);
+
+  useEffect(() => {
     saveData('orders', orders);
   }, [orders]);
 
@@ -919,6 +956,7 @@ export default function App() {
     setCampaignTemplates(INITIAL_CAMPAIGN_TEMPLATES);
     setCampaignSchedules(INITIAL_CAMPAIGN_SCHEDULES);
     setCampaignResults(INITIAL_CAMPAIGN_RESULTS);
+    setCampaignReaches(INITIAL_CAMPAIGN_REACHES);
     setOrders(INITIAL_ORDERS);
     setAutomations(INITIAL_AUTOMATIONS);
     setSettings(DEFAULT_SETTINGS);
@@ -1021,6 +1059,41 @@ const handleSaveSchedule = async (schedule: CampaignSchedule) => {
 const handleDeleteSchedule = async (scheduleId: string) => {
   setCampaignSchedules((prev) => prev.filter((item) => item.id !== scheduleId));
   await deleteFirestoreDocument('campaignSchedules', scheduleId, 'CAMPAIGN SCHEDULE');
+};
+
+const handleSaveCampaignResult = async (result: CampaignResult) => {
+  setCampaignResults((prev) => [
+    result,
+    ...prev.filter((item) => item.id !== result.id),
+  ]);
+
+  try {
+    const cleanResult = JSON.parse(JSON.stringify(result));
+    await setDoc(doc(db, 'campaignResults', result.id), cleanResult, { merge: true });
+    console.log(`CAMPAIGN RESULT SALVO FIRESTORE: ${result.id}`);
+  } catch (error) {
+    console.error('ERRO AO SALVAR CAMPAIGN RESULT FIRESTORE:', error);
+  }
+};
+
+const handleSaveCampaignReach = async (reach: Omit<CampaignReach, 'id'>) => {
+  const reachWithId: CampaignReach = {
+    ...reach,
+    id: `reach:${reach.campaignResultId}:${reach.customerId}`,
+  };
+
+  setCampaignReaches((prev) => [
+    reachWithId,
+    ...prev.filter((item) => item.id !== reachWithId.id),
+  ]);
+
+  try {
+    const cleanReach = JSON.parse(JSON.stringify(reachWithId));
+    await setDoc(doc(db, 'campaignReaches', reachWithId.id), cleanReach, { merge: true });
+    console.log(`CAMPAIGN REACH ATUALIZADO FIRESTORE: ${reachWithId.id}`);
+  } catch (error) {
+    console.error('ERRO AO ATUALIZAR CAMPAIGN REACH FIRESTORE:', error);
+  }
 };
 
   // 4. Client modification callback
@@ -1649,7 +1722,6 @@ if (publicCardapioMatch) {
 
           {(currentTab === 'campanhas' || currentTab === 'inteligencia_comercial') && (
             <CommercialIntelligenceView
-            key={currentTab}
             initialTab={currentTab === 'campanhas' ? 'campaigns' : 'dashboard'}
             commercialSegments={commercialSegments}
             availableAudienceOptions={availableAudienceOptions}
@@ -1659,6 +1731,7 @@ if (publicCardapioMatch) {
             campaigns={campaigns}
             campaignSchedules={campaignSchedules}
             campaignResults={campaignResults}
+            campaignReaches={campaignReaches}
             customerCommercialProfiles={customerCommercialProfiles}
             rules={commercialRules}
             onSaveRules={setCommercialRules}
@@ -1670,6 +1743,8 @@ if (publicCardapioMatch) {
             onDeleteCampaign={handleDeleteCampaign}
             onSaveSchedule={handleSaveSchedule}
             onDeleteSchedule={handleDeleteSchedule}
+            onSaveCampaignResult={handleSaveCampaignResult}
+            onSaveCampaignReach={handleSaveCampaignReach}
         />
           )}
           {currentTab === 'disparador' && (

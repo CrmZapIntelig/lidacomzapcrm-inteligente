@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   BarChart3,
   CalendarClock,
@@ -30,6 +30,7 @@ import {
   CampaignContactEligibilitySummary,
   CampaignContactEligibilityStatus,
   CampaignResult,
+  CampaignReach,
   CampaignDispatchDraft,
   CampaignDispatchRequestPreview,
   CampaignDispatchTransportEnvelopePreview,
@@ -81,6 +82,7 @@ interface CommercialIntelligenceViewProps {
   campaigns: Campaign[];
   campaignSchedules: CampaignSchedule[];
   campaignResults: CampaignResult[];
+  campaignReaches: CampaignReach[];
   customerCommercialProfiles: CustomerCommercialProfile[];
   rules: CommercialRulesConfig;
   onSaveRules: (rules: CommercialRulesConfig) => void;
@@ -92,6 +94,8 @@ interface CommercialIntelligenceViewProps {
   onDeleteCampaign: (campaignId: string) => void;
   onSaveSchedule: (schedule: CampaignSchedule) => void;
   onDeleteSchedule: (scheduleId: string) => void;
+  onSaveCampaignResult: (result: CampaignResult) => void;
+  onSaveCampaignReach: (reach: Omit<CampaignReach, 'id'>) => void;
 }
 
 const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
@@ -115,6 +119,7 @@ export default function CommercialIntelligenceView({
   campaigns,
   campaignSchedules,
   campaignResults,
+  campaignReaches,
   customerCommercialProfiles,
   rules,
   onSaveRules,
@@ -126,7 +131,10 @@ export default function CommercialIntelligenceView({
   onDeleteCampaign,
   onSaveSchedule,
   onDeleteSchedule,
+  onSaveCampaignResult,
+  onSaveCampaignReach,
 }: CommercialIntelligenceViewProps) {
+  const lastSavedSessionRef = useRef<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>(initialTab);
   const [activeModal, setActiveModal] = useState<ModalId>(null);
   const [editingTemplate, setEditingTemplate] = useState<CampaignTemplate | null>(null);
@@ -294,6 +302,37 @@ export default function CommercialIntelligenceView({
 
     return () => window.clearTimeout(timeoutId);
   }, [executionSession, isExecutionModalOpen]);
+
+  useEffect(() => {
+    if (executionSession?.status === 'completed' && lastSavedSessionRef.current !== executionSession.id) {
+      lastSavedSessionRef.current = executionSession.id;
+
+      const campaignResultId = `result:${executionSession.id}`;
+      const fallbackReachedAt = executionSession.completedAt || new Date().toISOString();
+
+      onSaveCampaignResult({
+        id: campaignResultId,
+        campaignId: executionSession.campaignId,
+        executedAt: fallbackReachedAt,
+        reachedCustomers: executionSession.successItems,
+        conversions: 0,
+        revenue: 0,
+        createdAt: new Date().toISOString(),
+      });
+
+      executionSession.items
+        .filter((item) => item.status === 'simulated-success')
+        .forEach((item) => {
+          onSaveCampaignReach({
+            campaignId: executionSession.campaignId,
+            campaignResultId,
+            customerId: item.customerId,
+            reachedAt: item.processedAt || fallbackReachedAt,
+            status: 'reached',
+          });
+        });
+    }
+  }, [executionSession?.status, executionSession?.id, executionSession?.campaignId, executionSession?.completedAt, executionSession?.successItems, executionSession?.items, onSaveCampaignResult, onSaveCampaignReach]);
 
   // Dispatch contract draft state and memoized draft
   const [isDispatchContractModalOpen, setIsDispatchContractModalOpen] = useState(false);
@@ -541,6 +580,10 @@ export default function CommercialIntelligenceView({
           reachedCustomers={reachedCustomers}
           conversions={conversions}
           revenue={revenue}
+          campaignResults={campaignResults}
+          campaignReaches={campaignReaches}
+          campaigns={campaigns}
+          clients={clients}
         />
       )}
 
@@ -687,12 +730,16 @@ function DashboardTab({
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
         {cards.map((card) => (
-          <MetricCard key={card.label} label={card.label} value={card.value.toString()} icon={card.icon} color={card.color} />
+          <React.Fragment key={card.label}>
+            <MetricCard label={card.label} value={card.value.toString()} icon={card.icon} color={card.color} />
+          </React.Fragment>
         ))}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4">
         {classificationCards.map((card) => (
-          <MetricCard key={card.label} label={card.label} value={card.value.toString()} icon={card.icon} color={card.color} />
+          <React.Fragment key={card.label}>
+            <MetricCard label={card.label} value={card.value.toString()} icon={card.icon} color={card.color} />
+          </React.Fragment>
         ))}
       </div>
     </div>
@@ -741,19 +788,197 @@ function ResultsTab({
   reachedCustomers,
   conversions,
   revenue,
+  campaignResults,
+  campaignReaches,
+  campaigns,
+  clients,
 }: {
   executedCampaigns: number;
   reachedCustomers: number;
   conversions: number;
   revenue: number;
+  campaignResults: CampaignResult[];
+  campaignReaches: CampaignReach[];
+  campaigns: Campaign[];
+  clients: Client[];
 }) {
+  const [selectedCampaignId, setSelectedCampaignId] = useState('');
+  const [selectedResult, setSelectedResult] = useState<CampaignResult | null>(null);
+  const sortedResults = useMemo(
+    () => [...campaignResults].sort(
+      (a, b) => new Date(b.executedAt).getTime() - new Date(a.executedAt).getTime()
+    ),
+    [campaignResults]
+  );
+  const filteredResults = useMemo(
+    () => selectedCampaignId
+      ? sortedResults.filter((result) => result.campaignId === selectedCampaignId)
+      : sortedResults,
+    [sortedResults, selectedCampaignId]
+  );
+  const filterEmptyText = campaignResults.length === 0
+    ? 'Nenhum resultado de campanha registrado ainda.'
+    : (selectedCampaignId && filteredResults.length === 0
+      ? 'Nenhum resultado encontrado para a campanha selecionada.'
+      : 'Nenhum resultado de campanha registrado ainda.');
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-      <MetricCard label="Campanhas Executadas" value={executedCampaigns.toString()} icon={Megaphone} color="text-indigo-500" />
-      <MetricCard label="Clientes Alcançados" value={reachedCustomers.toString()} icon={Users} color="text-cyan-500" />
-      <MetricCard label="Conversões" value={conversions.toString()} icon={Target} color="text-emerald-500" />
-      <MetricCard label="Receita" value={revenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} icon={TrendingUp} color="text-amber-500" />
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <MetricCard label="Campanhas Executadas" value={executedCampaigns.toString()} icon={Megaphone} color="text-indigo-500" />
+        <MetricCard label="Clientes Alcançados" value={reachedCustomers.toString()} icon={Users} color="text-cyan-500" />
+        <MetricCard label="Conversões" value={conversions.toString()} icon={Target} color="text-emerald-500" />
+        <MetricCard label="Receita" value={revenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} icon={TrendingUp} color="text-amber-500" />
+      </div>
+
+      <TableSection
+        title="Resultados das Campanhas"
+        actionLabel=""
+        onAction={() => undefined}
+        columns={['Campanha', 'Data de execução', 'Clientes alcançados', 'Conversões', 'Receita', 'Ações']}
+        emptyText={filterEmptyText}
+        hideAction
+        headerExtra={
+          <SelectInput
+            label="Campanha"
+            value={selectedCampaignId}
+            onChange={setSelectedCampaignId}
+            emptyOptionLabel="Todas as campanhas"
+            options={campaigns.map((campaign) => ({ value: campaign.id, label: campaign.name }))}
+          />
+        }
+      >
+        {filteredResults.map((result) => (
+          <tr key={result.id}>
+            <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">
+              {campaigns.find((campaign) => campaign.id === result.campaignId)?.name || 'Campanha não encontrada'}
+            </td>
+            <td className="py-3.5 px-4 font-mono whitespace-nowrap">{formatDateTime(result.executedAt)}</td>
+            <td className="py-3.5 px-4 font-mono">{result.reachedCustomers}</td>
+            <td className="py-3.5 px-4 font-mono">{result.conversions}</td>
+            <td className="py-3.5 px-4 font-mono font-bold text-emerald-500 whitespace-nowrap">{formatCurrency(result.revenue)}</td>
+            <td className="py-3.5 px-4">
+              <button
+                type="button"
+                onClick={() => setSelectedResult(result)}
+                className="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-cyan-50 text-cyan-700 hover:bg-cyan-100 dark:bg-cyan-950/30 dark:text-cyan-300 dark:hover:bg-cyan-950/50 transition-colors whitespace-nowrap"
+              >
+                Ver alcançados
+              </button>
+            </td>
+          </tr>
+        ))}
+      </TableSection>
+
+      {selectedResult && (
+        <CampaignResultReachedCustomersModal
+          result={selectedResult}
+          campaignName={campaigns.find((campaign) => campaign.id === selectedResult.campaignId)?.name || 'Campanha não encontrada'}
+          campaignReaches={campaignReaches}
+          clients={clients}
+          onClose={() => setSelectedResult(null)}
+        />
+      )}
     </div>
+  );
+}
+
+function CampaignResultReachedCustomersModal({
+  result,
+  campaignName,
+  campaignReaches,
+  clients,
+  onClose,
+}: {
+  result: CampaignResult;
+  campaignName: string;
+  campaignReaches: CampaignReach[];
+  clients: Client[];
+  onClose: () => void;
+}) {
+  const clientsById = useMemo(
+    () => new Map(clients.map((client) => [client.id, client])),
+    [clients]
+  );
+  const reaches = useMemo(
+    () => campaignReaches
+      .filter((reach) => reach.campaignResultId === result.id)
+      .sort((a, b) => new Date(b.reachedAt).getTime() - new Date(a.reachedAt).getTime()),
+    [campaignReaches, result.id]
+  );
+
+  return (
+    <BaseModal title="Resultado da Campanha" onClose={onClose} size="wide">
+      <div className="space-y-4 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <PreviewInfo label="Campanha" value={campaignName} />
+          <PreviewInfo label="Execução" value={formatDateTime(result.executedAt)} />
+          <PreviewInfo label="Clientes alcançados" value={result.reachedCustomers.toString()} />
+          <PreviewInfo label="Conversões" value={result.conversions.toString()} />
+          <PreviewInfo label="Receita" value={formatCurrency(result.revenue)} />
+        </div>
+
+        <div>
+          <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3">Clientes alcançados</h4>
+
+          {reaches.length === 0 ? (
+            <p className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 p-4 text-slate-600 dark:text-slate-300">
+              Não existem clientes alcançados registrados para esta execução.
+            </p>
+          ) : (
+            <div className="overflow-x-auto border border-slate-100 dark:border-slate-800 rounded-xl">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-mono text-slate-400 tracking-wider">
+                    {['Cliente', 'WhatsApp/Telefone', 'Alcançado em', 'Status'].map((column) => (
+                      <th key={column} className="py-3 px-4 whitespace-nowrap">{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                  {reaches.map((reach) => {
+                    const client = clientsById.get(reach.customerId);
+
+                    return (
+                      <tr key={reach.id}>
+                        <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">
+                          {client ? (
+                            client.name
+                          ) : (
+                            <span className="space-y-1">
+                              <span className="block">Cliente não encontrado</span>
+                              <span className="block text-[10px] font-mono font-normal text-slate-400">{reach.customerId}</span>
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4 font-mono whitespace-nowrap">{client?.phone?.trim() || '-'}</td>
+                        <td className="py-3.5 px-4 font-mono whitespace-nowrap">{formatDateTime(reach.reachedAt)}</td>
+                        <td className="py-3.5 px-4">
+                          <CampaignReachStatusBadge status={reach.status} />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    </BaseModal>
+  );
+}
+
+function CampaignReachStatusBadge({ status }: { status: CampaignReach['status'] }) {
+  const labels: Record<CampaignReach['status'], string> = {
+    'simulated-success': 'Simulado',
+    reached: 'Alcançado',
+  };
+
+  return (
+    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+      {labels[status]}
+    </span>
   );
 }
 
@@ -887,6 +1112,7 @@ function TableSection({
   emptyText,
   children,
   hideAction = false,
+  headerExtra,
 }: {
   title: string;
   actionLabel: string;
@@ -895,13 +1121,17 @@ function TableSection({
   emptyText: string;
   children: React.ReactNode;
   hideAction?: boolean;
+  headerExtra?: React.ReactNode;
 }) {
   const hasRows = React.Children.count(children) > 0;
 
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden">
       <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h3>
+        <div className="flex flex-wrap items-end gap-3">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h3>
+          {headerExtra}
+        </div>
         {!hideAction && (
           <button
             onClick={onAction}
@@ -1673,7 +1903,7 @@ function TextArea({ label, value, onChange, rows, required = false }: { label: s
   );
 }
 
-function SelectInput({ label, value, onChange, options }: { label: string; value: string; onChange: (value: string) => void; options: { value: string; label: string }[] }) {
+function SelectInput({ label, value, onChange, options, emptyOptionLabel = 'Selecionar' }: { label: string; value: string; onChange: (value: string) => void; options: { value: string; label: string }[]; emptyOptionLabel?: string }) {
   return (
     <label className="block">
       <span className="block text-slate-400 font-bold mb-1 uppercase tracking-wider text-[9px]">{label}</span>
@@ -1682,7 +1912,7 @@ function SelectInput({ label, value, onChange, options }: { label: string; value
         onChange={(event) => onChange(event.target.value)}
         className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none"
       >
-        <option value="">Selecionar</option>
+        <option value="">{emptyOptionLabel}</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>{option.label}</option>
         ))}
