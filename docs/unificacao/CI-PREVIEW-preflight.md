@@ -58,3 +58,8 @@ explícitas em tools/unification/baseline.json, normaliza paths/EOL e compara ar
 ordenados por código Unicode (sem collation ICU dependente da plataforma).
 Arquivo, linha/coluna, código e mensagem continuam obrigatoriamente iguais.
 Nenhum erro legado é corrigido ou omitido. Aprovação remota aguarda novo run.
+
+O run 36742004338 identificou a diferença exata: TypeScript retorna path absoluto
+para campaignDispatchContract.ts (importado por outros módulos) e relativo para
+outros diagnósticos. Conteúdo/linha/coluna/código/mensagem eram iguais. Paths agora
+são relativos ao root de execução, tanto no baseline registrado quanto no run.
