@@ -366,3 +366,12 @@ verde para push e PR; fonte de diagnósticos comparada por path relativo/linha/c
 Draft conserva endereço transitório para dedupe entre chamadas incompletas.
 Sem UI/Firestore/provider; preview permanece bloqueado. UNI-07 liberada offline.
 Detalhes: docs/unificacao/UNI-06-marketing-dispatch.md.
+
+## UNI-07 — eventos/timeline/funil offline
+
+86 testes, strict e build aprovados; baseline 21→21 zero novos. Eventos explícitos
+de draft, journal idempotente, timeline com SIMULATION e ScopedOpportunity RASCUNHO.
+Oportunidades existentes não regridem; Contact/Opportunity/Order separados.
+Primeiro envio→LEAD definido, aplicação live bloqueada; nenhum send real emitido.
+Histórico legado/UI/Firestore preservados. UNI-08 não iniciada: isolamento visual
+não comprovado. Gate e próxima ação em CI-PREVIEW-preflight.md; detalhes UNI-07.

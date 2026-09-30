@@ -70,3 +70,17 @@ de conhecer antes de criá-lo. Histórico Git é a resolução canônica desses 
 - RISCOS: handoff é snapshot e não recalcula marketing/eligibility; endereço permanece
   apenas transitório em draft offline. Caller mantém operações/revisões distintas.
 - DECISÃO: UNI-07 verde offline; gate de isolamento visual permanece.
+
+## UNI-07
+
+- UNI-06 HEAD final / COMMIT: db0b8ec1ac071bb83fa858e5126ee7148601633e.
+- CI UNI-06: push 36742541837 e PR 36742548511, success.
+- HEAD inicial: db0b8ec1ac071bb83fa858e5126ee7148601633e.
+- HEAD final / COMMIT: `Integrate offline draft events timeline and scoped opportunities`.
+- TESTES / BUILD: 86/86; strict e build aprovados; aviso bundle preexistente.
+- ERROS ANTES / DEPOIS / NOVOS: 21 / 21 / 0; assinaturas explícitas idênticas.
+- ARQUIVOS: offlineEvents.ts, dispatchEventBridge.ts/test.ts, UNI-07, ledger e relatório principal.
+- PR: #4 draft; PREVIEW STATUS: BLOCKED; URL: nenhuma; FIREBASE PROJECT / CHANNEL: nenhum.
+- RISCOS: reducer só aplica fatos de drafts offline; primeiro envio real permanece gate;
+  sem generic bus, order handlers, storage ou integração à UI existente.
+- DECISÃO: UNI-07 verde local; validar CI final. UNI-08 não iniciada por isolamento.
