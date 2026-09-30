@@ -168,3 +168,14 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - Staging cloud ausente: .firebaserc só default. Algoritmo/header de assinatura reconfirmados em referência oficial Meta pinada 14703a3; configuração da conta/subscription ainda não comprovada.
 - PR draft/main intacta; pessoal/fontes preservados; preview isolado sem nova ligação.
 - Decisão: CI da fase; continuar LIVE-03/04 PREPARATION antes do gate externo/canário.
+
+## LIVE-03 — PREPARATION apenas
+
+- HEAD inicial: 9ff2c1215b5835a55a03ae26988f7d2278f85159; CI LIVE-02 push 36779490875 / PR 36779494290 success.
+- Commit: Prepare gated one-recipient canary and provider receipt facts.
+- 116 testes acumulados; strict servidor/núcleo/preview e ambos builds aprovados; baseline 21 / 21 / 0.
+- Arquivos: outboundCanaryPreparation/test, providerReceiptProjection, normalized contract e parser/test Meta (context.id), LIVE-03/ledger.
+- Um TEST/uma mensagem/allowlist/contexto/readiness; canSend=false sempre. Receipt somente fato explícito, reply correlacionado, sem inventar status/funil/order. Sem primeiro envio.
+- Riscos pendentes: staging/secrets/public webhook/store distribuído/intenção transacional/canário. Preparação não equivale a canário concluído.
+- PR draft/main/fontes/pessoal preservados; preview local SIMULATION sem providers.
+- Decisão: confirmar CI; preparar RCS DISABLED localmente, parar antes de integração externa/primeiro envio.

@@ -117,7 +117,8 @@ export class MetaWhatsAppCloudProvider implements MessagingProvider {
             if (kind === 'messages') {
               if (m.type !== 'text' || !/^[1-9]\d{7,14}$/.test(string(m.from))) throw new Error('UNSUPPORTED_INBOUND');
               const text = string(record(m.text).body); if (text.length > 4096) throw new Error('INVALID_WEBHOOK');
-              events.push({ ...base, eventId: `${id}:inbound`, kind: 'INBOUND', address: `+${m.from}`, text });
+              const inReplyToMessageId = m.context === undefined ? undefined : string(record(m.context).id);
+              events.push({ ...base, eventId: `${id}:inbound`, kind: 'INBOUND', address: `+${m.from}`, text, inReplyToMessageId });
             } else {
               const status = normalizeMetaStatus(m.status);
               events.push({ ...base, eventId: `${id}:${status}:${rawTime}`, kind: 'STATUS', status });

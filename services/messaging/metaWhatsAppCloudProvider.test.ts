@@ -45,6 +45,8 @@ test('raw signature and challenge reject wrong bytes, tenant, malformed signatur
 test('normalize inbound and real status fields without manufacturing delivery or tenant binding', () => {
   const p = new MetaWhatsAppCloudProvider(configuration);
   assert.equal(p.parseWebhook(rawFixture(), 'demo', 'SIMULATION')[0].address, '+12025550100');
+  const reply = JSON.parse(rawFixture().toString()); reply.entry[0].changes[0].value.messages[0].context = { id: 'synthetic-outbound' };
+  assert.equal(p.parseWebhook(Buffer.from(JSON.stringify(reply)), 'demo', 'SIMULATION')[0].inReplyToMessageId, 'synthetic-outbound');
   assert.equal(p.parseWebhook(rawFixture(false), 'demo', 'SIMULATION')[0].status, 'DELIVERED');
   assert.throws(() => p.parseWebhook(Buffer.from('{bad'), 'demo', 'SIMULATION'));
   assert.throws(() => p.parseWebhook(Buffer.from(rawFixture().toString().replace('"200"', '"999"')), 'demo', 'SIMULATION'));

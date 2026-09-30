@@ -8,6 +8,7 @@ export interface NormalizedProviderEvent {
   mode: ExecutionMode; eventId: string; messageId: string; occurredAt: string;
   kind: 'INBOUND' | 'STATUS'; address?: string; text?: string;
   status?: 'SENT' | 'DELIVERED' | 'READ' | 'FAILED';
+  inReplyToMessageId?: string;
 }
 export interface SendResult { mode: ExecutionMode; outcome: 'DISABLED' | 'BLOCKED' | 'MOCK' | 'ACCEPTED' | 'RETRYABLE_FAILURE' | 'FINAL_FAILURE' | 'UNCERTAIN'; providerMessageId?: string; reason: string }
 export interface OutboundRequest { tenantId: string; contactId: string; entryId: string; idempotencyKey: string; recipient: string; text?: string; policy: MessagingPolicyInput }
