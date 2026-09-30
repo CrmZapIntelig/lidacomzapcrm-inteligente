@@ -44,3 +44,13 @@ de conhecer antes de criá-lo. Histórico Git é a resolução canônica desses 
 - PR: #4 draft. PREVIEW STATUS: BLOCKED; URL: nenhuma; FIREBASE PROJECT/CHANNEL: nenhum.
 - RISCOS: caller mantém snapshots e budget; preparo não é send; capability somente declarada offline.
 - DECISÃO: UNI-06 verde offline; GATE_PREVIEW_BACKEND_ISOLATION_REQUIRED permanece.
+
+## CI — correção de comparação portável
+
+- HEAD inicial: 6389d42. HEAD final / COMMIT: `Make baseline diagnostic comparison platform independent`.
+- TESTES: 74 remotos aprovados no run 36741628525; falha exclusiva de comparação hash.
+- BUILD: local aprovado; remoto anterior não executado após falha do gate.
+- ERROS ANTES / DEPOIS / NOVOS: 21 / 21 / 0, mesmas assinaturas explícitas.
+- ARQUIVOS: tools/unification/check-baseline.mjs, baseline.json, CI-PREVIEW e ledger.
+- PREVIEW: BLOCKED; URL nenhuma; PR #4 draft; Firebase/channel nenhum.
+- DECISÃO: revalidar CI corrigida antes de publicar próxima fase. Sem deploy.

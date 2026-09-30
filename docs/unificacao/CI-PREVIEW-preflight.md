@@ -48,3 +48,13 @@ PREVIEW STATUS: BLOCKED. PREVIEW URL: nenhuma. FIREBASE PROJECT: não selecionad
 para preview. CHANNEL: nenhum. BUILD REC-01: aprovado. COMMIT: mensagem
 `Add offline CI and record preview isolation gate`. Não é configuração Hosting
 completa, nem evidência de deploy/live. Disponibilidade de CI será confirmada pelos runs.
+
+## Correção de portabilidade do gate CI
+
+Runs iniciais 36741628525/36741619971: instalação, 74 testes e typecheck estrito
+passaram; comparação agregada por hash falhou mesmo com os mesmos 21 diagnósticos.
+Não é evidência de novo erro TypeScript. A correção armazena as 21 assinaturas
+explícitas em tools/unification/baseline.json, normaliza paths/EOL e compara arrays
+ordenados por código Unicode (sem collation ICU dependente da plataforma).
+Arquivo, linha/coluna, código e mensagem continuam obrigatoriamente iguais.
+Nenhum erro legado é corrigido ou omitido. Aprovação remota aguarda novo run.
