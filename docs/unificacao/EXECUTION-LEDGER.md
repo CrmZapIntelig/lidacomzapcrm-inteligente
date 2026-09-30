@@ -128,3 +128,13 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - RISCOS: cenário só sintético/memória; não comprova provider, persistência ou prontidão live.
 - PRESERVAÇÃO: main 60fb91f; App/components/lib e fontes históricas sem alterações desta fase. .vscode/extensions.json, backup.patch, AGENTS.md e docs/FONTES-CHATS.md excluídos.
 - DECISÃO: gate preview resolvido somente local; validar CI no commit publicado e parar em GATE_LIVE_INTEGRATION_REQUIRED. PR #4 draft, sem deploy/merge/integração real.
+
+## UNI-08 — fechamento remoto comprovado
+
+- HEAD funcional final / COMMIT: 949a77b76d9a4b0ae3645bba28c7247805a50b21 (Add isolated local active sales preview), push confirmado.
+- CI: push https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/36770447171 e PR https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/36770460665, ambos success no SHA funcional final.
+- Testes remotos: 86 núcleo + 3 cenário + 2 isolamento; strict/baseline/build operacional/preview success.
+- PR #4: draft=true, merged=false, auto_merge=null; base main 60fb91f preservada.
+- PREVIEW LOCAL_AVAILABLE: http://127.0.0.1:4178/; nenhuma URL Hosting/channel.
+- Encerramento documental: commit Record UNI-08 validation and live integration stop; nenhum código adicional após validação funcional.
+- DECISÃO FINAL: UNI-08 concluída no escopo local; parada em GATE_LIVE_INTEGRATION_REQUIRED, sem integração real/deploy/merge.

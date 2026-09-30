@@ -76,3 +76,5 @@ de backend. Encerramento: GATE-PREVIEW-BACKEND-ISOLATION.md.
 ## UNI-08 — preview local autorizado
 
 Opção 2 autorizada pelo usuário em 2026-09-30. LOCAL_AVAILABLE: http://127.0.0.1:4178/. Nenhum Hosting/channel publicado. Bundle só React/núcleo offline e CSP connect-src 'none'; 91 testes, strict núcleo/preview, builds aprovados; 21→21, zero novos. Workflow ampliado para repetir todas as verificações. Resultado remoto deve ser conferido no SHA publicado. Próxima parada GATE_LIVE_INTEGRATION_REQUIRED. Instruções em UNI-08-integracao-visual-offline.md.
+
+CI UNI-08 confirmada: commit 949a77b76d9a4b0ae3645bba28c7247805a50b21; push 36770447171 e PR 36770460665 success. Preview permanece local, sem Hosting/channel.

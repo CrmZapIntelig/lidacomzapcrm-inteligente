@@ -29,3 +29,5 @@ Conversa de exemplo mostra texto personalizado com envio desabilitado. Timeline 
 ## Limites e próximo gate
 
 Sem persistência, concorrência distribuída, provider, capability real, envio, janela real ou integração às telas operacionais. A demonstração não comprova prontidão de produção. Gate de preview resolvido exclusivamente para esta entrada local. Parada em GATE_LIVE_INTEGRATION_REQUIRED; nenhuma integração real, deploy live ou merge main autorizado.
+
+Resultado remoto confirmado no commit 949a77b76d9a4b0ae3645bba28c7247805a50b21: CI push 36770447171 e PR 36770460665 success (91 testes, strict núcleo/preview, baseline 21→21, ambos builds e isolamento). UNI-08 concluída somente local. Parada em GATE_LIVE_INTEGRATION_REQUIRED.
