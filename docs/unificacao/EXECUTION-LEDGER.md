@@ -84,3 +84,33 @@ de conhecer antes de criá-lo. Histórico Git é a resolução canônica desses 
 - RISCOS: reducer só aplica fatos de drafts offline; primeiro envio real permanece gate;
   sem generic bus, order handlers, storage ou integração à UI existente.
 - DECISÃO: UNI-07 verde local; validar CI final. UNI-08 não iniciada por isolamento.
+
+## Fechamento comprovado e gate UNI-08
+
+| Fase / marco | HEAD final / commit publicado | Testes locais acumulados |
+| --- | --- | --- |
+| SOURCE-AUDIT inicial | 5403790a60154bcd3f19718108d2bc9373946294 | histórico 38 |
+| REC-01 | 7abdd0fcc5a3c5a3259aeb45bc38218ef5e57be2 | 59 |
+| CI-PREVIEW pré-flight | 91b6356569ce8ff79b88a2756ec44dc1b343f04f | 59 |
+| UNI-05 | 6389d42479da7ecce21c537d3db82f202c37fd26 | 74 |
+| CI correção 1 | 067dc67b1cbedda23a7cd7992dc91e555c026afe | 74 remotos |
+| CI correção paths | 7473b374de3956a3cac1baf15af95adb3e2b827b | 74 remotos, CI verde |
+| UNI-06 | db0b8ec1ac071bb83fa858e5126ee7148601633e | 79 |
+| UNI-07 | 73a1f886d8b2bb482d89f13954d0060020a1f248 | 86 |
+
+Todos os commits acima tiveram push normal na branch de unificação. Nenhuma fase
+alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve deploy.
+
+- FASE: fechamento documental / gate UNI-08; DATA: 2026-09-30.
+- HEAD inicial: 73a1f886d8b2bb482d89f13954d0060020a1f248.
+- HEAD final / COMMIT: `Record continuous execution results and visual isolation gate`.
+- TESTES / BUILD: 86/86 locais e remotos no HEAD funcional final; strict/baseline/build success.
+- CI UNI-07: https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/36743034767
+  (push); https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/36743037336 (PR).
+- ERROS ANTES / DEPOIS / NOVOS: 21 / 21 / 0, mesmos diagnósticos nas assinaturas registradas.
+- ARQUIVOS: GATE-PREVIEW-BACKEND-ISOLATION.md, CI-PREVIEW, ledger, relatório principal.
+- PREVIEW STATUS / URL: BLOCKED / nenhuma. FIREBASE PROJECT / CHANNEL: nenhum de preview.
+- PR: #4 draft, sem merge/auto-merge. RISCOS: conexão operacional na SPA atual;
+  incidente login:list documentado sem material sensível no Git.
+- DECISÃO DE GATE: parar antes de UNI-08; opções/recomendação/estado Git no relatório GATE.
+- Fontes: fingerprints SOURCE-AUDIT reconferidos idênticos (G 293, S 317, W 181, R 49, B 3).

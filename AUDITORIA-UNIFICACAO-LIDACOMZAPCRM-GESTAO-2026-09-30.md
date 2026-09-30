@@ -375,3 +375,13 @@ Oportunidades existentes não regridem; Contact/Opportunity/Order separados.
 Primeiro envio→LEAD definido, aplicação live bloqueada; nenhum send real emitido.
 Histórico legado/UI/Firestore preservados. UNI-08 não iniciada: isolamento visual
 não comprovado. Gate e próxima ação em CI-PREVIEW-preflight.md; detalhes UNI-07.
+
+## Fechamento do controlador contínuo
+
+REC-01→CI offline→UNI-05→UNI-06→UNI-07 publicadas. HEAD funcional final 73a1f88;
+86 testes e strict/baseline/build aprovados também no GitHub (push/PR).
+Fingerprint fontes históricas idêntico ao SOURCE-AUDIT; main 60fb91f preservada.
+Parada obrigatória antes de UNI-08: GATE_PREVIEW_BACKEND_ISOLATION_REQUIRED.
+Nenhuma URL visual isolada disponível, nenhuma mudança de produção/backend.
+Próxima ação exige comprovar/autorizar isolamento visual. Relatório completo:
+docs/unificacao/GATE-PREVIEW-BACKEND-ISOLATION.md e EXECUTION-LEDGER.md.

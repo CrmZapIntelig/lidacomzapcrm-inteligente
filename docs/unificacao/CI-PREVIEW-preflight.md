@@ -63,3 +63,12 @@ O run 36742004338 identificou a diferença exata: TypeScript retorna path absolu
 para campaignDispatchContract.ts (importado por outros módulos) e relativo para
 outros diagnósticos. Conteúdo/linha/coluna/código/mensagem eram iguais. Paths agora
 são relativos ao root de execução, tanto no baseline registrado quanto no run.
+
+## Resultado remoto confirmado
+
+CI corrigida em 7473b37: push 36742248293 e PR 36742255718, success.
+UNI-06 db0b8ec: push 36742541837 e PR 36742548511, success.
+UNI-07 73a1f88: push 36743034767 e PR 36743037336, success.
+No HEAD funcional final: 86 testes, strict/baseline/build remotos aprovados.
+Hosting permanece BLOCKED sem URL de preview; configuração CI não resolve o gate
+de backend. Encerramento: GATE-PREVIEW-BACKEND-ISOLATION.md.
