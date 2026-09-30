@@ -347,3 +347,12 @@ acumulado por tenant/campanha/data/fuso. Não houve cópia de árvore ou singlet
 59 testes, typecheck estrito e build aprovados; baseline 21 → 21, zero novos.
 Gate de início UNI-05: SIM exclusivamente offline. UI/Firebase/main intactos.
 Detalhes: docs/unificacao/REC-01-pre-requisitos-venda-ativa.md e EXECUTION-LEDGER.md.
+
+## UNI-05 — núcleo venda ativa offline
+
+74 testes aprovados, typecheck estrito e build verdes; baseline 21→21 zero novos.
+Público explícito, eligibility central, personalização, drafts, fila estável,
+budget por dia e seleção única de canal; toda execução SIMULATION/PREPARED_ONLY.
+canSend=false e janela NOT_EVALUATED. Sem send, UI, Firestore ou provider.
+PR #4 draft; Hosting bloqueado até isolamento backend. UNI-06 liberada offline.
+Evidências e limites em docs/unificacao/UNI-05-venda-ativa-offline.md.

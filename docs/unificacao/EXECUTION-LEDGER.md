@@ -32,3 +32,15 @@ de conhecer antes de criá-lo. Histórico Git é a resolução canônica desses 
   FIREBASE PROJECT / CHANNEL: não selecionados.
 - RISCOS / DECISÃO: GATE_PREVIEW_BACKEND_ISOLATION_REQUIRED. Conforme seção 25
   do controlador, continuar fases internas e parar antes da UNI-08.
+
+## UNI-05
+
+- HEAD inicial / CI-PREVIEW final: 91b6356.
+- HEAD final / COMMIT: `Implement deterministic offline active sales drafts`.
+- TESTES / BUILD: 74/74; typecheck estrito e build aprovados, aviso bundle preexistente.
+- ERROS ANTES / DEPOIS / NOVOS: 21 / 21 / 0. Comparação por linha/coluna
+  (portável CRLF/LF), fingerprint 1d2ad0f9…74957b.
+- ARQUIVOS: activeSalesOffline.ts/test.ts, UNI-05, check-baseline.mjs, ledger e relatório principal.
+- PR: #4 draft. PREVIEW STATUS: BLOCKED; URL: nenhuma; FIREBASE PROJECT/CHANNEL: nenhum.
+- RISCOS: caller mantém snapshots e budget; preparo não é send; capability somente declarada offline.
+- DECISÃO: UNI-06 verde offline; GATE_PREVIEW_BACKEND_ISOLATION_REQUIRED permanece.
