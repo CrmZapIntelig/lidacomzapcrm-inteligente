@@ -54,3 +54,19 @@ de conhecer antes de criá-lo. Histórico Git é a resolução canônica desses 
 - ARQUIVOS: tools/unification/check-baseline.mjs, baseline.json, CI-PREVIEW e ledger.
 - PREVIEW: BLOCKED; URL nenhuma; PR #4 draft; Firebase/channel nenhum.
 - DECISÃO: revalidar CI corrigida antes de publicar próxima fase. Sem deploy.
+
+## CI — fechamento e UNI-06
+
+- CI final: 7473b374de3956a3cac1baf15af95adb3e2b827b.
+  Correção anterior 067dc67b1cbedda23a7cd7992dc91e555c026afe.
+- RUNS CI: push 36742248293 e PR 36742255718, ambos success (testes/strict/baseline/build).
+- UNI-06 HEAD inicial: 6389d42479da7ecce21c537d3db82f202c37fd26;
+  HEAD publicação: 7473b37. HEAD final / COMMIT: `Bridge explicit marketing audiences to offline dispatch`.
+- TESTES / BUILD: 79/79 locais; strict e build aprovados, aviso bundle conhecido.
+- ERROS ANTES / DEPOIS / NOVOS: 21 / 21 / 0, assinaturas relativas idênticas.
+- ARQUIVOS: marketingDispatchBridge.ts/test.ts, UNI-06, activeSalesOffline.ts/test.ts
+  (regressão de endereço entre chamadas), relatório principal e ledger.
+- PR: #4 draft. PREVIEW STATUS: BLOCKED; URL nenhuma; Firebase/channel nenhum.
+- RISCOS: handoff é snapshot e não recalcula marketing/eligibility; endereço permanece
+  apenas transitório em draft offline. Caller mantém operações/revisões distintas.
+- DECISÃO: UNI-07 verde offline; gate de isolamento visual permanece.

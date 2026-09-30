@@ -82,3 +82,10 @@ test('two contact IDs sharing one phone cannot duplicate recipient', () => {
   const changedEvidence = evidence.map(e => e.contactId === 'two' ? { ...e, phone: contacts[0].phone, identity: { ...e.identity, address: contacts[0].phone } } : e);
   assert.equal(prepareActiveSalesDrafts(s, { ...input, contacts: changedContacts, evidence: changedEvidence }).state.drafts.length, 1);
 });
+test('recipient snapshot prevents duplication when next call omits earlier contact source', () => {
+  const first = prepareActiveSalesDrafts(state(), input).state;
+  const changedContacts = [{ ...contacts[1], phone: contacts[0].phone }];
+  const changedEvidence = evidence.filter(e => e.contactId === 'two').map(e => ({ ...e, phone: contacts[0].phone, identity: { ...e.identity, address: contacts[0].phone } }));
+  const nextDay = prepareActiveSalesDrafts(first, { ...input, at: new Date('2026-10-01T12:00:00Z'), contacts: changedContacts, evidence: changedEvidence });
+  assert.equal(nextDay.state.drafts.length, 1);
+});

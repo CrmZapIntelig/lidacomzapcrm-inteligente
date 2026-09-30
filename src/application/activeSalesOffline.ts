@@ -9,6 +9,8 @@ export type DispatchChannelStrategy = 'WHATSAPP' | 'GOOGLE_RCS' | 'RCS_FIRST_WIT
 export interface ConversationDraft extends PendingOutboundMessage {
   tenantId: string;
   channel: CommunicationChannel;
+  /** Transient offline snapshot, never an audit/log or provider payload. */
+  recipientAddress: string;
   idempotencyKey: string;
   mode: 'SIMULATION';
   state: 'DRAFT';
@@ -74,7 +76,7 @@ export function prepareActiveSalesDrafts(state: ActiveSalesState, input: Prepara
     const contact = contacts[0];
     const evidence = input.evidence.filter(e => e.contactId === contact.id && e.tenantId === contact.tenantId);
     if (evidence.some(e => e.blocked || e.optedOut || e.group || e.consent !== 'ALLOWED')) { waiting('CONTACT_BLOCKED_OR_CONSENT_NOT_ALLOWED'); continue; }
-    if (next.drafts.some(d => input.contacts.some(c => c.id === d.contactId && c.tenantId === contact.tenantId && c.phone === contact.phone))) { waiting('DUPLICATE_RECIPIENT_ADDRESS'); continue; }
+    if (next.drafts.some(d => d.tenantId === contact.tenantId && d.recipientAddress === contact.phone)) { waiting('DUPLICATE_RECIPIENT_ADDRESS'); continue; }
     // Eligibility is central and current; snapshot membership never authorizes preparation.
     const eligible = evidence.filter(e => e.phone === contact.phone && evaluateDispatchEligibility({ ...e, alreadyPrepared: e.alreadyPrepared || next.drafts.some(d => d.contactId === contact.id) }, { tenantId: contact.tenantId, minimumIntervalMs: next.minimumIntervalMs, evaluatedAt: input.at }).eligibleForPreparation);
     let selected: CommunicationChannel | null = null;
@@ -93,7 +95,7 @@ export function prepareActiveSalesDrafts(state: ActiveSalesState, input: Prepara
     if (!budget.allowed) { waiting('DAILY_BUDGET_EXHAUSTED'); continue; }
     next.budgets = budget.budgets;
     const draftId = `draft:${entry.idempotencyKey}`;
-    next.drafts = [...next.drafts, { id: draftId, tenantId: contact.tenantId, contactId: contact.id, campaignId: next.campaign.id, queueEntryId: entry.id, conversationId: conversations[0].id, channel: selected, content, createdAt: new Date(input.at), idempotencyKey: entry.idempotencyKey, mode: 'SIMULATION', state: 'DRAFT', canSend: false }];
+    next.drafts = [...next.drafts, { id: draftId, tenantId: contact.tenantId, contactId: contact.id, campaignId: next.campaign.id, queueEntryId: entry.id, conversationId: conversations[0].id, channel: selected, recipientAddress: contact.phone, content, createdAt: new Date(input.at), idempotencyKey: entry.idempotencyKey, mode: 'SIMULATION', state: 'DRAFT', canSend: false }];
     next.queue = { ...next.queue, entries: next.queue.entries.map(e => e.id === entry.id ? { ...e, status: 'DRAFT_PREPARED', ownerId: undefined, leaseExpiresAt: undefined } : e) };
     preparedDraftIds.push(draftId);
     decisions.push({ entryId: entry.id, status: 'DRAFT_PREPARED', reasons: [] });

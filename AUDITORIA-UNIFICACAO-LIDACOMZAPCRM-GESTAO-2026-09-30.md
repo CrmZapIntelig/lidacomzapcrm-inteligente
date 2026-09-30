@@ -356,3 +356,13 @@ budget por dia e seleção única de canal; toda execução SIMULATION/PREPARED_
 canSend=false e janela NOT_EVALUATED. Sem send, UI, Firestore ou provider.
 PR #4 draft; Hosting bloqueado até isolamento backend. UNI-06 liberada offline.
 Evidências e limites em docs/unificacao/UNI-05-venda-ativa-offline.md.
+
+## UNI-06 — Marketing → Dispatch
+
+Ponte explícita preserva QUEM/POR QUÊ e configuração operacional separada.
+Snapshot com revisão/vínculo e chave determinística, sem recalcular segmentação.
+79 testes locais, strict/build verdes, baseline 21→21 zero novos. CI em 7473b37
+verde para push e PR; fonte de diagnósticos comparada por path relativo/linha/coluna.
+Draft conserva endereço transitório para dedupe entre chamadas incompletas.
+Sem UI/Firestore/provider; preview permanece bloqueado. UNI-07 liberada offline.
+Detalhes: docs/unificacao/UNI-06-marketing-dispatch.md.
