@@ -138,3 +138,12 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - PREVIEW LOCAL_AVAILABLE: http://127.0.0.1:4178/; nenhuma URL Hosting/channel.
 - Encerramento documental: commit Record UNI-08 validation and live integration stop; nenhum código adicional após validação funcional.
 - DECISÃO FINAL: UNI-08 concluída no escopo local; parada em GATE_LIVE_INTEGRATION_REQUIRED, sem integração real/deploy/merge.
+
+## LIVE-00 — readiness estrutural (2026-09-30)
+
+- HEAD inicial: 62cfde5c8741c23922ab626aab682fe8ba2dac0b; final identificado por commit Prepare fail-closed messaging readiness and inbound projection.
+- 100 testes locais acumulados; strict núcleo/preview e builds operacional/isolado aprovados; baseline 21 / 21 / 0.
+- Arquivos: messagingPolicy, messagingReadiness, inboundProjection e testes; LIVE-00/ledger. Fonte histórica HEAD 0b13ef1 auditada somente leitura, incluindo pasta LidacomZap não rastreada preservada.
+- Provider boundary/policy/template/auto-reply DRAFT/projeção idempotente prontos; runtime/adapter e persistência ainda ausentes. Nenhum envio/rede provider/cloud.
+- PR #4 draft; main 60fb91f intacta; preview http://127.0.0.1:4178/ continua SIMULATION isolado.
+- Decisão: validar CI antes da LIVE-01; bloqueios cloud/canário não impedem próxima implementação local.
