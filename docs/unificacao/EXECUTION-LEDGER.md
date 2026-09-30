@@ -157,3 +157,14 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - Secrets fakes, zero network provider/send/cloud; métodos reais permanecem GATE_OUTBOUND_CANARY_REQUIRED, sem transporte conectado. Reconfirmação técnica Meta pendente, documentada.
 - Preview local SIMULATION preservado, PR draft, main 60fb91f, fontes/pessoais intactos.
 - Decisão: confirmar CI da fase e avançar LIVE-02 somente local.
+
+## LIVE-02 — ingresso e journal local sintético
+
+- HEAD inicial: 818e7c2f35292f7266b82248a34c9fa4230fb057; CI LIVE-01 push 36778699714 / PR 36778707362 success.
+- Commit: Prepare durable synthetic ingress and fenced inbound worker.
+- 112 testes acumulados; strict servidor/núcleo/preview e builds aprovados; baseline 21 / 21 / 0.
+- Arquivos: localInboundJournal/runtime/test, staging.example.json, .gitignore, inboundProjection/test (validação de estado tenant e cópias), LIVE-02/ledger.
+- ACK após gravação, restart/replay, fencing/backoff, projeção + draft atômicos, zero send. Persistência só sintética; não equivale a Firestore staging/distribuído.
+- Staging cloud ausente: .firebaserc só default. Algoritmo/header de assinatura reconfirmados em referência oficial Meta pinada 14703a3; configuração da conta/subscription ainda não comprovada.
+- PR draft/main intacta; pessoal/fontes preservados; preview isolado sem nova ligação.
+- Decisão: CI da fase; continuar LIVE-03/04 PREPARATION antes do gate externo/canário.

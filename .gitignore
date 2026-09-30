@@ -2,6 +2,7 @@ node_modules/
 build/
 dist/
 dist-offline/
+.local-messaging/
 coverage/
 .DS_Store
 *.log

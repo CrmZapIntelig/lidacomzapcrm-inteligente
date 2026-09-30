@@ -21,4 +21,5 @@ test('tenant/account/mode and ambiguous identities/conversations fail atomically
   assert.throws(() => projectInbound({ ...state, contacts: [...state.contacts, { ...state.contacts[0], id: 'second' }] }, { ...event, messageId: 'next' }, allocate), /IDENTITY_AMBIGUOUS/);
   assert.throws(() => projectInbound({ ...state, conversations: [...state.conversations, { ...state.conversations[0], id: 'second' }] }, { ...event, messageId: 'next' }, allocate), /CONVERSATION_AMBIGUOUS/);
   assert.equal(state.messages.length, 1);
+  assert.throws(() => projectInbound({ ...state, contacts: [{ ...state.contacts[0], tenantId: 'other' }] }, { ...event, messageId: 'next' }, allocate), /STATE_CONTEXT/);
 });

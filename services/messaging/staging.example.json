@@ -1,0 +1,18 @@
+{
+  "mode": "DISABLED",
+  "environment": "UNPROVISIONED_STAGING",
+  "tenantId": "demo-offline",
+  "provider": "WHATSAPP_META_OFFICIAL",
+  "projectId": null,
+  "wabaId": null,
+  "phoneNumberId": null,
+  "apiVersion": null,
+  "credentialRef": null,
+  "appSecretRef": null,
+  "verifyTokenRef": null,
+  "publicWebhook": null,
+  "testRecipientAllowlist": [],
+  "maxRecipients": 1,
+  "maxMessages": 1,
+  "autoSend": false
+}
