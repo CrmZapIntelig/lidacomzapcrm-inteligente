@@ -5,6 +5,12 @@ Auditoria de leitura. UNI-05 não iniciada. Único arquivo autorizado nesta entr
 
 ## 1. Resumo executivo
 
+Atualização posterior REC-01 (2026-09-30): a decisão **NÃO** abaixo registra o
+baseline histórico 5403790. A recuperação seletiva agora foi implementada e
+validada no CRM; [REC-01](REC-01-pre-requisitos-venda-ativa.md) comprova a liberação
+**SIM para UNI-05 offline**. A lista original da seção 17 permanece como evidência,
+com checklist correspondente na REC-01. Nenhuma liberação live foi concedida.
+
 **UNI-05 pode começar usando apenas os contratos atuais da unificação? NÃO.**
 Eles permitem projeções e um draft, mas não incluem o núcleo de fila, transições,
 retry e decisão de canal que já existe nas fontes. Antes de implementar a venda

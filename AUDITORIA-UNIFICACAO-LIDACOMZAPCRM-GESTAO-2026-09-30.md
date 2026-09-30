@@ -337,3 +337,13 @@ Nenhuma mudança em UNI-03, modelos, UI, Firestore, package, Firebase ou main.
 Sem envio, migração ou deploy. Configuração pessoal e patch local preservados.
 Detalhes: [UNI-04](docs/unificacao/UNI-04-integracao-camada-aplicacao.md).
 UNI-05 não iniciada.
+
+## REC-01 — recuperação seletiva, 2026-09-30
+
+SOURCE-AUDIT 5403790 lido integralmente. Recuperadas factories/routing, grafo
+outbound e retry, adaptadas semânticas de fila/lease/cancelamento como snapshots
+imutáveis. Criadas audience explícita, eligibility central e orçamento diário
+acumulado por tenant/campanha/data/fuso. Não houve cópia de árvore ou singleton.
+59 testes, typecheck estrito e build aprovados; baseline 21 → 21, zero novos.
+Gate de início UNI-05: SIM exclusivamente offline. UI/Firebase/main intactos.
+Detalhes: docs/unificacao/REC-01-pre-requisitos-venda-ativa.md e EXECUTION-LEDGER.md.
