@@ -114,3 +114,17 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
   incidente login:list documentado sem material sensível no Git.
 - DECISÃO DE GATE: parar antes de UNI-08; opções/recomendação/estado Git no relatório GATE.
 - Fontes: fingerprints SOURCE-AUDIT reconferidos idênticos (G 293, S 317, W 181, R 49, B 3).
+
+## UNI-08 — entrada visual local isolada (2026-09-30)
+
+- AUTORIZAÇÃO: opção 2 do GATE_PREVIEW_BACKEND_ISOLATION_REQUIRED, dada diretamente pelo usuário.
+- HEAD inicial: cfe7c26d6d2f59bddefa389d2a57b2d952f28736.
+- HEAD final / COMMIT: `Add isolated local active sales preview` (SHA no log Git; não se autorreferencia o commit).
+- TESTES / BUILD: 91/91 locais; strict núcleo e preview; builds operacional/isolado aprovados. Aviso de bundle operacional preexistente.
+- ERROS ANTES / DEPOIS / NOVOS: 21 / 21 / 0; mesmas assinaturas.
+- ARQUIVOS: offline-preview (entrada, cenário, CSS, testes, pacote de tipos e lock), vite.offline.config.ts, tsconfig.preview-offline.json, tsconfig.json, package.json, .gitignore, workflow, servidor/testes de isolamento e relatórios UNI-08/gates/ledger/principal/CI.
+- PREVIEW STATUS / URL: LOCAL_AVAILABLE / http://127.0.0.1:4178/. FIREBASE PROJECT / CHANNEL: nenhum.
+- EVIDÊNCIA VISUAL: preparo, fallback, replay, conversa personalizada, próximo dia, append posição 7, timeline/RASCUNHO; zero envio. Screenshot externa ao Git registrada na UNI-08.
+- RISCOS: cenário só sintético/memória; não comprova provider, persistência ou prontidão live.
+- PRESERVAÇÃO: main 60fb91f; App/components/lib e fontes históricas sem alterações desta fase. .vscode/extensions.json, backup.patch, AGENTS.md e docs/FONTES-CHATS.md excluídos.
+- DECISÃO: gate preview resolvido somente local; validar CI no commit publicado e parar em GATE_LIVE_INTEGRATION_REQUIRED. PR #4 draft, sem deploy/merge/integração real.

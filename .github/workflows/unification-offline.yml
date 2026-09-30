@@ -20,3 +20,8 @@ jobs:
       - run: node node_modules/typescript/bin/tsc -p tsconfig.offline.json
       - run: node tools/unification/check-baseline.mjs
       - run: npm run build
+      - run: node --test --import tsx offline-preview/*.test.ts
+      - run: npm ci --prefix offline-preview
+      - run: node node_modules/typescript/bin/tsc -p tsconfig.preview-offline.json
+      - run: npm run build:offline
+      - run: node --test tools/unification/preview-isolation.test.mjs

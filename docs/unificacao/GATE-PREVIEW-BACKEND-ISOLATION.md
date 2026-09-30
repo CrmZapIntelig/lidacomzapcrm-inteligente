@@ -1,5 +1,9 @@
 # Gate — integração visual bloqueada
 
+## Atualização UNI-08 — 2026-09-30
+
+O usuário autorizou explicitamente a opção 2. A entrada local independente foi criada e validada, sem importar App/Firebase/Auth/Firestore/providers reais. Gate RESOLVIDO somente para http://127.0.0.1:4178/, fixtures e backend NONE. Evidências em UNI-08-integracao-visual-offline.md. Hosting não publicado. Próxima parada: GATE_LIVE_INTEGRATION_REQUIRED (GATE-LIVE-INTEGRATION.md). O texto abaixo preserva o estado histórico anterior à autorização.
+
 DATA: 2026-09-30. Controlador contínuo fornecido pelo usuário, seções 21, 25 e 38.
 
 GATE_ID: **GATE_PREVIEW_BACKEND_ISOLATION_REQUIRED**.

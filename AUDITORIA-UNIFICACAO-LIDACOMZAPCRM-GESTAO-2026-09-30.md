@@ -385,3 +385,7 @@ Parada obrigatória antes de UNI-08: GATE_PREVIEW_BACKEND_ISOLATION_REQUIRED.
 Nenhuma URL visual isolada disponível, nenhuma mudança de produção/backend.
 Próxima ação exige comprovar/autorizar isolamento visual. Relatório completo:
 docs/unificacao/GATE-PREVIEW-BACKEND-ISOLATION.md e EXECUTION-LEDGER.md.
+
+## UNI-08 — atualização após autorização da opção 2
+
+Em 2026-09-30 o usuário autorizou a entrada visual local isolada. Implementada e validada com dados sintéticos e os núcleos UNI-05/06/07, sem importar App.tsx/Firebase/Auth/Firestore/providers reais. URL http://127.0.0.1:4178/. 91/91 testes locais, strict núcleo/preview e builds aprovados; 21→21 diagnósticos globais, zero novos. A autorização não abrange backend operacional, deploy live ou merge main. Gate visual resolvido somente local; parada em GATE_LIVE_INTEGRATION_REQUIRED. Relatórios: docs/unificacao/UNI-08-integracao-visual-offline.md, GATE-LIVE-INTEGRATION.md e EXECUTION-LEDGER.md. Os registros anteriores preservam o estado histórico.
