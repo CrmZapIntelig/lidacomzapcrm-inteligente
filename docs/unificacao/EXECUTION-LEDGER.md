@@ -19,3 +19,16 @@ de conhecer antes de criá-lo. Histórico Git é a resolução canônica desses 
 - RISCOS: capability explícita de fixture não é evidência live; snapshots exigem caller;
   orçamento offline não é quota de provider. Nenhum send/receipt real.
 - DECISÃO DE GATE: verde offline; UNI-05 pode começar.
+
+## CI-PREVIEW
+
+- HEAD inicial / REC-01 final: 7abdd0fcc5a3c5a3259aeb45bc38218ef5e57be2.
+- HEAD final / COMMIT: `Add offline CI and record preview isolation gate`.
+- TESTES / BUILD: gates locais REC-01 59/59 e build verde; configuração CI sem deploy.
+- ERROS ANTES / DEPOIS / NOVOS: 21 / 21 / 0; fingerprint 765fceec…fecd.
+- ARQUIVOS: .github/workflows/unification-offline.yml, tsconfig.offline.json,
+  tools/unification/check-baseline.mjs, CI-PREVIEW-preflight.md, ledger.
+- PR: #4 draft, sem auto-merge. PREVIEW STATUS: BLOCKED; URL: nenhuma;
+  FIREBASE PROJECT / CHANNEL: não selecionados.
+- RISCOS / DECISÃO: GATE_PREVIEW_BACKEND_ISOLATION_REQUIRED. Conforme seção 25
+  do controlador, continuar fases internas e parar antes da UNI-08.
