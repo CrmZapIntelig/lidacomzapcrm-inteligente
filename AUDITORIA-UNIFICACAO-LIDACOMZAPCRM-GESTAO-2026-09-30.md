@@ -322,3 +322,18 @@ build aprovado com aviso de bundle; lint permanece com 21 erros, zero novos.
 Não houve mudança de UI, Firestore, envio, migração, main ou deploy.
 Referências remotas citadas foram lidas localmente, sem atualização de rede.
 Detalhes e limitações: [UNI-03](docs/unificacao/UNI-03-adaptadores-legado-novo-dominio.md).
+
+## UNI-04 — camada de aplicação, 2026-09-30
+
+Pre-flight confirmou branch codex/unificacao-gestao-inteligente e HEAD 6a92a78.
+UNI-02/03 publicadas no origin antes de iniciar UNI-04, com HEADs iguais.
+Criada facade read-only em src/application, consumindo os adapters preservados.
+Marketing só prepara Dispatch draft por chamada explícita com audiência; fila
+NOT_CREATED, execução NOT_STARTED. Opportunity ausente permanece ABSENT.
+Política de mensagens permanece NOT_EVALUATED, canSend=false.
+38 testes aprovados (25 novos + 13 UNI-03), typecheck estrito e build aprovados.
+Lint final: mesmos 21 erros anteriores, zero novos, comparados pela API TypeScript.
+Nenhuma mudança em UNI-03, modelos, UI, Firestore, package, Firebase ou main.
+Sem envio, migração ou deploy. Configuração pessoal e patch local preservados.
+Detalhes: [UNI-04](docs/unificacao/UNI-04-integracao-camada-aplicacao.md).
+UNI-05 não iniciada.
