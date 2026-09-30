@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.offline.json",
+  "include": ["src/domain/**/*.ts", "src/application/**/*.ts", "services/messaging/**/*.ts"]
+}

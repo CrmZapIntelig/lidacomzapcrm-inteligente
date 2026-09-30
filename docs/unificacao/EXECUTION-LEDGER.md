@@ -147,3 +147,13 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - Provider boundary/policy/template/auto-reply DRAFT/projeção idempotente prontos; runtime/adapter e persistência ainda ausentes. Nenhum envio/rede provider/cloud.
 - PR #4 draft; main 60fb91f intacta; preview http://127.0.0.1:4178/ continua SIMULATION isolado.
 - Decisão: validar CI antes da LIVE-01; bloqueios cloud/canário não impedem próxima implementação local.
+
+## LIVE-01 — provider preparado, transporte fechado
+
+- HEAD inicial: ed493ba3e9807a9a38077e89337646b138c047a6; CI LIVE-00 push 36778176581 / PR 36778181444 success.
+- Commit: Prepare disabled server-side Meta messaging adapter.
+- Testes: 106 acumulados (104 módulos/cenário + 2 isolamento); strict server/núcleo/preview, ambos builds aprovados; baseline 21 / 21 / 0.
+- Arquivos: services/messaging/metaWhatsAppCloudProvider.ts/test.ts, tsconfig.messaging.json, workflow, LIVE-01/ledger.
+- Secrets fakes, zero network provider/send/cloud; métodos reais permanecem GATE_OUTBOUND_CANARY_REQUIRED, sem transporte conectado. Reconfirmação técnica Meta pendente, documentada.
+- Preview local SIMULATION preservado, PR draft, main 60fb91f, fontes/pessoais intactos.
+- Decisão: confirmar CI da fase e avançar LIVE-02 somente local.
