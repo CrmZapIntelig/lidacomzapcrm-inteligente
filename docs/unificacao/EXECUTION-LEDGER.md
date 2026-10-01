@@ -190,3 +190,12 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - Preview recompilado com 36 módulos, isolamento aprovado; nenhuma nova ligação a App/Firebase/Auth/Firestore/providers. Disponibilidade de uma sessão HTTP anterior não foi presumida.
 - Main remoto reconfirmado 60fb91f; PR draft=true/merged=false/auto_merge=null. Pessoais, documentos de outra conversa e fontes históricas não editados.
 - Decisão: publicar e validar CI; parar em GATE_STAGING_PROJECT_REQUIRED. Primeiro envio permanece GATE_OUTBOUND_CANARY_REQUIRED. Preparação local concluída, canário/integracão externa não executados.
+
+## Fechamento LIVE PREPARATION — evidência remota
+
+- HEAD funcional: b5f7e9125ad537daa96289021df1abf90fa07816, publicado normalmente na branch.
+- CI funcional push: https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/36827648971 — success.
+- CI funcional PR: https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/36827655989 — success no mesmo SHA.
+- Fechamento exclusivamente documental: Record live preparation validation and staging gate. Nenhum código mudou após os gates funcionais.
+- Próximo gate: GATE_STAGING_PROJECT_REQUIRED; exigir autorização de ambiente separado antes de criar cloud. Não confundir essa autorização com autorização do primeiro envio.
+- Resultado: preparação local LIVE-00–04 concluída e validada; prontidão cloud/produção e canário real não comprovados. PR #4 draft, main 60fb91f preservada.

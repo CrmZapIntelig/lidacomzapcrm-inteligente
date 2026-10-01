@@ -14,6 +14,6 @@ AÇÃO MÍNIMA DO USUÁRIO: autorizar a criação de um projeto staging separado
 
 PRÓXIMO PASSO DO AGENTE: auditar o ambiente autorizado sem expor tokens; se necessário, parar no gate de reautenticação antes de acesso cloud. Preparar persistência, IAM, secrets e receiver isolados dentro do escopo aprovado, validar isolamento e manter **GATE_OUTBOUND_CANARY_REQUIRED** antes do primeiro envio TEST. RCS mantém gate próprio de agente/canário.
 
-HEAD / PR / CI: branch codex/unificacao-gestao-inteligente; HEAD funcional da fase identificado pelo commit Prepare disabled RCS drafts and safe single-channel fallback. PR https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/pull/4 draft. Resultados e SHAs comprovados no EXECUTION-LEDGER.md; main esperado 60fb91fdf048a8e0d4f9adc29a532be8bf4356dd.
+HEAD / PR / CI: branch codex/unificacao-gestao-inteligente; HEAD funcional b5f7e9125ad537daa96289021df1abf90fa07816. CI push 36827648971 e PR 36827655989 success nesse SHA. PR https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/pull/4 draft. Fechamento documental e evidências no EXECUTION-LEDGER.md; main preservado 60fb91fdf048a8e0d4f9adc29a532be8bf4356dd.
 
 DECISÃO: parar antes de integração externa, primeiro envio, criação cloud, deploy live ou merge main. Não foram acessados dados operacionais ou usadas credenciais de provider.
