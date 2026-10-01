@@ -1,6 +1,6 @@
 # Execution ledger — Unificação
 
-Projeto definitivo LidacomZapCRM Inteligente. Branch codex/unificacao-gestao-inteligente.
+Projeto principal LidacomZapCRM. Branch codex/unificacao-gestao-inteligente.
 Data de execução 2026-09-30. Fontes históricas read-only. Main protegida em 60fb91f.
 Commits/HEAD finais de cada fase são identificados pela mensagem única abaixo e
 confirmados na entrada seguinte; evita incluir no próprio commit um hash impossível
@@ -199,3 +199,13 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - Fechamento exclusivamente documental: Record live preparation validation and staging gate. Nenhum código mudou após os gates funcionais.
 - Próximo gate: GATE_STAGING_PROJECT_REQUIRED; exigir autorização de ambiente separado antes de criar cloud. Não confundir essa autorização com autorização do primeiro envio.
 - Resultado: preparação local LIVE-00–04 concluída e validada; prontidão cloud/produção e canário real não comprovados. PR #4 draft, main 60fb91f preservada.
+
+## Auditoria corretiva do estado canônico — 2026-10-01
+
+- HEAD auditado: ad30da8e657723c4a9da6cf913c235078c169ba4. Um único projeto LidacomZapCRM; arquitetura/funcionalidades do Gestão incorporadas pertencem ao CRM. O outro checkout é repositório histórico LidacomZap Gestão Inteligente.
+- Mapa solicitado: CANONICAL-UNIFICATION-STATE.md, com roadmap original versus fases/commits reais, classificações e gaps. Numeração e commits históricos preservados.
+- Validação repetida nesta auditoria: 119 testes, strict servidor/núcleo/preview, baseline 21/21/0, verificação AST e ambos builds aprovados. Aviso de bundle preexistente.
+- App/components/lib/types legados iguais ao checkpoint a69aba9 anterior à UNI-02. Diferenças de campanhas anteriores contra main não são atribuídas à unificação.
+- PR #4 draft, sem merge/auto-merge; main remoto 60fb91f. Working tree preexistente preservado: .vscode/extensions.json, AGENTS.md, docs/FONTES-CHATS.md e backup.patch. Nenhum staging local novo encontrado.
+- Regressão encontrada: NÃO no escopo auditado. Rollback necessário: NÃO. Alteração somente documental, sem remover ou reverter código.
+- Decisão: auditoria corretiva concluída; não continuar staging neste pedido. Gates de ambiente e primeiro envio permanecem vigentes.
