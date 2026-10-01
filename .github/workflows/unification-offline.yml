@@ -20,6 +20,7 @@ jobs:
       - run: node node_modules/typescript/bin/tsc -p tsconfig.offline.json
       - run: node --test --import tsx services/messaging/*.test.ts
       - run: node node_modules/typescript/bin/tsc -p tsconfig.messaging.json
+      - run: node tools/unification/check-messaging-safety.mjs
       - run: node tools/unification/check-baseline.mjs
       - run: npm run build
       - run: node --test --import tsx offline-preview/*.test.ts

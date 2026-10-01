@@ -179,3 +179,14 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - Riscos pendentes: staging/secrets/public webhook/store distribuído/intenção transacional/canário. Preparação não equivale a canário concluído.
 - PR draft/main/fontes/pessoal preservados; preview local SIMULATION sem providers.
 - Decisão: confirmar CI; preparar RCS DISABLED localmente, parar antes de integração externa/primeiro envio.
+
+## LIVE-04 — PREPARATION validada localmente (2026-10-01)
+
+- HEAD inicial: 5c1c531ca49f54f8c565939db45772096f4a5aef; CI LIVE-03 push 36780096773 / PR 36780100689 success.
+- Commit funcional: Prepare disabled RCS drafts and safe single-channel fallback.
+- 119 testes aprovados (117 módulos/cenário + 2 isolamento); strict servidor/núcleo/preview, builds operacional/isolado e verificação AST aprovados. Baseline 21 / 21 / 0, mesmas assinaturas. Aviso preexistente de bundle operacional acima de 500 kB.
+- Arquivos: rcsChannelProvider/test, channelFallbackPreparation, check-messaging-safety, workflow, LIVE-04/gates/ledger.
+- RCS DISABLED, capability fornecida e vinculada, drafts MOCK, fallback único sem repetição após aceitação/incerteza. Sem SDK/transporte/consulta real/agente; formato de draft interno, não protocolo Google validado.
+- Preview recompilado com 36 módulos, isolamento aprovado; nenhuma nova ligação a App/Firebase/Auth/Firestore/providers. Disponibilidade de uma sessão HTTP anterior não foi presumida.
+- Main remoto reconfirmado 60fb91f; PR draft=true/merged=false/auto_merge=null. Pessoais, documentos de outra conversa e fontes históricas não editados.
+- Decisão: publicar e validar CI; parar em GATE_STAGING_PROJECT_REQUIRED. Primeiro envio permanece GATE_OUTBOUND_CANARY_REQUIRED. Preparação local concluída, canário/integracão externa não executados.

@@ -1,5 +1,7 @@
 # Gate — integração real
 
+Atualização 2026-10-01: o controlador posterior autorizou LIVE-00/01/02 e LIVE-03/04 PREPARATION local. A restrição histórica abaixo foi resolvida somente para essa preparação; integração externa e primeiro envio continuam fechados. O próximo gate concreto está em GATE-STAGING-CANARY.md. Não houve ligação ao backend operacional.
+
 GATE_ID: **GATE_LIVE_INTEGRATION_REQUIRED**. DATA: 2026-09-30.
 
 MOTIVO: UNI-08 conclui a demonstração sintética. Integração com Auth, Firestore, storage, providers, janela de mensagens, workers ou telas operacionais ultrapassa a autorização atual. O usuário mandou parar antes de qualquer integração real.
