@@ -246,3 +246,11 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - GATE: GATE_FIREBASE_REAUTH_REQUIRED; nenhum login:list/tokens/session antiga usados. Interação necessária apenas para login seguro no navegador.
 - NEXT: reautenticar após autorização, criar/verificar projeto gratuito segregado e IAM/Hosting, adicionar alias staging preservando default, publicar preview pr-4 e validar URL/CI; só então avançar STG-02 e STG-03. Gates billing/Meta/RCS/primeiro envio permanecem.
 - PRESERVAÇÃO: .vscode/extensions.json, backup.patch, AGENTS.md e FONTES-CHATS não relacionados excluídos; operação original, UNI-08, main e fontes históricas intactas.
+
+## STG-01 — correção de contexto do workflow
+
+- HEAD inicial: 0740d0dd04a2bae8e49d557bf484213c25bb4667 (documentação/UX-OPS); funcional c081e817ead96122e71bafec7254ee3aa7f028bd.
+- CI push 37066900336 falhou antes de criar jobs. Revisão encontrou uso de runner.temp em jobs.env, contexto não disponível nesse ponto conforme documentação oficial GitHub.
+- Correção: definir FIREBASE_CLI_ROOT por RUNNER_TEMP em etapa do job. Job de preview segue condicionado/bloqueado; sem credential/cloud/send.
+- HEAD final / COMMIT: `Fix staging workflow runner context availability`. Testes locais 138 e baseline/builds permanecem válidos; nenhuma fonte runtime modificada. CI corrigida a confirmar no fechamento.
+- GATE / NEXT: GATE_FIREBASE_REAUTH_REQUIRED / login autorizado e depois provisionamento segregado; STG-01 ainda parcial.

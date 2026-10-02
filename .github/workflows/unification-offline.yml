@@ -54,7 +54,6 @@ jobs:
     env:
       APP_ENV: staging
       FIREBASE_PROJECT_ID: ${{ vars.STAGING_FIREBASE_PROJECT_ID }}
-      FIREBASE_CLI_ROOT: ${{ runner.temp }}/staging-firebase-cli
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,6 +62,8 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Set temporary staging CLI directory
+        run: echo "FIREBASE_CLI_ROOT=$RUNNER_TEMP/staging-firebase-cli" >> "$GITHUB_ENV"
       - run: npm ci
       - run: npm ci --prefix offline-preview
       - run: node tools/unification/staging-environment.mjs deploy
