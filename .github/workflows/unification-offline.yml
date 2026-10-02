@@ -18,7 +18,7 @@ jobs:
       - run: npm ci
       - run: node --test --import tsx src/domain/*.test.ts src/application/*.test.ts
       - run: node node_modules/typescript/bin/tsc -p tsconfig.offline.json
-      - run: node --test --import tsx services/messaging/*.test.ts
+      - run: node --test --import tsx services/messaging/*.test.ts services/staging/*.test.ts
       - run: node node_modules/typescript/bin/tsc -p tsconfig.messaging.json
       - run: node tools/unification/check-messaging-safety.mjs
       - run: node tools/unification/check-baseline.mjs

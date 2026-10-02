@@ -1,5 +1,16 @@
 # Execution ledger — Unificação
 
+## STG-02 — store distribuído de fixtures / STG-03 gate
+
+- HEAD INICIAL: 23758b73a72e82956881e598b575e2a97521377f. COMMIT/HEAD FINAL: `Persist synthetic staging ingress with atomic Firestore ports` (resolver Git; CI do commit será confirmada no fechamento).
+- FIRESTORE: lidacomzapcrm-staging/(default), southamerica-east1, Standard/FIRESTORE_NATIVE, freeTier=true, billing=false, PITR disabled. Regras deny-all publicadas explicitamente neste projeto; nenhum backend operacional, UI Firebase ou coleção real acessado.
+- IMPLEMENTAÇÃO: porta AtomicJsonPort + Firestore transacional + fronteira HTTP única. Reaproveita journal/regras existentes, mantendo filesystem/journal/tests locais. Queue/admission/claim/lease/fencing/retry/final/crash recovery e projection/draft/audit em commit atômico. SIMULATION/TEST only; capacidade 200 work/1000 audit/256 KiB; sem scheduler/worker cloud.
+- PROBE CLOUD: concorrência/admission/replay/restart/atomicProjectionDraft/crashRecoveryFencing/retryFinalFailure/auditSanitised PASS, um contexto fixture separado, canSend=false. Saída sanitizada; credential nova somente em cache privado, nenhuma chave duradoura.
+- TESTES: oito casos staging adicionados aos 139; consolidação/strict/baseline/build e CI final a registrar no fechamento. Guards mantêm APP_ENV/project fail-closed; novo store servidor não habilita backend no bundle de Hosting.
+- STG-01 CI comprovada: push 37076090694 / PR 37076094664 success no d1c4db2, incluindo deployment WIF. Novos commits mantêm o job limitado à PR #4/branch/environment.
+- GATE / NEXT: GATE_STAGING_BILLING_REQUIRED na STG-03; Functions HTTPS requer Blaze, Cloud Run não disponível em Spark. Nenhum billing/Functions/Run/Build/Artifact Registry ou endpoint público criado. Autorizar billing somente staging antes de continuar. Meta/RCS DISABLED; primeiro envio continua gate independente; Order/UX-OPS sem escrita real.
+- PRESERVAÇÃO: default/main/operacional/UNI-08, pessoal e fonte histórica intactos. Sem merge, produção, envio ou migration operacional. Hosting continua preview temporário pr-4; URL https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app .
+
 ## STG-01 — provisionamento isolado comprovado (2026-10-02)
 
 - HEAD INICIAL: 1c44e7e3a75a469d28b0815aafa76798f6fca169. COMMIT de provisionamento d1c4db2; fechamento visual/documental `Record verified isolated Hosting and federated staging deployment` (resolver HEAD FINAL pelo Git).

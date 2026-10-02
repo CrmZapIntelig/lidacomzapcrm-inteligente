@@ -34,7 +34,8 @@ export function validateStaging({ manifest, aliases, hosting, environment = {}, 
   assert.equal(manifest.canSend, false, 'STAGING_SEND_FORBIDDEN');
   assert.equal(manifest.metaProvider, 'DISABLED', 'META_MUST_REMAIN_DISABLED');
   assert.equal(manifest.rcsProvider, 'DISABLED', 'RCS_MUST_REMAIN_DISABLED');
-  assert.equal(manifest.firestoreProvisioned, false, 'STG01_FIRESTORE_NOT_PROVISIONED');
+  // STG-02 server persistence can coexist with Hosting; it never enables preview backend.
+  assert.equal(typeof manifest.firestoreProvisioned, 'boolean', 'FIRESTORE_PROVISIONING_STATE_REQUIRED');
   assert.equal(manifest.webhookProvisioned, false, 'STG01_WEBHOOK_NOT_PROVISIONED');
   assert.equal(manifest.hostingChannel, 'pr-4', 'NON_LIVE_CHANNEL_REQUIRED');
   assert.equal(manifest.hostingPublic, 'dist-integrated', 'ISOLATED_BUILD_REQUIRED');

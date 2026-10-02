@@ -2,6 +2,8 @@
 
 ## Estado atual — controlador contínuo de 2026-10-02
 
+**Atualização prevalente após reautenticação autorizada:** GATE_FIREBASE_REAUTH_REQUIRED resolvido. STG-01 Hosting isolado e CI federada concluídos; STG-02 Firestore gratuito/ports/fixtures validados (CI final no ledger). Gate atual: **GATE_STAGING_BILLING_REQUIRED** para receiver HTTPS/worker Functions na STG-03. Billing=false, nenhum recurso pago criado. Ação mínima: autorização explícita de billing/Blaze somente no staging, com custos possíveis. Não solicitar login de novo. Depois: preparar/publicar receiver isolado e retomar até próximo gate Meta/credenciais/primeiro envio. O texto seguinte é registro histórico superado.
+
 GATE_STAGING_PROJECT_REQUIRED resolvido **quanto à autorização** de criar ambiente gratuito separado; o projeto ainda não existe como fato comprovado. Próximo gate: **GATE_FIREBASE_REAUTH_REQUIRED**. A sessão anterior é potencialmente comprometida devido ao incidente login:list; não foi reutilizada/consultada. Ação mínima: **Autorize o login Firebase no navegador.**
 
 Pronto: guardas fail-closed, configuração Hosting exclusiva dist-integrated/pr-4, testes e CI condicionada, UX-OPS registrado. Provisionamento/alias/URL/Firestore/webhook/WIF continuam pendentes. Depois: agente reautentica sem exposição de tokens, cria/verifica projeto grátis isolado, preserva default, publica só preview e avança STG-02 quando STG-01 estiver comprovadamente verde. Billing, credenciais Meta/RCS e primeiro envio permanecem gates humanos independentes.

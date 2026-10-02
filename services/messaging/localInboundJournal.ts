@@ -8,7 +8,7 @@ import { prepareAutoReplyDraft } from '../../src/application/messagingReadiness'
 import { businessKey, timestamp } from '../../src/domain/offlinePrimitives';
 
 interface Work { key: string; event: NormalizedProviderEvent; state: 'QUEUED' | 'RESERVED' | 'COMPLETED' | 'FAILED_FINAL'; attempt: number; token?: string; owner?: string; leaseUntil?: string; retryAt?: string }
-interface Journal { version: 1; tenantId: string; accountId: string; mode: 'SIMULATION'; work: Work[]; projection: InboundState; drafts: AutoReplyDraft[]; audit: MessagingAudit[] }
+export interface Journal { version: 1; tenantId: string; accountId: string; mode: 'SIMULATION'; work: Work[]; projection: InboundState; drafts: AutoReplyDraft[]; audit: MessagingAudit[] }
 export interface AutoReplyConfiguration { content: string; humanEscalation: string; blocked: boolean; optedOut: boolean; consent: 'ALLOWED' | 'DENIED' | 'UNKNOWN' }
 
 /** Local synthetic durable reference, NOT a staging/production database adapter. */
@@ -18,8 +18,8 @@ export class LocalInboundJournal {
     if (!/^demo(?:-|$)/.test(tenantId) || !/^\d+$/.test(accountId)) throw new Error('SYNTHETIC_CONTEXT_REQUIRED');
     this.root = resolve(root);
   }
-  private fresh(): Journal { return { version: 1, tenantId: this.tenantId, accountId: this.accountId, mode: 'SIMULATION', work: [], projection: createInboundState(this.tenantId, this.accountId, 'SIMULATION'), drafts: [], audit: [] }; }
-  private validateEvent(e: NormalizedProviderEvent) {
+  protected fresh(): Journal { return { version: 1, tenantId: this.tenantId, accountId: this.accountId, mode: 'SIMULATION', work: [], projection: createInboundState(this.tenantId, this.accountId, 'SIMULATION'), drafts: [], audit: [] }; }
+  protected validateEvent(e: NormalizedProviderEvent) {
     if (!['INBOUND', 'STATUS'].includes(e.kind) || !((e.channel === 'WHATSAPP' && e.provider === 'WHATSAPP_META_OFFICIAL') || (e.channel === 'RCS' && e.provider === 'RCS_GOOGLE')) || (e.kind === 'STATUS' && !['SENT', 'DELIVERED', 'READ', 'FAILED'].includes(e.status ?? ''))) throw new Error('SYNTHETIC_EVENT_INVALID');
     if (e.mode !== 'SIMULATION' || e.tenantId !== this.tenantId || e.accountId !== this.accountId || !/^synthetic-[A-Za-z0-9:_-]{1,200}$/.test(e.messageId) || !/^synthetic-[A-Za-z0-9:_-]{1,250}$/.test(e.eventId) || (e.kind === 'INBOUND' && !/^\+1202555010[0-6]$/.test(e.address ?? ''))) throw new Error('SYNTHETIC_EVENT_REQUIRED');
     timestamp(new Date(e.occurredAt));
@@ -28,6 +28,10 @@ export class LocalInboundJournal {
     try {
       const file = join(this.root, 'inbound.json'); if ((await lstat(file)).isSymbolicLink()) throw new Error('JOURNAL_SYMLINK');
       const j = JSON.parse(await readFile(file, 'utf8')) as Journal;
+      return this.restore(j);
+    } catch (e) { if ((e as NodeJS.ErrnoException).code === 'ENOENT') return this.fresh(); throw e; }
+  }
+  protected restore(j: Journal): Journal {
       if (j.version !== 1 || j.tenantId !== this.tenantId || j.accountId !== this.accountId || j.mode !== 'SIMULATION' || !Array.isArray(j.work) || !Array.isArray(j.drafts) || !Array.isArray(j.audit) || j.projection.tenantId !== this.tenantId || j.projection.mode !== 'SIMULATION' || j.projection.accountId !== this.accountId) throw new Error('JOURNAL_CONTEXT_MISMATCH');
       if (j.work.length > 10000 || new Set(j.work.map(w => w.key)).size !== j.work.length) throw new Error('JOURNAL_INVALID');
       for (const w of j.work) {
@@ -38,9 +42,8 @@ export class LocalInboundJournal {
       j.projection.conversations = j.projection.conversations.map(c => ({ ...c, createdAt: new Date(c.createdAt), updatedAt: new Date(c.updatedAt) }));
       j.projection.messages = j.projection.messages.map(m => ({ ...m, createdAt: new Date(m.createdAt) }));
       return j;
-    } catch (e) { if ((e as NodeJS.ErrnoException).code === 'ENOENT') return this.fresh(); throw e; }
   }
-  private async transaction<T>(fn: (j: Journal) => T): Promise<T> {
+  protected async transaction<T>(fn: (j: Journal) => T): Promise<T> {
     await mkdir(this.root, { recursive: true, mode: 0o700 });
     if ((await realpath(this.root)) !== this.root) throw new Error('JOURNAL_ROOT_SYMLINK');
     const lockPath = join(this.root, 'inbound.lock'); const lock = await open(lockPath, 'wx', 0o600);

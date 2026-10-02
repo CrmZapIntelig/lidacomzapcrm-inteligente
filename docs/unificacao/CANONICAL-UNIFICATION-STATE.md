@@ -4,6 +4,12 @@ Auditoria corretiva de 2026-10-01, solicitada antes de qualquer staging. Checkou
 
 ## Um único projeto
 
+### STG-02 — persistência staging comprovada / STG-03 billing gate
+
+Firestore default separado em southamerica-east1, Standard/freeTier=true e billing=false. Ports assíncronas reaproveitam regras do journal local: admissão/idempotency/fila/claim/lease/fencing/retry/failure/crash recovery e projeção+draft/audit atômicos. Probe real exclusivamente fixtures TEST no staging passou; regras fechadas publicadas. Oito testes locais adicionais. STAGING READY **somente persistência de fixtures limitada** (200 work/1000 audit/256 KiB); nenhum claim de volume operacional ou inbound real. Firestore em React/preview continua ausente; backend do preview NONE.
+
+STG-03 não provisionada: Functions HTTPS exige Blaze, ausente. **GATE_STAGING_BILLING_REQUIRED**. Não foi habilitado billing nem recurso pago; webhook público e worker cloud ausentes. Providers DISABLED, zero mensagens, main/operacional intactos. ORDER-01/OPS-01/UX-OPS continuam backlog aprovado. Fontes e limites: STG-02-durable-staging-persistence.md e STG-03-webhook-worker-gate.md. Resultados finais de testes/CI e SHAs no ledger. As seções datadas anteriores são registros históricos.
+
 ### Estado mais recente — STG-01 autenticada (2026-10-02)
 
 STG-01 concluída: projeto isolado lidacomzapcrm-staging / 854899277909, billing=false, default operacional preservado. Hosting exclusivo dist-integrated/pr-4 em https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app ; CSP sem backend. CI push 37076090694 e PR 37076094664 success em d1c4db2, incluindo deploy federado comprovado. IAM/WIF limitado ao staging/PR #4, sem chave duradoura. Reautenticação nova em cache privado, sem usar sessão anterior. Integrações operacionais continuam bloqueadas; o mapa histórico abaixo não é promovido por hospedar o preview.

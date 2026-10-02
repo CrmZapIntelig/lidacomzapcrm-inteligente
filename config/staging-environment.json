@@ -12,6 +12,6 @@
   "canSend": false,
   "metaProvider": "DISABLED",
   "rcsProvider": "DISABLED",
-  "firestoreProvisioned": false,
+  "firestoreProvisioned": true,
   "webhookProvisioned": false
 }

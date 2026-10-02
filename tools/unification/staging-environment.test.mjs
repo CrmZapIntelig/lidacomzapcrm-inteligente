@@ -37,7 +37,7 @@ test('only matching provisioned project/alias permits preview deployment validat
   delete input.aliases.projects.staging; assert.throws(() => validateStaging({ ...input, purpose: 'deploy' }), /ALIAS_REQUIRED/);
 });
 test('billing/provider/send/persistence activation requires a later explicit phase', async () => {
-  for (const [field, value] of [['billingEnabled', true], ['fixturesOnly', false], ['backend', 'FIRESTORE'], ['canSend', true], ['metaProvider', 'LIVE'], ['rcsProvider', 'LIVE'], ['firestoreProvisioned', true], ['webhookProvisioned', true]]) {
+  for (const [field, value] of [['billingEnabled', true], ['fixturesOnly', false], ['backend', 'FIRESTORE'], ['canSend', true], ['metaProvider', 'LIVE'], ['rcsProvider', 'LIVE'], ['firestoreProvisioned', 'UNKNOWN'], ['webhookProvisioned', true]]) {
     const input = await fixture(); input.manifest[field] = value; assert.throws(() => validateStaging(input));
   }
 });
