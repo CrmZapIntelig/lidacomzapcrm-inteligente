@@ -30,6 +30,8 @@ Worker ainda explícito/local; **sem scheduler/worker cloud ou webhook público*
 
 ## Validação e continuidade
 
+Fechamento funcional **6424df719d0e3f58b7ccdd0f4006d9f18a603da4**: **147/147 testes**, quatro stricts, baseline 21 → 21 / zero novos, AST/isolation e três builds verdes. CI push [37077640270](https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37077640270) e PR [37077644182](https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37077644182) success; job staging-preview executou deployment WIF. STG-02 concluída neste escopo de fixtures limitado. STG-03 parou no gate documentado; não declarar worker cloud operacional.
+
 Oito testes novos: contenção/restart/atomicidade, crash/fencing/retry/final, dados reais rejeitados/audit/receipt não correlacionado, capacidade/rollback/corrupção, projeto/path/write bloqueados antes de credential, erros HTTP sanitizados, commit com ACK incerto e claims concorrentes/retries limitados. CI inclui serviços staging no teste/strict; AST permite rede só nesta fronteira Firestore e rejeita import de serviços pelo frontend. Resultados consolidados/SHAs/CI no ledger.
 
 Após STG-02 verde, STG-03 precisa endpoint HTTPS e execução gerenciada. GATE_STAGING_BILLING_REQUIRED: Functions requer Blaze; não foi vinculado billing nem criado recurso pago. Meta/RCS continuam DISABLED, segredo/configuração externos e primeiro envio são gates posteriores.

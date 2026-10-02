@@ -4,6 +4,8 @@ Data: 2026-10-02. HEAD inicial e3c80db7b38fef1b78739b17d108d7539f8ae270. Branch 
 
 ## Objetivo e entradas
 
+Atualização STG-01/02 (2026-10-02): publicação segura também disponível em https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app , canal temporário pr-4, com CI federada comprovada. Catálogo manual atualizado distingue Hosting/store servidor de fixtures TEST validados de webhook/worker/cloud/providers ainda pendentes. MODE permanece OFFLINE PREVIEW; o preview não conecta Firestore ou backend. Nenhuma integração operacional foi promovida por estas evidências de staging.
+
 LidacomZapCRM é um único produto. O preview integrado representa a operação original preservada e a arquitetura/funcionalidades do Gestão incorporadas ao LidacomZapCRM, mostrando contratos, adapters, implementação offline e gaps. Não é uma segunda aplicação de produção ou arquitetura de negócio paralela.
 
 | Entrada | Finalidade | Saída de build | URL local |

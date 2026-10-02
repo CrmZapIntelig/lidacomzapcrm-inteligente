@@ -20,7 +20,11 @@ test('all module navigation targets render the safety banner and correct title; 
 test('dashboard and capability map retain canonical gaps without promotion to live/operational', () => {
   const dashboard = render('dashboard');
   for (const c of capabilities.slice(0, 11)) assert.ok(dashboard.includes(c.title));
-  for (const c of capabilities) assert.ok(!c.statuses.some(s => ['LIVE READY', 'STAGING READY', 'OPERACIONAL COMPLETO'].includes(s)));
+  for (const c of capabilities) {
+    assert.ok(!c.statuses.some(s => ['LIVE READY', 'OPERACIONAL COMPLETO'].includes(s)));
+    if (c.statuses.includes('STAGING READY')) assert.ok(['staging', 'fixture-store'].includes(c.id));
+  }
+  assert.match(capabilities.find(c => c.id === 'fixture-store')!.gap, /fixtures.*200 work.*256 KiB/);
   assert.match(render('arquitetura'), /Pedidos unificados operacionalmente ainda incompletos/);
   assert.equal(safety.canSend, false); assert.equal(safety.sentMessages, 0);
 });

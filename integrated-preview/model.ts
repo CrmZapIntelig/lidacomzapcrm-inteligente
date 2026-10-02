@@ -5,7 +5,7 @@ import type { VisualSession } from '../offline-preview/scenario';
 import { budgetDay } from '../src/domain/dispatchPrerequisites';
 
 // Manually derived from the canonical state plus verified STG-01 Hosting; no runtime I/O.
-export const canonicalSource = 'STG-01 · 02/10/2026';
+export const canonicalSource = 'STG-01/02 · 02/10/2026';
 export const modules = [
   ['dashboard', 'Dashboard', '◈'], ['crm', 'CRM', '▤'], ['clientes', 'Clientes', '◎'], ['conversas', 'Conversas', '◌'],
   ['marketing', 'Marketing', '◇'], ['venda', 'Venda Ativa', '↗'], ['dispatch', 'Disparador Inteligente', '≋'], ['funil', 'Funil', '⋮'],
@@ -14,7 +14,7 @@ export const modules = [
   ['gateway', 'Gateway / Worker', '⇄'], ['config', 'Configurações', '⚙'], ['arquitetura', 'Arquitetura / Status', '⬡'],
 ] as const;
 export type ModuleId = typeof modules[number][0];
-export type ProductStatus = 'OPERACIONAL LEGADO' | 'CONTRATO' | 'ADAPTER' | 'OFFLINE IMPLEMENTADO' | 'VISUAL IMPLEMENTADO' | 'STAGING PENDENTE' | 'LIVE PENDENTE';
+export type ProductStatus = 'OPERACIONAL LEGADO' | 'CONTRATO' | 'ADAPTER' | 'OFFLINE IMPLEMENTADO' | 'VISUAL IMPLEMENTADO' | 'STAGING READY' | 'STAGING PENDENTE' | 'LIVE PENDENTE';
 export interface Capability { id: string; title: string; phase: string; statuses: readonly ProductStatus[]; gap: string; module: ModuleId }
 export const capabilities: readonly Capability[] = [
   { id: 'operation', title: 'Operação CRM', phase: 'CRM original', statuses: ['OPERACIONAL LEGADO'], gap: 'Consumidores canônicos ainda não ligados à operação.', module: 'crm' },
@@ -24,14 +24,15 @@ export const capabilities: readonly Capability[] = [
   { id: 'omni', title: 'Omnichannel', phase: 'UNI-02/03/04 / LIVE-00', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO'], gap: 'Inbox real e identidades persistidas pendentes.', module: 'conversas' },
   { id: 'whatsapp', title: 'WhatsApp', phase: 'LIVE-00/01/02/03', statuses: ['OFFLINE IMPLEMENTADO', 'STAGING PENDENTE', 'LIVE PENDENTE'], gap: 'Transporte DISABLED; conta, secrets e canário não comprovados.', module: 'whatsapp' },
   { id: 'rcs', title: 'RCS', phase: 'LIVE-04', statuses: ['OFFLINE IMPLEMENTADO', 'LIVE PENDENTE'], gap: 'Agente não configurado; capability real UNKNOWN.', module: 'rcs' },
-  { id: 'gateway', title: 'Gateway / Worker', phase: 'LIVE-00/02', statuses: ['OFFLINE IMPLEMENTADO', 'STAGING PENDENTE'], gap: 'Store distribuído e endpoint público pendentes.', module: 'gateway' },
+  { id: 'gateway', title: 'Gateway / Worker', phase: 'LIVE-00/02 / STG-02', statuses: ['OFFLINE IMPLEMENTADO', 'STAGING PENDENTE'], gap: 'Store de fixtures TEST validado; endpoint HTTPS e worker cloud pendentes.', module: 'gateway' },
   { id: 'events', title: 'Timeline / Funil', phase: 'UNI-02/03/04/07', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO', 'VISUAL IMPLEMENTADO'], gap: 'Bus genérico e handlers operacionais não integrados.', module: 'timeline' },
-  { id: 'staging', title: 'Staging · preview isolado', phase: 'STG-01', statuses: ['VISUAL IMPLEMENTADO'], gap: 'Hosting pr-4 e CI federada comprovados; persistência/worker/integrações ainda pendentes.', module: 'config' },
+  { id: 'staging', title: 'Staging · preview isolado', phase: 'STG-01', statuses: ['STAGING READY', 'VISUAL IMPLEMENTADO'], gap: 'Hosting pr-4/CI comprovados. Backend do preview NONE; webhook/worker cloud pendentes.', module: 'config' },
   { id: 'production', title: 'Produção · novo domínio', phase: 'GATE_OUTBOUND_CANARY_REQUIRED', statuses: ['LIVE PENDENTE'], gap: 'Novo fluxo sem primeiro envio, deploy ou integração real.', module: 'arquitetura' },
   { id: 'identity', title: 'Contact / ChannelIdentity', phase: 'UNI-02/03 / REC-01', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO'], gap: 'Client legado preservado; resolução distribuída pendente.', module: 'clientes' },
   { id: 'queue', title: 'Eligibility / Queue / Budget', phase: 'REC-01 / UNI-05', statuses: ['CONTRATO', 'OFFLINE IMPLEMENTADO'], gap: 'Budget de preparo local não é quota do provider.', module: 'dispatch' },
   { id: 'policy', title: 'Janela / TemplatePolicy', phase: 'LIVE-00/01', statuses: ['CONTRATO', 'OFFLINE IMPLEMENTADO'], gap: 'Evidência real e ligação explícita à operação pendentes.', module: 'whatsapp' },
   { id: 'automation', title: 'Automações / respostas', phase: 'LIVE-00/02', statuses: ['OFFLINE IMPLEMENTADO'], gap: 'DRAFT somente; escalonamento humano, sem auto-send.', module: 'gateway' },
+  { id: 'fixture-store', title: 'Persistência staging · somente TEST', phase: 'STG-02', statuses: ['STAGING READY'], gap: 'Firestore servidor para fixtures: 200 work / 256 KiB. Sem ingresso real ou backend neste preview.', module: 'gateway' },
 ];
 export const stages = ['RASCUNHO', 'LEAD', 'EM_ATENDIMENTO', 'PEDIDO_GERADO', 'AGUARDANDO_PAGAMENTO', 'PAGO', 'PRODUCAO', 'ENTREGUE', 'FECHADO', 'POS_VENDA'] as const;
 export const gatewaySteps = ['Webhook', 'Signature', 'Admission', 'Queue', 'Lease', 'Worker', 'Identity Resolution', 'Conversation Resolution', 'Domain Event'];

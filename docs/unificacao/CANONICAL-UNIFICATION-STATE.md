@@ -6,6 +6,12 @@ Auditoria corretiva de 2026-10-01, solicitada antes de qualquer staging. Checkou
 
 ### STG-02 — persistência staging comprovada / STG-03 billing gate
 
+| Capacidade nova comprovada | Fase | Estado | Limite/gap |
+| --- | --- | --- | --- |
+| Hosting do preview integrado isolado | STG-01 | STAGING READY / VISUAL IMPLEMENTADO | Backend NONE; não é SPA operacional |
+| Persistência servidor somente fixtures TEST | STG-02 | STAGING READY limitado | Aggregate bounded, sem inbound/cliente real |
+| Endpoint HTTPS e worker cloud | STG-03 | STAGING PENDENTE | Billing/Blaze gate; não provisionados |
+
 Firestore default separado em southamerica-east1, Standard/freeTier=true e billing=false. Ports assíncronas reaproveitam regras do journal local: admissão/idempotency/fila/claim/lease/fencing/retry/failure/crash recovery e projeção+draft/audit atômicos. Probe real exclusivamente fixtures TEST no staging passou; regras fechadas publicadas. Oito testes locais adicionais. STAGING READY **somente persistência de fixtures limitada** (200 work/1000 audit/256 KiB); nenhum claim de volume operacional ou inbound real. Firestore em React/preview continua ausente; backend do preview NONE.
 
 STG-03 não provisionada: Functions HTTPS exige Blaze, ausente. **GATE_STAGING_BILLING_REQUIRED**. Não foi habilitado billing nem recurso pago; webhook público e worker cloud ausentes. Providers DISABLED, zero mensagens, main/operacional intactos. ORDER-01/OPS-01/UX-OPS continuam backlog aprovado. Fontes e limites: STG-02-durable-staging-persistence.md e STG-03-webhook-worker-gate.md. Resultados finais de testes/CI e SHAs no ledger. As seções datadas anteriores são registros históricos.

@@ -1,5 +1,14 @@
 # Execution ledger — Unificação
 
+## Encerramento comprovado STG-01/02 — STG-03 billing gate
+
+- HEAD INICIAL da retomada: 1c44e7e3a75a469d28b0815aafa76798f6fca169. Commits: d1c4db2 (provisionamento/alias), 23758b7 (Hosting/WIF/preview), **6424df719d0e3f58b7ccdd0f4006d9f18a603da4** (persistência/ports/regras). HEAD FINAL de fechamento: commit `Close verified staging persistence at managed webhook billing gate` (resolver Git).
+- CI funcional STG-02: push https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37077640270 e PR https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37077644182 no 6424df7; PR/job offline e staging-preview success comprovados. Push/fechamento documental a conferir nos checks da PR; nenhum verde inferido de skipped.
+- VALIDAÇÃO LOCAL: **147/147** testes (139 preservados + oito staging), quatro stricts/AST/source+bundle isolation, baseline **21 / 21 / 0**, mesmas assinaturas; três builds aprovados. Warning chunk operacional preexistente. Probe cloud TEST de contenção/recovery/projeção atômica aprovado. Regras deny-all staging publicadas. Manifesto Hosting registra Firestore existente como metadata, sem habilitar backend no preview.
+- ESTADO: STG-01 CONCLUÍDA; STG-02 CONCLUÍDA para persistência sintética limitada; STG-03 NÃO PROVISIONADA / GATE_STAGING_BILLING_REQUIRED. Billing permanece false. Firebase/Auth/Firestore operacionais, dados reais, main e arquivos pessoais intactos; zero envio/deploy produção/merge. Meta/RCS DISABLED; UX-OPS/Order operacional ainda backlog.
+- URL: https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app , preview temporário renovado somente por PR #4. Modo OFFLINE PREVIEW preservado; catálogo visual distingue Hosting/store TEST comprovados de integrações ainda pendentes.
+- NEXT / AÇÃO MÍNIMA: autorização explícita de billing/Blaze somente staging para Functions HTTPS/worker. Retomar STG-03 e parar em credencial externa/Meta/RCS/primeiro envio quando necessário. Não iniciar ORDER-01/OPS-01 neste gate.
+
 ## STG-02 — store distribuído de fixtures / STG-03 gate
 
 - HEAD INICIAL: 23758b73a72e82956881e598b575e2a97521377f. COMMIT/HEAD FINAL: `Persist synthetic staging ingress with atomic Firestore ports` (resolver Git; CI do commit será confirmada no fechamento).
