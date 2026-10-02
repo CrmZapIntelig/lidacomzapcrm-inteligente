@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { spawn } from 'node:child_process';
 import { assertEnvironment, operationalProject, validateStaging } from './staging-environment.mjs';
 import { buildDeploymentArgs } from './deploy-staging-preview.mjs';
@@ -52,8 +54,15 @@ test('deployment invocation binds explicit project/config and non-live channel; 
   assert.throws(() => buildDeploymentArgs({ ...state, channel: 'live' }));
   assert.throws(() => buildDeploymentArgs({ ...state, provisioned: false }));
 });
-test('unprovisioned deploy command stops before invoking Firebase or consulting credentials', async () => {
-  const child = spawn(process.execPath, ['tools/unification/deploy-staging-preview.mjs'], { env: { ...process.env, APP_ENV: 'staging', FIREBASE_CLI_ROOT: '/nonexistent-staging-cli' }, stdio: ['ignore', 'pipe', 'pipe'] });
+test('unprovisioned deploy command stops before invoking Firebase or consulting credentials', async t => {
+  const directory = await mkdtemp(join(tmpdir(), 'crm-staging-guard-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const input = await fixture(); input.manifest.provisioned = false;
+  await mkdir(join(directory, 'config'));
+  await writeFile(join(directory, 'config/staging-environment.json'), JSON.stringify(input.manifest));
+  await writeFile(join(directory, '.firebaserc'), JSON.stringify(input.aliases));
+  await writeFile(join(directory, 'firebase.staging.json'), JSON.stringify(input.hosting));
+  const child = spawn(process.execPath, [resolve('tools/unification/deploy-staging-preview.mjs')], { cwd: directory, env: { ...process.env, APP_ENV: 'staging', FIREBASE_CLI_ROOT: '/nonexistent-staging-cli' }, stdio: ['ignore', 'pipe', 'pipe'] });
   let stdout = '', stderr = '';
   child.stdout.on('data', data => { stdout += data; }); child.stderr.on('data', data => { stderr += data; });
   const exit = await new Promise((resolve, reject) => { child.once('error', reject); child.once('close', resolve); });

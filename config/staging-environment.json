@@ -3,7 +3,7 @@
   "appEnv": "staging",
   "projectId": "lidacomzapcrm-staging",
   "displayName": "LidacomZapCRM Staging",
-  "provisioned": false,
+  "provisioned": true,
   "billingEnabled": false,
   "hostingChannel": "pr-4",
   "hostingPublic": "dist-integrated",
