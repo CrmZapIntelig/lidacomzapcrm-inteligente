@@ -11,6 +11,8 @@
     "preview:offline": "node tools/unification/serve-offline.mjs",
     "build:integrated-preview": "vite build --config vite.integrated.config.ts",
     "preview:integrated": "node tools/unification/serve-integrated.mjs",
+    "check:staging": "node tools/unification/staging-environment.mjs",
+    "deploy:staging-preview": "node tools/unification/deploy-staging-preview.mjs",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"
   },

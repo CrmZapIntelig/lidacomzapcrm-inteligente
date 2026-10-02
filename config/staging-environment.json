@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "appEnv": "staging",
+  "projectId": "lidacomzapcrm-staging",
+  "displayName": "LidacomZapCRM Staging",
+  "provisioned": false,
+  "billingEnabled": false,
+  "hostingChannel": "pr-4",
+  "hostingPublic": "dist-integrated",
+  "fixturesOnly": true,
+  "backend": "NONE",
+  "canSend": false,
+  "metaProvider": "DISABLED",
+  "rcsProvider": "DISABLED",
+  "firestoreProvisioned": false,
+  "webhookProvisioned": false
+}

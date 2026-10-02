@@ -11,6 +11,8 @@ coverage/
 !.env.example
 # Firebase local cache
 .firebase/
+gha-creds-*.json
+.firebase-staging-local/
 
 # Local backups
 *.zip
