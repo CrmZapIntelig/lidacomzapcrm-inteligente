@@ -28,3 +28,8 @@ jobs:
       - run: node node_modules/typescript/bin/tsc -p tsconfig.preview-offline.json
       - run: npm run build:offline
       - run: node --test tools/unification/preview-isolation.test.mjs
+      - run: node --test --import tsx integrated-preview/*.test.tsx
+      - run: node node_modules/typescript/bin/tsc -p tsconfig.integrated-preview.json
+      - run: node tools/unification/check-integrated-isolation.mjs
+      - run: npm run build:integrated-preview
+      - run: node --test tools/unification/integrated-isolation.test.mjs

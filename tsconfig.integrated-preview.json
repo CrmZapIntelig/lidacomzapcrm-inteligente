@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.offline.json",
+  "compilerOptions": {
+    "paths": {
+      "react": ["./offline-preview/node_modules/@types/react"],
+      "react/*": ["./offline-preview/node_modules/@types/react/*"],
+      "react-dom/*": ["./offline-preview/node_modules/@types/react-dom/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "dist-offline", "dist-integrated"],
+  "include": ["src/domain/**/*.ts", "src/application/**/*.ts", "integrated-preview/**/*.ts", "integrated-preview/**/*.tsx", "vite.integrated.config.ts"]
+}

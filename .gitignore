@@ -3,6 +3,7 @@ build/
 dist/
 dist-offline/
 .local-messaging/
+dist-integrated/
 coverage/
 .DS_Store
 *.log
