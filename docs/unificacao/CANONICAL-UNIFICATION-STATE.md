@@ -4,6 +4,10 @@ Auditoria corretiva de 2026-10-01, solicitada antes de qualquer staging. Checkou
 
 ## Um único projeto
 
+### Estado mais recente — STG-01 autenticada (2026-10-02)
+
+STG-01 concluída: projeto isolado lidacomzapcrm-staging / 854899277909, billing=false, default operacional preservado. Hosting exclusivo dist-integrated/pr-4 em https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app ; CSP sem backend. CI push 37076090694 e PR 37076094664 success em d1c4db2, incluindo deploy federado comprovado. IAM/WIF limitado ao staging/PR #4, sem chave duradoura. Reautenticação nova em cache privado, sem usar sessão anterior. Integrações operacionais continuam bloqueadas; o mapa histórico abaixo não é promovido por hospedar o preview.
+
 LidacomZapCRM reúne a operação original preservada e a arquitetura/funcionalidades do Gestão incorporadas ao LidacomZapCRM. Os arquivos novos de domínio, aplicação, preview e serviços pertencem ao CRM unificado; não são um segundo sistema nem contratos descartáveis.
 
 C:/Users/dfant/lidacomzap-gestao-inteligente é o repositório histórico LidacomZap Gestão Inteligente, utilizado para auditoria e recuperação seletiva. Sua condição histórica não reduz o que já foi incorporado ao CRM a mera referência. Esta auditoria não editou nem retomou desenvolvimento naquele repositório.

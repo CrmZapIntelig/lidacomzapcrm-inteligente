@@ -4,8 +4,8 @@ import type { Order as LegacyOrder, DeliveryOrder } from '../src/types';
 import type { VisualSession } from '../offline-preview/scenario';
 import { budgetDay } from '../src/domain/dispatchPrerequisites';
 
-// Manually derived from CANONICAL-UNIFICATION-STATE.md at e3c80db; never fetched/parsed at runtime.
-export const canonicalSource = 'e3c80db · 01/10/2026';
+// Manually derived from the canonical state plus verified STG-01 Hosting; no runtime I/O.
+export const canonicalSource = 'STG-01 · 02/10/2026';
 export const modules = [
   ['dashboard', 'Dashboard', '◈'], ['crm', 'CRM', '▤'], ['clientes', 'Clientes', '◎'], ['conversas', 'Conversas', '◌'],
   ['marketing', 'Marketing', '◇'], ['venda', 'Venda Ativa', '↗'], ['dispatch', 'Disparador Inteligente', '≋'], ['funil', 'Funil', '⋮'],
@@ -26,7 +26,7 @@ export const capabilities: readonly Capability[] = [
   { id: 'rcs', title: 'RCS', phase: 'LIVE-04', statuses: ['OFFLINE IMPLEMENTADO', 'LIVE PENDENTE'], gap: 'Agente não configurado; capability real UNKNOWN.', module: 'rcs' },
   { id: 'gateway', title: 'Gateway / Worker', phase: 'LIVE-00/02', statuses: ['OFFLINE IMPLEMENTADO', 'STAGING PENDENTE'], gap: 'Store distribuído e endpoint público pendentes.', module: 'gateway' },
   { id: 'events', title: 'Timeline / Funil', phase: 'UNI-02/03/04/07', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO', 'VISUAL IMPLEMENTADO'], gap: 'Bus genérico e handlers operacionais não integrados.', module: 'timeline' },
-  { id: 'staging', title: 'Staging', phase: 'GATE_STAGING_PROJECT_REQUIRED', statuses: ['STAGING PENDENTE'], gap: 'Nenhum ambiente separado provisionado nesta preparação.', module: 'config' },
+  { id: 'staging', title: 'Staging · preview isolado', phase: 'STG-01', statuses: ['VISUAL IMPLEMENTADO'], gap: 'Hosting pr-4 e CI federada comprovados; persistência/worker/integrações ainda pendentes.', module: 'config' },
   { id: 'production', title: 'Produção · novo domínio', phase: 'GATE_OUTBOUND_CANARY_REQUIRED', statuses: ['LIVE PENDENTE'], gap: 'Novo fluxo sem primeiro envio, deploy ou integração real.', module: 'arquitetura' },
   { id: 'identity', title: 'Contact / ChannelIdentity', phase: 'UNI-02/03 / REC-01', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO'], gap: 'Client legado preservado; resolução distribuída pendente.', module: 'clientes' },
   { id: 'queue', title: 'Eligibility / Queue / Budget', phase: 'REC-01 / UNI-05', statuses: ['CONTRATO', 'OFFLINE IMPLEMENTADO'], gap: 'Budget de preparo local não é quota do provider.', module: 'dispatch' },

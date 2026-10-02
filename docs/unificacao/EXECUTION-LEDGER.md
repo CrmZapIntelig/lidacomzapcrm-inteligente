@@ -1,5 +1,15 @@
 # Execution ledger — Unificação
 
+## STG-01 — provisionamento isolado comprovado (2026-10-02)
+
+- HEAD INICIAL: 1c44e7e3a75a469d28b0815aafa76798f6fca169. COMMIT de provisionamento d1c4db2; fechamento visual/documental `Record verified isolated Hosting and federated staging deployment` (resolver HEAD FINAL pelo Git).
+- AUTH: login oficial novo em perfil privado, sem reutilizar sessão anterior ou imprimir tokens; acompanhamento pausado após sucesso.
+- CLOUD: lidacomzapcrm-staging, número 854899277909, billing=false. Default operacional preservado; alias staging adicionado. Hosting exclusivamente dist-integrated/pr-4; URL https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app ; expiração inicial 2026-10-09T23:01:43Z; canal live sem release.
+- CI: push https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37076090694 e PR https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37076094664 success em d1c4db2. Job staging-preview success via WIF; IAM trust PR #4/repository IDs/workflow/environment. Sem chave duradoura, auto-merge ou deploy main.
+- TESTES: 139/139; quatro stricts, AST, baseline 21 → 21 / zero novos; três builds verdes. HTTP 200/CSP connect-src none e navegação Pedidos no navegador, sem erros de console.
+- PR: #4 draft; main 60fb91fdf048a8e0d4f9adc29a532be8bf4356dd intacta. Alterações pessoais e App/Firebase/UI/UNI-08 preservados. Providers DISABLED; zero mensagens; preview permanece OFFLINE, sem backend.
+- GATE: reautenticação resolvida. NEXT: STG-02, persistência distribuída somente fixtures TEST atrás de ports; STG-03 depois dos gates desta persistência.
+
 Projeto principal LidacomZapCRM. Branch codex/unificacao-gestao-inteligente.
 Data de execução 2026-09-30. Fontes históricas read-only. Main protegida em 60fb91f.
 Commits/HEAD finais de cada fase são identificados pela mensagem única abaixo e

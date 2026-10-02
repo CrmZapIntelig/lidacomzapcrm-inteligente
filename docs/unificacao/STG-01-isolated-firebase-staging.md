@@ -4,11 +4,23 @@ Data: 2026-10-02. HEAD inicial 7ae486ff99d33e4f9c9a589748a0a0a957e3c772; branch 
 
 ## Estado verdadeiro
 
+### Retomada autenticada — 2026-10-02
+
+Autenticação oficial nova concluída em perfil privado separado, sem reutilizar tokens/cache anterior e sem logs brutos. Projeto **lidacomzapcrm-staging**, número **854899277909**, criado exclusivamente para staging. Billing consultado na API: **false**. Alias staging adicionado; default operacional preservado. Nenhum dado operacional consultado ou copiado.
+
+Hosting publicou exclusivamente dist-integrated no canal temporário **pr-4**. URL comprovada HTTP 200: https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app . Expiração inicial: **2026-10-09T23:01:43Z**. CSP connect-src 'none' confirmada na resposta; canal live padrão sem release/deploy. Navegação Pedidos verificada no navegador, sem erros de console. MODE continua OFFLINE PREVIEW: hospedagem cloud não conecta backend.
+
+IAM/WIF configurados somente neste projeto: pool crm-staging-ci, provider github-pr4 e service account crm-staging-hosting. Trust exige IDs numéricos do repositório 1251047262/owner 289824578, pull_request, refs/pull/4/merge, workflow unification-offline.yml e ambiente staging. Roles CI: firebasehosting.admin e serviceusage.serviceUsageConsumer no staging; workloadIdentityUser vinculado ao principal do pool. Nenhuma chave de service account criada. APIs IAM/credentials/STS habilitadas sem associar billing. GitHub environment staging e quatro variáveis não secretas criados; nenhuma automação main → produção.
+
+Commit de provisionamento **d1c4db2**. 139 testes, quatro stricts, AST/isolation, baseline 21 → 21 e três builds aprovados. CI federada **em validação**; até confirmar deployment cloud verde, STG-01 permanece parcial. Firestore, webhook público e worker distribuído ainda ausentes. O bloco seguinte registra a preparação histórica anterior.
+
 **PREPARAÇÃO LOCAL IMPLEMENTADA / CLOUD NÃO PROVISIONADO.** Project ID lidacomzapcrm-staging é preferência ainda não confirmada como disponível. Não existe URL staging comprovada. Firestore, webhook público, worker distribuído, IAM/WIF e integração Hosting não foram provisionados nesta etapa. Nenhuma sessão Firebase antiga foi consultada ou usada. Histórico de login:list sensível exige reautenticação antes de acesso cloud. GATE_FIREBASE_REAUTH_REQUIRED é a próxima parada humana.
 
 Default permanece project-1300957a-ea82-4645-845 em .firebaserc; firebase.json operacional permanece intacto. O alias staging só será adicionado após confirmar a existência/isolamento do projeto criado. Não registrar alias reservado como recurso já existente.
 
 ## Preparação testável
+
+**Fechamento cloud:** CI push 37076090694 e PR 37076094664 success em d1c4db2; job staging-preview executado com sucesso (não skipped), autenticação WIF e deploy Hosting pr-4. STG-01 concluída para visualização isolada. Isto não promove WhatsApp/RCS/worker a staging ready. A continuação STG-02 provisionou depois Firestore separado; backend do bundle permanece NONE, CSP sem conexões.
 
 config/staging-environment.json é manifesto versionado **provisioned=false**, sem credenciais. firebase.staging.json serve exclusivamente dist-integrated, site explícito e CSP connect-src 'none'; nenhuma rewrite de backend, SDK ou SPA operacional. Canal **pr-4**, validade planejada de sete dias; não canal live.
 
