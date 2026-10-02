@@ -94,3 +94,13 @@ Algum rollback necessário? **NÃO**. Correção de contexto/documentação some
 Nenhum staging, credencial, envio, merge ou deploy foi criado/executado. A auditoria corretiva termina antes de retomar qualquer configuração externa. GATE_STAGING_PROJECT_REQUIRED e GATE_OUTBOUND_CANARY_REQUIRED continuam vigentes; este pedido não os autoriza.
 
 Fontes utilizadas: código atual, histórico Git, docs UNI/REC/LIVE e ledger. docs/FONTES-CHATS.md informa que os chats vinculados não forneceram transcrição verificável; nenhum conteúdo desses links foi inferido nesta auditoria.
+
+## PREVIEW-01 — visão integrada (2026-10-02)
+
+A entrada integrated-preview/ acrescenta VISUAL IMPLEMENTADO para representação transversal do produto: 19 áreas, estado canônico local, clientes/conversas sintéticos, Marketing/Dispatch, funil/timeline, comparação de pedidos, operação legada ilustrativa, WhatsApp/RCS e gateway/configurações/status. Nenhuma classificação de integração operacional/staging/live da tabela anterior foi promovida.
+
+offline-preview/ (UNI-08) permanece intacto e funcionando. O novo preview reutiliza seu helper puro de fixtures e os núcleos/adapters já incorporados, sem criar arquitetura de negócio paralela ou importar UI operacional/providers. Fonte do mapa visual: estado auditado em e3c80db.
+
+129 testes acumulados, stricts, baseline 21 → 21 e três builds aprovados localmente; navegação/preparo verificados no Chrome. URL integrada http://127.0.0.1:4180/; UNI-08 http://127.0.0.1:4178/. Ambas estáticas, sintéticas e loopback. Evidências remotas e commit da fase no EXECUTION-LEDGER.md; detalhes em PREVIEW-01-integrated-product.md.
+
+Capacidade visual não significa capacidade operacional. Próxima ação: revisão humana do preview. Nenhum STG-01, ambiente cloud, merge, deploy ou envio autorizado/executado nesta fase.

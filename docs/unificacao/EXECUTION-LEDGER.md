@@ -209,3 +209,21 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - PR #4 draft, sem merge/auto-merge; main remoto 60fb91f. Working tree preexistente preservado: .vscode/extensions.json, AGENTS.md, docs/FONTES-CHATS.md e backup.patch. Nenhum staging local novo encontrado.
 - Regressão encontrada: NÃO no escopo auditado. Rollback necessário: NÃO. Alteração somente documental, sem remover ou reverter código.
 - Decisão: auditoria corretiva concluída; não continuar staging neste pedido. Gates de ambiente e primeiro envio permanecem vigentes.
+
+## PREVIEW-01 — produto integrado, somente visual (2026-10-02)
+
+- HEAD inicial e3c80db7b38fef1b78739b17d108d7539f8ae270; branch codex/unificacao-gestao-inteligente. Commit funcional identificado por Add isolated integrated CRM product preview.
+- 129 testes aprovados (117 existentes módulos/cenário, 7 integrados, 2 isolamento UNI-08, 3 integrado). Strict servidor/núcleo/UNI-08/integrado, AST e três builds aprovados; baseline 21 / 21 / 0.
+- 19 módulos navegáveis; Marketing/Dispatch separados, drafts/budget/timeline conhecidos, pedidos legados versus projeções canônicas. Providers/staging/live continuam bloqueados; operação legada apenas ilustrada.
+- URLs verificadas no Chrome: UNI-08 http://127.0.0.1:4178/ e integrado http://127.0.0.1:4180/. Listeners 127.0.0.1. Screenshots externos em PREVIEW-01-integrated-product.md.
+- Arquivos funcionais: integrated-preview, config/build/typecheck, servidor estático/check/test integrado e CI; documentação PREVIEW-01/canônico/ledger. Sem nova dependência runtime/lockfile.
+- Preservação comprovada por diff contra HEAD inicial: offline-preview e App/components/lib/types sem alterações. .vscode/extensions.json, AGENTS.md, FONTES-CHATS e backup.patch excluídos.
+- Risco/limite: só representação sintética; não certifica integração operacional. CI remota será confirmada no commit publicado antes do encerramento.
+- Decisão: concluir e PARAR para revisão humana. Não iniciar STG-01, não criar staging, não mergear main, não fazer deploy ou envio real.
+
+## PREVIEW-01 — fechamento funcional comprovado
+
+- HEAD funcional publicado: b5ca1542a9446755fd7ec97f3e72572ffe24254c (Add isolated integrated CRM product preview).
+- CI push https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37038618163 e PR https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37038625456 — ambos success nesse SHA, incluindo os novos gates integrados.
+- Encerramento documental: Record integrated preview evidence and review stop. Nenhuma alteração funcional após os gates e Browser QA registrados.
+- PR #4 atualizado e mantido draft; próximo passo somente revisão humana do preview. GATE_STAGING_PROJECT_REQUIRED e GATE_OUTBOUND_CANARY_REQUIRED permanecem pendentes, sem início de STG-01.
