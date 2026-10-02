@@ -60,3 +60,11 @@ test('unprovisioned deploy command stops before invoking Firebase or consulting 
   assert.equal(exit, 1); assert.equal(stdout, ''); assert.match(stderr, /STAGING_UNPROVISIONED/);
   assert.doesNotMatch(stderr, /STAGING_CLI_START_FAILED/);
 });
+test('operational Vite entry refuses APP_ENV staging before bundling the CRM', async () => {
+  const child = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'build'], { env: { ...process.env, APP_ENV: 'staging' }, stdio: ['ignore', 'pipe', 'pipe'] });
+  let stdout = '', stderr = '';
+  child.stdout.on('data', data => { stdout += data; }); child.stderr.on('data', data => { stderr += data; });
+  const exit = await new Promise((resolve, reject) => { child.once('error', reject); child.once('close', resolve); });
+  assert.notEqual(exit, 0); assert.match(stderr, /STAGING_OPERATIONAL_ENTRY_FORBIDDEN/);
+  assert.doesNotMatch(stdout, /modules transformed/);
+});

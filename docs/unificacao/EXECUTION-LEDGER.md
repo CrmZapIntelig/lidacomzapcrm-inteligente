@@ -254,3 +254,11 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - Correção: definir FIREBASE_CLI_ROOT por RUNNER_TEMP em etapa do job. Job de preview segue condicionado/bloqueado; sem credential/cloud/send.
 - HEAD final / COMMIT: `Fix staging workflow runner context availability`. Testes locais 138 e baseline/builds permanecem válidos; nenhuma fonte runtime modificada. CI corrigida a confirmar no fechamento.
 - GATE / NEXT: GATE_FIREBASE_REAUTH_REQUIRED / login autorizado e depois provisionamento segregado; STG-01 ainda parcial.
+- CI corrigida confirmada: push https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37067056547 e PR https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37067060902 success em 62ecbf2. Gates offline executados; job staging-preview condicionado/skipped, sem deploy.
+
+## STG-01 — bloquear entrada operacional sob APP_ENV staging
+
+- HEAD inicial: 62ecbf2ac0289d475f0ed7196b376ffaa82234fa. Commit: `Reject operational Vite entry in staging environment`.
+- Proteção adicional: vite.config.ts recusa APP_ENV=staging antes de bundlar/servir App.tsx; nenhuma modificação no App/Firebase/componentes/tipos/UNI-08. Configs isoladas mantidas.
+- TESTES: 139/139 aprovados em execução consolidada (129 preservados + 10 staging). Baseline 21 → 21, stricts, AST e os três builds revalidados; configuração normal preservada. CI no SHA desta proteção a confirmar no fechamento.
+- GATE / NEXT: GATE_FIREBASE_REAUTH_REQUIRED / provisionamento isolado após login; nenhuma consulta cloud ou envio.

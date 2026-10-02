@@ -4,6 +4,9 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
+  if (process.env.APP_ENV === 'staging') {
+    throw new Error('STAGING_OPERATIONAL_ENTRY_FORBIDDEN: use the isolated integrated preview');
+  }
   return {
     plugins: [react(), tailwindcss()],
     resolve: {

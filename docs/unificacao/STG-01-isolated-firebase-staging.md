@@ -12,7 +12,7 @@ Default permanece project-1300957a-ea82-4645-845 em .firebaserc; firebase.json o
 
 config/staging-environment.json é manifesto versionado **provisioned=false**, sem credenciais. firebase.staging.json serve exclusivamente dist-integrated, site explícito e CSP connect-src 'none'; nenhuma rewrite de backend, SDK ou SPA operacional. Canal **pr-4**, validade planejada de sete dias; não canal live.
 
-Ambientes: development exige projeto demo-lidacomzapcrm para emulação; staging exige projectId isolado explícito e coerente; production identifica o projeto operacional apenas para validação de separação, sem deploy disponibilizado pelo novo comando. Não modificar src/lib/firebase.ts nem plugar SDK Firebase/Firestore em React. Variáveis APP_ENV, FIREBASE_PROJECT_ID, GCLOUD_PROJECT e GOOGLE_CLOUD_PROJECT não podem redirecionar staging ao operacional. Config inválida falha antes de executar Firebase.
+Ambientes: development exige projeto demo-lidacomzapcrm para emulação; staging exige projectId isolado explícito e coerente; production identifica o projeto operacional apenas para validação de separação, sem deploy disponibilizado pelo novo comando. A entrada Vite operacional recusa APP_ENV=staging antes de servir/bundlar a aplicação; somente configs isoladas de preview são permitidas nesse modo. src/lib/firebase.ts preservado, sem SDK Firebase/Firestore novo em React. Variáveis APP_ENV, FIREBASE_PROJECT_ID, GCLOUD_PROJECT e GOOGLE_CLOUD_PROJECT não podem redirecionar staging ao operacional. Config inválida falha antes de executar Firebase.
 
 `npm run check:staging` valida a preparação. `npm run deploy:staging-preview` exige provisionamento confirmado/alias/site/canal/build coerentes e falha atualmente antes de subprocesso/credenciais. FIREBASE_CLI_ROOT identifica instalação server-side da CLI; sua ausência não tem fallback para sessão global. A saída bruta da CLI é retida em memória e não impressa; logs mostram apenas estado sanitizado, projeto e canal.
 
@@ -34,7 +34,7 @@ A compatibilidade Firebase CLI 15.19.1/ADC/WIF ainda deverá ser validada no pro
 
 ## Validação e limites
 
-Pre-flight: 129/129 testes, stricts e AST aprovados, baseline 21 → 21, três builds verdes; CI no HEAD inicial push 37038932006 e PR 37038937351 success reconfirmada. Guarda staging tem 9 testes adicionais, incluindo execução do comando que recusa deployment antes de invocar CLI. Estado final/CI do commit no ledger. Aviso de chunk operacional >500 kB preexistente.
+Pre-flight: 129/129 testes, stricts e AST aprovados, baseline 21 → 21, três builds verdes; CI no HEAD inicial push 37038932006 e PR 37038937351 success reconfirmada. Guarda staging tem 10 testes adicionais, incluindo execução do comando que recusa deployment antes de invocar CLI e rejeição do build operacional em APP_ENV=staging. Estado final/CI do commit no ledger. Aviso de chunk operacional >500 kB preexistente.
 
 Nada desta fase modifica App/components/lib/types, offline-preview, dados operacionais, produção ou fontes históricas. Providers DISABLED; zero envio. Order operacional canônico permanece incompleto. Requisitos UX-OPS registrados separadamente, sem código financeiro ou redesign.
 
