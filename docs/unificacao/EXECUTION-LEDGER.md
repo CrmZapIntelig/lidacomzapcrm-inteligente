@@ -227,3 +227,22 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - CI push https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37038618163 e PR https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37038625456 — ambos success nesse SHA, incluindo os novos gates integrados.
 - Encerramento documental: Record integrated preview evidence and review stop. Nenhuma alteração funcional após os gates e Browser QA registrados.
 - PR #4 atualizado e mantido draft; próximo passo somente revisão humana do preview. GATE_STAGING_PROJECT_REQUIRED e GATE_OUTBOUND_CANARY_REQUIRED permanecem pendentes, sem início de STG-01.
+
+## STG-01 — preparação local / gate de reautenticação (2026-10-02)
+
+- FASE: STG-01 PARTIAL, preparação local implementada; provisionamento Firebase não executado. Requisitos UX-OPS registrados, não implementados operacionalmente.
+- AUTORIZAÇÃO: novo controlador contínuo permite staging gratuito exclusivo e preview isolado; não permite billing, produção, merge ou envio.
+- HEAD INICIAL: 7ae486ff99d33e4f9c9a589748a0a0a957e3c772.
+- HEAD FINAL / COMMIT: commit identificado por `Prepare isolated staging guards and approved operations roadmap`; SHA e CI confirmados em fechamento posterior.
+- COMMIT FUNCIONAL: c081e81, `Prepare isolated staging environment and guarded preview deployment`, 8 arquivos / 247 linhas adicionais; configuração/testes/CI sem alterar operação.
+- PRE-FLIGHT: root/branch/origin/HEAD/main remotos confirmados; PR #4 draft, base main 60fb91f; CI inicial push 37038932006 e PR 37038937351 success. 129 testes e baseline 21 → 21 reexecutados, três builds/strict/AST verdes.
+- TESTES: 138/138 aprovados em execução consolidada (129 preservados + 9 staging); nenhum teste consulta cloud/credenciais. CI registrada no fechamento.
+- BUILD: operacional, UNI-08 e integrado aprovados nesta retomada; aviso bundle operacional preexistente. Mudanças posteriores limitadas a scripts/config/docs/CI, sem código dos bundles.
+- BASELINE: 21 / 21 / 0 no pre-flight e antes do commit; stricts núcleo/servidor/UNI-08/integrado, AST e sintaxe dos scripts aprovados.
+- CI: job offline preservado e acrescido de guarda/testes; staging-preview condicionado à PR #4/branch/repo e ativação explícita, provisionamento e WIF. Deployment não ativado/validado cloud; skipped não significa STAGING READY.
+- ARQUIVOS: config/staging-environment.json, firebase.staging.json, guardas/testes/deploy wrapper, scripts package, ignore de credenciais temporárias, workflow, STG-01/UX-OPS/canônico/gate/ledger. .firebaserc e firebase.json operacionais intactos.
+- STAGING URL / FIREBASE / FIRESTORE / WEBHOOK / WORKER: nenhuma URL; ID lidacomzapcrm-staging apenas preferência; nenhum recurso provisionado; journal local permanece referência sintética.
+- WHATSAPP / RCS: DISABLED, zero envio. Order canônico permanece contrato/projeção, operação incompleta. UX-OPS é backlog aprovado sem alteração financeira/UI.
+- GATE: GATE_FIREBASE_REAUTH_REQUIRED; nenhum login:list/tokens/session antiga usados. Interação necessária apenas para login seguro no navegador.
+- NEXT: reautenticar após autorização, criar/verificar projeto gratuito segregado e IAM/Hosting, adicionar alias staging preservando default, publicar preview pr-4 e validar URL/CI; só então avançar STG-02 e STG-03. Gates billing/Meta/RCS/primeiro envio permanecem.
+- PRESERVAÇÃO: .vscode/extensions.json, backup.patch, AGENTS.md e FONTES-CHATS não relacionados excluídos; operação original, UNI-08, main e fontes históricas intactas.

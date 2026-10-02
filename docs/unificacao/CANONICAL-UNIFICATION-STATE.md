@@ -104,3 +104,13 @@ offline-preview/ (UNI-08) permanece intacto e funcionando. O novo preview reutil
 129 testes acumulados, stricts, baseline 21 → 21 e três builds aprovados localmente; navegação/preparo verificados no Chrome. URL integrada http://127.0.0.1:4180/; UNI-08 http://127.0.0.1:4178/. Ambas estáticas, sintéticas e loopback. Evidências remotas e commit da fase no EXECUTION-LEDGER.md; detalhes em PREVIEW-01-integrated-product.md.
 
 Capacidade visual não significa capacidade operacional. Próxima ação: revisão humana do preview. Nenhum STG-01, ambiente cloud, merge, deploy ou envio autorizado/executado nesta fase.
+
+## STG-01 — preparação após nova autorização (2026-10-02)
+
+O controlador contínuo posterior autoriza staging Firebase gratuito exclusivo e Hosting somente do preview isolado. A parada anterior de PREVIEW-01 foi superada para esse escopo; produção, merge e primeiro envio continuam proibidos.
+
+Configuração e guardas locais de STG-01 implementadas; **provisioned=false**. lidacomzapcrm-staging é ID preferencial, não projeto confirmado. Default/firebase.json operacionais intactos; alias staging ainda não adicionado. CI inclui validação e job de preview condicionado a provisionamento/identidade/ativação futura; deployment cloud ainda não executado. Backend NONE, providers DISABLED, zero envio. Não há URL staging, Firestore staging, webhook público ou worker distribuído comprovados.
+
+GATE_FIREBASE_REAUTH_REQUIRED: sessão antiga potencialmente comprometida, conforme incidente histórico. Nenhum login:list, token, consulta cloud ou recurso criado nesta retomada. Após autorização do login em navegador, provisionar projeto segregado sem billing, validar identidade/Hosting e concluir STG-01 antes de avançar STG-02/03. Detalhes e plano: STG-01-isolated-firebase-staging.md.
+
+UX-OPS-approved-requirements.md registra requisitos aprovados: ações em conversa, pedido contextual, cadastros, impressão centralizada, NOTA/venda a prazo, venda distinta de recebimento, fechamento por forma e paleta. Estado REQUISITO APROVADO, sem implementação operacional nova. ORDER-01 deve preceder escritas de OPS-01; nenhuma integração real ou crédito foi implantado.

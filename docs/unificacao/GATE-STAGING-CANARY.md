@@ -1,5 +1,15 @@
 # Gate — ambiente staging separado
 
+## Estado atual — controlador contínuo de 2026-10-02
+
+GATE_STAGING_PROJECT_REQUIRED resolvido **quanto à autorização** de criar ambiente gratuito separado; o projeto ainda não existe como fato comprovado. Próximo gate: **GATE_FIREBASE_REAUTH_REQUIRED**. A sessão anterior é potencialmente comprometida devido ao incidente login:list; não foi reutilizada/consultada. Ação mínima: **Autorize o login Firebase no navegador.**
+
+Pronto: guardas fail-closed, configuração Hosting exclusiva dist-integrated/pr-4, testes e CI condicionada, UX-OPS registrado. Provisionamento/alias/URL/Firestore/webhook/WIF continuam pendentes. Depois: agente reautentica sem exposição de tokens, cria/verifica projeto grátis isolado, preserva default, publica só preview e avança STG-02 quando STG-01 estiver comprovadamente verde. Billing, credenciais Meta/RCS e primeiro envio permanecem gates humanos independentes.
+
+O registro abaixo descreve a parada histórica anterior e não revoga a autorização nova.
+
+## Registro histórico — LIVE PREPARATION
+
 GATE_ID: **GATE_STAGING_PROJECT_REQUIRED**.
 
 FASE: LIVE-00/01/02 e LIVE-03/04 PREPARATION local; retomada em 2026-10-01.
