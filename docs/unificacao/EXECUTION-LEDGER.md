@@ -262,3 +262,13 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - Proteção adicional: vite.config.ts recusa APP_ENV=staging antes de bundlar/servir App.tsx; nenhuma modificação no App/Firebase/componentes/tipos/UNI-08. Configs isoladas mantidas.
 - TESTES: 139/139 aprovados em execução consolidada (129 preservados + 10 staging). Baseline 21 → 21, stricts, AST e os três builds revalidados; configuração normal preservada. CI no SHA desta proteção a confirmar no fechamento.
 - GATE / NEXT: GATE_FIREBASE_REAUTH_REQUIRED / provisionamento isolado após login; nenhuma consulta cloud ou envio.
+
+## STG-01 — fechamento local comprovado / cloud bloqueado
+
+- HEAD funcional final: 075d0c09bcc910234a53b79fbfc6cb825bb5cd9e. Commits deste bloco: c081e81 (guardas/CI), 0740d0d (docs/UX-OPS), 62ecbf2 (correção workflow), 075d0c0 (proteção Vite).
+- CI funcional: push https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37067438240 e PR https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37067443177 — success no SHA funcional. Job offline success; staging-preview skipped por não estar ativado/provisionado. Isso não comprova deploy.
+- TESTES / STRICT / AST / BUILD / BASELINE: 139/139; stricts e AST aprovados; operacional/UNI-08/integrado verdes; 21 / 21 / 0, mesmas assinaturas. Sem mudança de código após essas validações.
+- HEAD final documental / COMMIT: `Record staging preparation evidence and Firebase reauthentication gate` (resolver SHA pelo Git). CI desse fechamento a confirmar após push; sem cloud.
+- PR #4 atualizada e draft; main remoto 60fb91fdf048a8e0d4f9adc29a532be8bf4356dd; pessoal/fontes/operacional/UNI-08 preservados. Busca de padrões sensíveis no diff novo sem ocorrências; credenciais temporárias/cache ignorados.
+- ESTADO: STG-01 PARTIAL LOCAL_PREPARED; ID somente reservado em config, alias default intacto. Sem URL/projeto staging confirmado, Firestore staging, endpoint público, worker distribuído, billing ou envio. Meta/RCS DISABLED; Order operacional incompleto; UX-OPS registrado, crédito/impressão/UX reais não implementados.
+- GATE: GATE_FIREBASE_REAUTH_REQUIRED. AÇÃO MÍNIMA: Autorize o login Firebase no navegador. NEXT: agente reautentica com logs sanitizados e provisiona staging gratuito isolado; STG-02 somente após publicação/isolamento comprovados. Não há pedido antecipado de credenciais Meta/RCS.
