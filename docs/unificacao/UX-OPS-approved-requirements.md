@@ -49,4 +49,6 @@ Emerald & Gold Luxury SaaS: #059669, #0D9488, #F59E0B, #064E3B, #134E4A, #18181B
 
 ## Sequência e gates
 
+Continuidade local 2026-10-03: ORDER-01/OPS-01 possuem agora fundação offline e demonstração no preview integrado (ORDER-01-incremental-offline.md). Pedido contextual com produto fixture, modalidade/pagamento/revisão/confirmação em memória; NOTA aceita/recusada com troca de pagamento; contabilidade pura de venda versus recebimento; fechamento manual de cinco métodos; contrato central de impressão e cadastros demo. Isso não implementa crédito, cadastro completo, impressão física ou operação real. Ações contextuais restantes (edição do cliente, pedidos, anotação, oportunidade/timeline operacional) continuam backlog, preservando implementações anteriores. Paleta registrada, sem redesign operacional.
+
 STG-01 → STG-02 → STG-03 → ORDER-01 → OPS-01 → UX-OPS → Messaging Canary. UX-OPS é registrado agora; implementação após bases operacionais. A ordem só muda com justificativa técnica documentada. Meta e RCS permanecem DISABLED. Primeiro envio exige GATE_FIRST_REAL_SEND_READY, mesmo para TEST. Crédito real, clientes reais, migração operacional, produção e merge têm autorização/gates próprios.

@@ -4,6 +4,14 @@ Auditoria corretiva de 2026-10-01, solicitada antes de qualquer staging. Checkou
 
 ## Um único projeto
 
+### Continuidade local — 2026-10-03
+
+META-01 **PAUSADA**, GATE_META_TRUSTED_DEVICE_REQUIRED: restrição temporária de dispositivo/contexto não reconhecido informada pelo usuário. Nenhuma nova tentativa, App/WABA ou callback público. Retomada somente após o usuário informar liberação do cadastro Developer. Não confundir STG-03 sintético privado com inbound Meta real.
+
+ORDER-01/OPS-01 avançaram em camada independente **ADAPTER / OFFLINE IMPLEMENTADO / VISUAL IMPLEMENTADO**: projeção com evidência separada de pagamento/produção/entrega, revisão contextual Order/OrderItem, port idempotente/revisionado somente memória SIMULATION, NOTA/recebimento futuro/fechamento por método, renderer de impressão e cadastro demo. App.tsx/components/lib/types, adapters anteriores e persistência operacional preservados. Não há novo pedido, crédito, caixa, KDS, entrega ou envio real. Detalhes: ORDER-01-incremental-offline.md; META-01-inbound-staging.md. Resultado final de testes/CI no ledger.
+
+Próximo gate desta frente: GATE_OPERATIONAL_ORDER_PERSISTENCE_REQUIRED antes de qualquer implementação ligada às coleções/dados operacionais. Não é conclusão da integração operacional ORDER-01 nem da operação real OPS-01. Cadastro completo, round-trip, integração financeira e impressão física continuam pendentes.
+
 ### Estado atual — STG-01/02/03 sintéticos comprovados
 
 | Capacidade nova comprovada | Fase | Estado | Limite/gap |

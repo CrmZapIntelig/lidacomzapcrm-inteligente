@@ -57,7 +57,18 @@ test('WhatsApp and RCS expose disabled transport and pending prerequisites, no s
 test('fixture names, addresses, tenant and orders are explicitly synthetic; no real input or persistence surface', () => {
   for (const c of contacts) { assert.match(c.name, /Exemplo$/); assert.equal(c.tenantId, 'demo-offline'); assert.match(c.phone, /^\+1202555010[0-6]$/); }
   for (const i of identities) assert.match(i.address!, /^\+1202555010[0-6]$/);
-  for (const [id] of modules) { const markup = render(id); assert.ok(!/<(?:input|form|textarea)/.test(markup)); }
+  for (const [id] of modules) {
+    const markup = render(id);
+    assert.ok(!/<(?:form|textarea)/.test(markup));
+    const inputs = markup.match(/<input\b[^>]*>/g) ?? [];
+    assert.equal(inputs.length, id === 'pedidos' || id === 'conversas' ? 5 : 0);
+    for (const input of inputs) {
+      assert.match(input, /type="number"/);
+      assert.match(input, /aria-label="Informado (DINHEIRO|PIX|DEBITO|CREDITO|NOTA)"/);
+      assert.match(input, /min="0"/);
+      assert.match(input, /step="1"/);
+    }
+  }
   assert.match(legacyDelivery.address.street, /Demonstração/);
 });
 test('timeline has no fabricated events at initialization; funnel does not claim later-stage facts', () => {

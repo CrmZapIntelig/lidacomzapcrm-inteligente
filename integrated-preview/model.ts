@@ -5,7 +5,7 @@ import type { VisualSession } from '../offline-preview/scenario';
 import { budgetDay } from '../src/domain/dispatchPrerequisites';
 
 // Manually derived from the canonical state plus verified STG-01 Hosting; no runtime I/O.
-export const canonicalSource = 'STG-01/02 · 02/10/2026';
+export const canonicalSource = 'ORDER-01 / OPS-01 offline · 03/10/2026';
 export const modules = [
   ['dashboard', 'Dashboard', '◈'], ['crm', 'CRM', '▤'], ['clientes', 'Clientes', '◎'], ['conversas', 'Conversas', '◌'],
   ['marketing', 'Marketing', '◇'], ['venda', 'Venda Ativa', '↗'], ['dispatch', 'Disparador Inteligente', '≋'], ['funil', 'Funil', '⋮'],
@@ -20,7 +20,7 @@ export const capabilities: readonly Capability[] = [
   { id: 'operation', title: 'Operação CRM', phase: 'CRM original', statuses: ['OPERACIONAL LEGADO'], gap: 'Consumidores canônicos ainda não ligados à operação.', module: 'crm' },
   { id: 'sales', title: 'Venda Ativa', phase: 'REC-01 / UNI-05 / UNI-08', statuses: ['OFFLINE IMPLEMENTADO', 'VISUAL IMPLEMENTADO'], gap: 'Execução operacional e persistência transacional pendentes.', module: 'venda' },
   { id: 'marketing', title: 'Marketing', phase: 'UNI-02/03/06', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO'], gap: 'Handoff persistido com campanhas operacionais pendente.', module: 'marketing' },
-  { id: 'orders', title: 'Pedidos', phase: 'UNI-02/03/04', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO'], gap: 'Pedidos unificados operacionalmente ainda incompletos.', module: 'pedidos' },
+  { id: 'orders', title: 'Pedidos', phase: 'UNI-02/03/04 / ORDER-01 / OPS-01', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO', 'VISUAL IMPLEMENTADO'], gap: 'Revisão contextual/NOTA somente memória. Pedidos unificados operacionalmente ainda incompletos.', module: 'pedidos' },
   { id: 'omni', title: 'Omnichannel', phase: 'UNI-02/03/04 / LIVE-00', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO'], gap: 'Inbox real e identidades persistidas pendentes.', module: 'conversas' },
   { id: 'whatsapp', title: 'WhatsApp', phase: 'LIVE-00/01/02/03', statuses: ['OFFLINE IMPLEMENTADO', 'STAGING PENDENTE', 'LIVE PENDENTE'], gap: 'Transporte DISABLED; conta, secrets e canário não comprovados.', module: 'whatsapp' },
   { id: 'rcs', title: 'RCS', phase: 'LIVE-04', statuses: ['OFFLINE IMPLEMENTADO', 'LIVE PENDENTE'], gap: 'Agente não configurado; capability real UNKNOWN.', module: 'rcs' },

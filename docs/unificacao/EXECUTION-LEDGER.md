@@ -1,5 +1,18 @@
 # Execution ledger — Unificação
 
+## ORDER-01 / OPS-01 — continuidade local após gate Meta (2026-10-03)
+
+- HEAD INICIAL: 29dd5e5f990b6f6ef6142312e9b248a63731fbae. Pre-flight confirmou branch/origin/PR #4 draft/main 60fb91f; CI inicial push 37091397844 e PR 37091400883 success. 153 testes reexecutados; baseline 21→21.
+- META-01: GATE_META_TRUSTED_DEVICE_REQUIRED, restrição informada pelo usuário. Pausa mantida; nenhuma tentativa Meta/asset/credencial/subscription nova. Retomar somente após informação humana de liberação.
+- AUDITORIA: equivalências Order/DeliveryOrder/Order canônico, origem/vínculos, pagamento/produção/entrega/cancelamento, coleções e consumidores documentados em ORDER-01-incremental-offline.md. FECHADO dispara venda no caixa legado; nova visão conservadora não fabrica comprovante de recebimento. Adapter anterior intacto.
+- EXECUÇÃO: fundação Order/OrderItem com snapshots/eixos, revisão/port de confirmação memória idempotente/revisionado SIMULATION. NOTA aprovação/recusa/troca; fatos venda/recebimento separados; fechamento de cinco métodos; renderer único/versionado/escape; port de cadastros demo. OPS contextual no preview isolado, produto fixture, sem port operacional.
+- TESTES: 164/164 no conjunto consolidado após adaptar segurança dos inputs: somente cinco números de fechamento demo nas áreas Pedidos/Conversas; proibidos texto livre/backend/persistência. Testes novos de estados/evidência/contexto/replay/revisão/dinheiro/NOTA/recebimento/fechamento/impressão/cadastro/isolation. Stricts núcleo/messaging/offline/integrado/Functions e AST verdes; baseline 21/21/0 com SHA de diagnósticos preservado.
+- BUILDS: operacional, UNI-08, integrado e Functions verdes; chunk operacional acima de 500 kB já existente. Browser local validou abertura/revisão, NOTA bloqueada, recusa→PIX, impressão escapada, confirmação memória e cinco valores manuais/diferença zero. Não consultou nem escreveu Firestore/cloud/Meta.
+- PRESERVAÇÃO: App/components/lib/types/compatAdapters/UNI-08 intactos contra HEAD inicial; quatro arquivos pessoais excluídos. Nenhuma migração, envio, produção, main ou nova infraestrutura/billing. CI existente pode atualizar exclusivamente Hosting preview sintético da PR #4; nenhum deploy de backend nesta fase.
+- COMMITS / HEAD FINAL / CI: commits pequenos identificados por `Add incremental offline order operations and financial evidence` e `Demonstrate contextual orders and record Meta trusted-device pause`; SHAs/CI confirmados no fechamento abaixo.
+- ESTADO: ORDER-01 e OPS-01 OFFLINE/VISUAL, integração operacional parcial/pending. Cadastros completos, crédito real, catálogo operacional, persistência, KDS/Delivery/Caixa e impressão física pendentes.
+- GATE / NEXT: GATE_OPERATIONAL_ORDER_PERSISTENCE_REQUIRED antes de conectar novos comandos às coleções/dados reais; preparar integração transacional/round-trip e rollback em fase autorizada. META trusted-device, first-send/produção/main permanecem independentes.
+
 ## STG-03 — receiver/worker TEST gerenciados e readiness operacional
 
 - HEAD INICIAL: **2ff066280023ff9e2f8b527fee851a7619d8fcd0**. Branch canônica, PR #4 draft; main **60fb91fdf048a8e0d4f9adc29a532be8bf4356dd**. Trabalho STG-03 não commitado do checkpoint preservado; arquivos pessoais excluídos.
