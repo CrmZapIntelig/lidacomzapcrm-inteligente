@@ -42,6 +42,8 @@ Diferença de relógio local de cerca de 14s fez policy bloquear draft de fixtur
 
 Amostra pós-probe de 89 logs Cloud Run: sem corpo de fixture, telefone, Bearer ou JWT. Código não registra payload/headers/erro bruto. É evidência limitada da amostra e revisão, não garantia absoluta de todas as futuras entradas. Auditoria de domínio também sanitizada.
 
+Auditoria npm do pacote Functions: zero high/critical, duas moderate transitivas (`gaxios`/`uuid`). [Advisory de uuid](https://github.com/advisories/GHSA-w5hq-g745-h8pq) afeta buffers externos em métodos v3/v5/v6; gaxios consultado chama v4() sem buffer externo, e o domínio usa node:crypto randomUUID. Essa análise limita a exposição observada, não certifica todas as dependências; upgrade transitivo compatível continua backlog, sem override major automático.
+
 Hosting preview existente respondeu 200, CSP connect-src none preservado. Aplicação operacional/App/Firebase/components/types e offline-preview não foram alterados. Zero dados reais, mensagens enviadas, merge main, migração operacional ou deploy produção.
 
 ## Próximos gates
