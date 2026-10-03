@@ -13,6 +13,14 @@
 - ESTADO: ORDER-01 e OPS-01 OFFLINE/VISUAL, integração operacional parcial/pending. Cadastros completos, crédito real, catálogo operacional, persistência, KDS/Delivery/Caixa e impressão física pendentes.
 - GATE / NEXT: GATE_OPERATIONAL_ORDER_PERSISTENCE_REQUIRED antes de conectar novos comandos às coleções/dados reais; preparar integração transacional/round-trip e rollback em fase autorizada. META trusted-device, first-send/produção/main permanecem independentes.
 
+### Fechamento funcional ORDER-01 / OPS-01
+
+- COMMITS: b792875b81666e80c7e52b3ee02f5bb776bb640e (fundação offline) e d18ac293fc6e269f5a06092778a3e85f9477e7e0 (preview/gate/documentos), ambos publicados somente na branch autorizada.
+- CI comprovada no HEAD funcional d18ac29: push https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37143173711 e PR https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37143176776 success; check dinâmico 37143174119 success. PR #4 atualizada, draft=true/merged=false/base60fb91f.
+- Ajuste final: mapa visual corrigido para STG-03 IAM privado somente TEST já comprovado; remove gate billing obsoleto e mostra pausa Meta trusted-device. Guardas de status permitem STAGING READY somente nas capacidades staging/fixture-store/gateway e exigem limite TEST/privado no gateway. 11 testes integrados/isolation e build integrado revalidados; nenhuma fonte operacional ou servidor modificada.
+- HEAD FINAL: commit de fechamento `Align preview with verified synthetic staging and close offline operations checkpoint` (SHA resolvível no Git; CI deste fechamento verificada antes do relatório final). Validação consolidada 164, baseline 21→21, builds/stricts verdes permanecem; ajustes finais restritos a mapa/teste visual e ledger.
+- URL local http://127.0.0.1:4180/; Hosting pr-4 permanece somente demo (CI autorizada existente). Nenhum novo recurso cloud ou backend conectado. Próximo gate real: integração das novas escritas com persistência operacional, ainda sem autorização para dados reais. META-01 só retoma após liberação informada pelo usuário.
+
 ## STG-03 — receiver/worker TEST gerenciados e readiness operacional
 
 - HEAD INICIAL: **2ff066280023ff9e2f8b527fee851a7619d8fcd0**. Branch canônica, PR #4 draft; main **60fb91fdf048a8e0d4f9adc29a532be8bf4356dd**. Trabalho STG-03 não commitado do checkpoint preservado; arquivos pessoais excluídos.

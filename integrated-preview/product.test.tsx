@@ -22,7 +22,10 @@ test('dashboard and capability map retain canonical gaps without promotion to li
   for (const c of capabilities.slice(0, 11)) assert.ok(dashboard.includes(c.title));
   for (const c of capabilities) {
     assert.ok(!c.statuses.some(s => ['LIVE READY', 'OPERACIONAL COMPLETO'].includes(s)));
-    if (c.statuses.includes('STAGING READY')) assert.ok(['staging', 'fixture-store'].includes(c.id));
+    if (c.statuses.includes('STAGING READY')) {
+      assert.ok(['staging', 'fixture-store', 'gateway'].includes(c.id));
+      if (c.id === 'gateway') { assert.match(c.phase, /STG-02\/03/); assert.match(c.gap, /privados somente TEST/); assert.match(c.gap, /inbound real pendentes/); }
+    }
   }
   assert.match(capabilities.find(c => c.id === 'fixture-store')!.gap, /fixtures.*200 work.*256 KiB/);
   assert.match(render('arquitetura'), /Pedidos unificados operacionalmente ainda incompletos/);
