@@ -4,7 +4,8 @@
   "projectId": "lidacomzapcrm-staging",
   "displayName": "LidacomZapCRM Staging",
   "provisioned": true,
-  "billingEnabled": false,
+  "billingEnabled": true,
+  "billingAuthorization": "STG-03-2026-10-02",
   "hostingChannel": "pr-4",
   "hostingPublic": "dist-integrated",
   "fixturesOnly": true,
@@ -13,5 +14,6 @@
   "metaProvider": "DISABLED",
   "rcsProvider": "DISABLED",
   "firestoreProvisioned": true,
-  "webhookProvisioned": false
+  "webhookProvisioned": true,
+  "webhookIsolation": "PRIVATE_SYNTHETIC"
 }

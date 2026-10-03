@@ -14,7 +14,7 @@ async function resolveImport(path, specifier) {
 async function inspectFrontend(path) {
   if (visited.has(path)) return; visited.add(path);
   const source = await readFile(path, 'utf8');
-  assert.ok(!/^services\/(messaging|staging)\//.test(relative(root, path).replaceAll('\\', '/')), 'SERVER_PROVIDER_IN_FRONTEND');
+  assert.ok(!/^(services\/(messaging|staging)\/|staging-functions\/)/.test(relative(root, path).replaceAll('\\', '/')), 'SERVER_PROVIDER_IN_FRONTEND');
   const tree = ts.createSourceFile(path, source, ts.ScriptTarget.Latest, true);
   const imports = [];
   function walk(node) {

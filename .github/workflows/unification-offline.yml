@@ -20,6 +20,10 @@ jobs:
       - run: node node_modules/typescript/bin/tsc -p tsconfig.offline.json
       - run: node --test --import tsx services/messaging/*.test.ts services/staging/*.test.ts
       - run: node node_modules/typescript/bin/tsc -p tsconfig.messaging.json
+      - run: npm ci --prefix staging-functions --ignore-scripts
+      - run: node node_modules/typescript/bin/tsc -p tsconfig.staging-functions.json
+      - run: npm run build --prefix staging-functions
+      - run: node --test tools/unification/staging-runtime.test.mjs
       - run: node tools/unification/check-messaging-safety.mjs
       - run: node tools/unification/check-baseline.mjs
       - run: npm run build

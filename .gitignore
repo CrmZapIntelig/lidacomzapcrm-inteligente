@@ -4,6 +4,7 @@ dist/
 dist-offline/
 .local-messaging/
 dist-integrated/
+staging-functions/lib/
 coverage/
 .DS_Store
 *.log

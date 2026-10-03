@@ -28,7 +28,8 @@ export function validateStaging({ manifest, aliases, hosting, environment = {}, 
   assert.equal(typeof manifest.provisioned, 'boolean', 'PROVISIONING_STATE_REQUIRED');
   if (manifest.provisioned) assert.equal(aliases.projects.staging, manifest.projectId, 'PROVISIONED_STAGING_ALIAS_REQUIRED');
   if (purpose === 'deploy') assert.equal(manifest.provisioned, true, 'GATE_FIREBASE_REAUTH_REQUIRED_OR_STAGING_UNPROVISIONED');
-  assert.equal(manifest.billingEnabled, false, 'GATE_STAGING_BILLING_REQUIRED');
+  assert.equal(typeof manifest.billingEnabled, 'boolean', 'BILLING_STATE_REQUIRED');
+  if (manifest.billingEnabled) assert.equal(manifest.billingAuthorization, 'STG-03-2026-10-02', 'GATE_STAGING_BILLING_REQUIRED');
   assert.equal(manifest.fixturesOnly, true, 'STAGING_FIXTURES_ONLY');
   assert.equal(manifest.backend, 'NONE', 'STG01_BACKEND_FORBIDDEN');
   assert.equal(manifest.canSend, false, 'STAGING_SEND_FORBIDDEN');
@@ -36,7 +37,8 @@ export function validateStaging({ manifest, aliases, hosting, environment = {}, 
   assert.equal(manifest.rcsProvider, 'DISABLED', 'RCS_MUST_REMAIN_DISABLED');
   // STG-02 server persistence can coexist with Hosting; it never enables preview backend.
   assert.equal(typeof manifest.firestoreProvisioned, 'boolean', 'FIRESTORE_PROVISIONING_STATE_REQUIRED');
-  assert.equal(manifest.webhookProvisioned, false, 'STG01_WEBHOOK_NOT_PROVISIONED');
+  assert.equal(typeof manifest.webhookProvisioned, 'boolean', 'WEBHOOK_PROVISIONING_STATE_REQUIRED');
+  if (manifest.webhookProvisioned) assert.equal(manifest.webhookIsolation, 'PRIVATE_SYNTHETIC', 'PRIVATE_SYNTHETIC_WEBHOOK_REQUIRED');
   assert.equal(manifest.hostingChannel, 'pr-4', 'NON_LIVE_CHANNEL_REQUIRED');
   assert.equal(manifest.hostingPublic, 'dist-integrated', 'ISOLATED_BUILD_REQUIRED');
   assert.deepEqual(Object.keys(hosting), ['hosting'], 'STG01_HOSTING_ONLY');
