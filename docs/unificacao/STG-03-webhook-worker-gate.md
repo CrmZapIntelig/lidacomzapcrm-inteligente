@@ -1,4 +1,14 @@
-# STG-03 — endpoint HTTPS / worker: gate de billing
+# STG-03 — endpoint HTTPS / worker
+
+## Retomada autorizada — 2026-10-02
+
+O gate de billing abaixo é histórico e foi superado pela autorização explícita do usuário. Verificação sanitizada na retomada confirmou billing habilitado exclusivamente em `lidacomzapcrm-staging`, orçamento existente de BRL 10/mês e alertas 50%, 90%, 100%, com destinatários IAM padrão da conta de billing. Não houve novo vínculo ou criação de orçamento na retomada. Alertas não são hard cap.
+
+Implementação e deploy concluídos: `services/staging/syntheticIngress.ts` reutiliza admission, queue, lease/fencing e projeção do journal STG-02. `staging-functions/` é pacote server-only separado do React, com Functions v2 em southamerica-east1, IAM privado, runtime próprio, min=0/max=1/concurrency=1/timeout=60s/memória=256MiB/body=65536 bytes/batch=10. Worker executa uma etapa por invocação explícita, sem scheduler ou segunda fila.
+
+HMAC/challenge utilizam material público de fixture TEST, nunca secrets Meta. IAM é a fronteira de acesso. Provider real Meta/RCS DISABLED, zero outbound. Hosting permanece estático e sem conexão ao receiver. Endpoint privado HTTPS validado: https://stagingingress-frefvtfoya-rj.a.run.app . Evidências, limites e comandos em [STG-03-webhook-worker-staging.md](STG-03-webhook-worker-staging.md). O próximo gate de mensageria é GATE_META_CREDENTIALS_REQUIRED para abandonar fixtures e preparar configuração Meta real, sem autorizar sender ou primeiro envio.
+
+## Registro histórico anterior à autorização
 
 2026-10-02. Autorização vigente permite staging gratuito segregado, sem billing automático. Projeto lidacomzapcrm-staging tem billing=false. STG-01 Hosting pr-4/CI federada comprovados; STG-02 Firestore gratuito/ports/fixtures testados; evidências de CI no ledger.
 

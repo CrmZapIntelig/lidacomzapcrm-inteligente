@@ -4,19 +4,21 @@ Auditoria corretiva de 2026-10-01, solicitada antes de qualquer staging. Checkou
 
 ## Um único projeto
 
-### STG-02 — persistência staging comprovada / STG-03 billing gate
+### Estado atual — STG-01/02/03 sintéticos comprovados
 
 | Capacidade nova comprovada | Fase | Estado | Limite/gap |
 | --- | --- | --- | --- |
 | Hosting do preview integrado isolado | STG-01 | STAGING READY / VISUAL IMPLEMENTADO | Backend NONE; não é SPA operacional |
 | Persistência servidor somente fixtures TEST | STG-02 | STAGING READY limitado | Aggregate bounded, sem inbound/cliente real |
-| Endpoint HTTPS e worker cloud | STG-03 | STAGING PENDENTE | Billing/Blaze gate; não provisionados |
+| Endpoint HTTPS e worker cloud | STG-03 | STAGING READY somente TEST | IAM privado, worker por invocação; Meta/RCS reais DISABLED |
 
-Firestore default separado em southamerica-east1, Standard/freeTier=true e billing=false. Ports assíncronas reaproveitam regras do journal local: admissão/idempotency/fila/claim/lease/fencing/retry/failure/crash recovery e projeção+draft/audit atômicos. Probe real exclusivamente fixtures TEST no staging passou; regras fechadas publicadas. Oito testes locais adicionais. STAGING READY **somente persistência de fixtures limitada** (200 work/1000 audit/256 KiB); nenhum claim de volume operacional ou inbound real. Firestore em React/preview continua ausente; backend do preview NONE.
+Firestore default separado em southamerica-east1, Standard; criado na STG-02 sem billing. Agora Blaze habilitado somente staging, com budget existente BRL 10/mês e alertas 50/90/100%, sem hard cap. Ports assíncronas reaproveitam regras do journal local: admissão/idempotency/fila/claim/lease/fencing/retry/failure/crash recovery e projeção+draft/audit atômicos. Probe real exclusivamente fixtures TEST no staging passou; regras fechadas preservadas. STAGING READY **somente persistência de fixtures limitada** (200 work/1000 audit/256 KiB); nenhum claim de volume operacional ou inbound real. Firestore em React/preview continua ausente; backend do preview NONE.
 
-STG-03 não provisionada: Functions HTTPS exige Blaze, ausente. **GATE_STAGING_BILLING_REQUIRED**. Não foi habilitado billing nem recurso pago; webhook público e worker cloud ausentes. Providers DISABLED, zero mensagens, main/operacional intactos. ORDER-01/OPS-01/UX-OPS continuam backlog aprovado. Fontes e limites: STG-02-durable-staging-persistence.md e STG-03-webhook-worker-gate.md. Resultados finais de testes/CI e SHAs no ledger. As seções datadas anteriores são registros históricos.
+STG-03 Functions v2 Node22 em southamerica-east1 concluída: endpoint privado https://stagingingress-frefvtfoya-rj.a.run.app , min=0/max=1/concurrency=1/timeout=60s/body=65536/batch=10. Runtime separado, quatro permissões customizadas de journal, zero chaves geradas. Assinatura/challenge são fixtures TEST; nenhum segredo Meta. Worker usa a fila STG-02 por invocação explícita, sem scheduler/segunda fila/outbound. Probes HTTPS/Firestore de dedupe/recovery/retry/fencing/final/draft passaram; 153 testes locais, baseline 21→21 e builds verdes. CI/SHAs no ledger. Próximo gate de mensageria: **GATE_META_CREDENTIALS_REQUIRED**; RCS e primeiro envio mantêm gates independentes.
 
-### Estado mais recente — STG-01 autenticada (2026-10-02)
+ORDER-01/OPS-01: readiness auditado em ORDER-01-OPS-01-readiness.md; integração operacional continua pendente. FECHADO→PAID é projeção legada insuficiente para comprovar recebimento. NOTA/caixa/UX permanecem requisitos aprovados, sem escrita financeira real. Fontes e limites: STG-02-durable-staging-persistence.md, STG-03-webhook-worker-staging.md e ledger. Os registros datados abaixo preservam os estados históricos, inclusive billing=false antes da autorização.
+
+### Registro histórico — STG-01 autenticada (2026-10-02)
 
 STG-01 concluída: projeto isolado lidacomzapcrm-staging / 854899277909, billing=false, default operacional preservado. Hosting exclusivo dist-integrated/pr-4 em https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app ; CSP sem backend. CI push 37076090694 e PR 37076094664 success em d1c4db2, incluindo deploy federado comprovado. IAM/WIF limitado ao staging/PR #4, sem chave duradoura. Reautenticação nova em cache privado, sem usar sessão anterior. Integrações operacionais continuam bloqueadas; o mapa histórico abaixo não é promovido por hospedar o preview.
 

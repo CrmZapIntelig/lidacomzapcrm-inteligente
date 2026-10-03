@@ -1,5 +1,19 @@
 # Execution ledger — Unificação
 
+## STG-03 — receiver/worker TEST gerenciados e readiness operacional
+
+- HEAD INICIAL: **2ff066280023ff9e2f8b527fee851a7619d8fcd0**. Branch canônica, PR #4 draft; main **60fb91fdf048a8e0d4f9adc29a532be8bf4356dd**. Trabalho STG-03 não commitado do checkpoint preservado; arquivos pessoais excluídos.
+- CLOUD: billing staging já habilitado na execução autorizada anterior; retomada verificou vínculo e budget existente BRL 10/mês, 50/90/100%, não hard cap. Nenhum novo projeto/budget/vínculo. Functions v2 Node22/Cloud Run southamerica-east1 ACTIVE, endpoint privado https://stagingingress-frefvtfoya-rj.a.run.app . Runtime crm-staging-runtime separado, custom role com quatro permissões get/create/update/transação; zero USER_MANAGED keys. Escala 0–1/concurrency1/60s/256MiB/body65536/batch10. Artefatos com retenção 1 dia.
+- FIRESTORE / WORKER: journal/queue/ports STG-02 mantidos. Receiver ACK após persistência; worker explícito por invocação; lease/fencing/retry/backoff/final/crash recovery e projeção/draft/audit atômicos. Apenas TEST/SIMULATION/demo/allowlist fechada, sem scheduler/backend no preview ou segunda fila.
+- TESTES: **153/153** (147 preservados + 5 ingress + 1 configuração). Stricts núcleo/servidor/UNI-08/integrado/runtime, AST/source+bundle isolation e baseline **21/21/0**, SHA de diagnósticos inalterado. Builds operacional/UNI-08/integrado/Functions aprovados. Warning de chunk operacional preexistente.
+- PROBE HTTPS FINAL: IAM anônimo 403, challenge/signature, malformed, dados reais/perfis/texto arbitrário/LIVE rejeitados, body/batch413, admission/replay/dedupe, nova instância journal, draft canSend=false, lease recovery/retry/fencing/final PASS. Logs amostrados 89 entradas sem corpo/telefone/Bearer/JWT; audit sanitizado. Restart é de journal/cliente, não kill do container.
+- DEPLOY: primeiro timeout discovery antes de recurso; FUNCTIONS_DISCOVERY_TIMEOUT=90 resolveu. Primeiro deploy ACTIVE com erro CLI de cleanup pós-deploy; policy oficial configurada, deploy final success. Private IAM inicial vazio corrigido com invocador único runtime; jamais público. Policy manteve bloqueio de draft futuro quando relógio local adiantado; fixture corrigida sem mudar regra.
+- COMMIT FUNCIONAL: **90bf10daa057918654a8100b18e47d3e6ff9133e**, `Deploy private synthetic staging receiver and journal worker`. HEAD final documental identificado por `Record verified STG-03 and operational readiness gaps`; CI push/PR do fechamento pendente de confirmação, sem verde inferido.
+- CI: gates runtime strict/build/test adicionados ao job offline. WIF/Hosting permanece segregado à PR #4/branch/environment, sem nova permissão Functions, main auto-deploy ou auto-merge.
+- PRESERVAÇÃO: App/Firebase/components/types/offline-preview/default/operacional/main e .vscode/extensions.json/AGENTS.md/FONTES-CHATS/backup pessoal intactos. Hosting pr-4 respondeu 200 com CSP connect-src none.
+- ORDER / OPS / UX-OPS: readiness local documentado, gap financeiro FECHADO→PAID destacado; contratos/adapters existentes não promovidos a operação. NOTA/caixa/impressão/paleta continuam requisitos, sem cliente/pedido/crédito real.
+- GATE / NEXT: **GATE_META_CREDENTIALS_REQUIRED** para configuração de teste real após infraestrutura TEST verde. RCS DISABLED; gate agente separado. Primeiro outbound exige gate obrigatório, nunca automático. Zero envio/merge/produção/migração real.
+
 ## Encerramento comprovado STG-01/02 — STG-03 billing gate
 
 - HEAD INICIAL da retomada: 1c44e7e3a75a469d28b0815aafa76798f6fca169. Commits: d1c4db2 (provisionamento/alias), 23758b7 (Hosting/WIF/preview), **6424df719d0e3f58b7ccdd0f4006d9f18a603da4** (persistência/ports/regras). HEAD FINAL de fechamento: commit `Close verified staging persistence at managed webhook billing gate` (resolver Git).
