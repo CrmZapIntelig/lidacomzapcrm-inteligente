@@ -1,0 +1,83 @@
+name: Unification offline gates
+on:
+  push:
+    branches: [codex/unificacao-gestao-inteligente]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node --test --import tsx src/domain/*.test.ts src/application/*.test.ts
+      - run: node node_modules/typescript/bin/tsc -p tsconfig.offline.json
+      - run: node --test --import tsx services/messaging/*.test.ts services/staging/*.test.ts
+      - run: node node_modules/typescript/bin/tsc -p tsconfig.messaging.json
+      - run: npm ci --prefix staging-functions --ignore-scripts
+      - run: node node_modules/typescript/bin/tsc -p tsconfig.staging-functions.json
+      - run: npm run build --prefix staging-functions
+      - run: node --test tools/unification/staging-runtime.test.mjs
+      - run: node tools/unification/check-messaging-safety.mjs
+      - run: node tools/unification/check-baseline.mjs
+      - run: npm run build
+      - run: node --test --import tsx offline-preview/*.test.ts
+      - run: npm ci --prefix offline-preview
+      - run: node node_modules/typescript/bin/tsc -p tsconfig.preview-offline.json
+      - run: npm run build:offline
+      - run: node --test tools/unification/preview-isolation.test.mjs
+      - run: node --test --import tsx integrated-preview/*.test.tsx
+      - run: node node_modules/typescript/bin/tsc -p tsconfig.integrated-preview.json
+      - run: node tools/unification/check-integrated-isolation.mjs
+      - run: npm run build:integrated-preview
+      - run: node --test tools/unification/integrated-isolation.test.mjs
+      - run: node --test tools/unification/staging-environment.test.mjs
+      - run: npm run check:staging
+  staging-preview:
+    needs: offline
+    if: >-
+      vars.STAGING_HOSTING_ENABLED == 'true' &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.number == 4 &&
+      github.head_ref == 'codex/unificacao-gestao-inteligente' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    environment: staging
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: lidacomzapcrm-staging-pr-4
+      cancel-in-progress: false
+    env:
+      APP_ENV: staging
+      FIREBASE_PROJECT_ID: ${{ vars.STAGING_FIREBASE_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Set temporary staging CLI directory
+        run: echo "FIREBASE_CLI_ROOT=$RUNNER_TEMP/staging-firebase-cli" >> "$GITHUB_ENV"
+      - run: npm ci
+      - run: npm ci --prefix offline-preview
+      - run: node tools/unification/staging-environment.mjs deploy
+      - run: node tools/unification/check-integrated-isolation.mjs
+      - run: npm run build:integrated-preview
+      - run: node --test tools/unification/integrated-isolation.test.mjs
+      - run: npm install --prefix "$FIREBASE_CLI_ROOT" --no-save firebase-tools@15.19.1
+      - uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ vars.STAGING_FIREBASE_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.STAGING_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.STAGING_DEPLOY_SERVICE_ACCOUNT }}
+      - run: npm run deploy:staging-preview

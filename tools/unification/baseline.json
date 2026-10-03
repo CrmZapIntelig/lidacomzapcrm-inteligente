@@ -1,0 +1,191 @@
+[
+  [
+    "backend/dispatch-admission/src/index.ts",
+    {
+      "line": 29,
+      "character": 2
+    },
+    1205,
+    "Re-exporting a type when 'isolatedModules' is enabled requires using 'export type'."
+  ],
+  [
+    "src/lib/supabase.ts",
+    {
+      "line": 4,
+      "character": 32
+    },
+    2339,
+    "Property 'env' does not exist on type 'ImportMeta'."
+  ],
+  [
+    "src/lib/supabase.ts",
+    {
+      "line": 5,
+      "character": 36
+    },
+    2339,
+    "Property 'env' does not exist on type 'ImportMeta'."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 96,
+      "character": 11
+    },
+    2540,
+    "Cannot assign to 'status' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 97,
+      "character": 11
+    },
+    2540,
+    "Cannot assign to 'blockReasons' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 103,
+      "character": 11
+    },
+    2540,
+    "Cannot assign to 'status' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 104,
+      "character": 11
+    },
+    2540,
+    "Cannot assign to 'blockReasons' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 110,
+      "character": 11
+    },
+    2540,
+    "Cannot assign to 'status' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 111,
+      "character": 11
+    },
+    2540,
+    "Cannot assign to 'blockReasons' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 117,
+      "character": 11
+    },
+    2540,
+    "Cannot assign to 'status' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 118,
+      "character": 11
+    },
+    2540,
+    "Cannot assign to 'blockReasons' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 124,
+      "character": 11
+    },
+    2540,
+    "Cannot assign to 'status' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 125,
+      "character": 11
+    },
+    2540,
+    "Cannot assign to 'blockReasons' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 130,
+      "character": 9
+    },
+    2540,
+    "Cannot assign to 'status' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 131,
+      "character": 9
+    },
+    2540,
+    "Cannot assign to 'blockReasons' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 145,
+      "character": 13
+    },
+    2540,
+    "Cannot assign to 'status' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 146,
+      "character": 13
+    },
+    2540,
+    "Cannot assign to 'blockReasons' because it is a read-only property."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 154,
+      "character": 52
+    },
+    2367,
+    "This comparison appears to be unintentional because the types '\"candidate\"' and '\"blocked-technical\"' have no overlap."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 155,
+      "character": 54
+    },
+    2367,
+    "This comparison appears to be unintentional because the types '\"candidate\"' and '\"blocked-eligibility\"' have no overlap."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 156,
+      "character": 50
+    },
+    2367,
+    "This comparison appears to be unintentional because the types '\"candidate\"' and '\"blocked-content\"' have no overlap."
+  ],
+  [
+    "src/utils/campaignDispatchContract.ts",
+    {
+      "line": 157,
+      "character": 45
+    },
+    2367,
+    "This comparison appears to be unintentional because the types '\"candidate\"' and '\"duplicate-recipient\"' have no overlap."
+  ]
+]

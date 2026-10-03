@@ -1,0 +1,8 @@
+{
+  "name": "lidacomzapcrm-staging-functions",
+  "private": true,
+  "main": "lib/index.js",
+  "engines": { "node": "22" },
+  "scripts": { "build": "node build.cjs" },
+  "dependencies": { "firebase-functions": "7.4.0", "google-auth-library": "11.1.0" }
+}

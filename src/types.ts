@@ -622,6 +622,10 @@ export interface CampaignSchedule {
   updatedAt?: string;
 }
 
+export type CampaignResultMode =
+  | 'simulation'
+  | 'live';
+
 export interface CampaignResult {
   id: string;
   campaignId: string;
@@ -629,7 +633,22 @@ export interface CampaignResult {
   reachedCustomers: number;
   conversions: number;
   revenue: number;
+  mode?: CampaignResultMode;
   createdAt: string;
+}
+
+export type CampaignReachStatus =
+  | 'simulated-success'
+  | 'reached';
+
+export interface CampaignReach {
+  id: string;
+  campaignId: string;
+  campaignResultId: string;
+  customerId: string;
+  reachedAt: string;
+  status: CampaignReachStatus;
+  mode?: CampaignResultMode;
 }
 
 export interface CustomerScore {

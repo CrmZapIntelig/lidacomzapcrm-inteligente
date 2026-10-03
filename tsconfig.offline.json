@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "strict": true },
+  "include": ["src/domain/**/*.ts", "src/application/**/*.ts"]
+}
