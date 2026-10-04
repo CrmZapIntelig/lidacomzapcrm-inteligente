@@ -5,8 +5,20 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { ProductPreview } from './ProductPreview';
 import { modules, selectModule, capabilities, safety, contacts, identities, initialSession, prepareSession, sessionBudget, legacyOrder, legacyDelivery, canonicalOrder, canonicalDelivery } from './model';
 const render = (id: typeof modules[number][0]) => renderToStaticMarkup(<ProductPreview initialModule={id}/>);
+
+test('published product state shows TEST persistence and independent production/Meta gates', () => {
+  const orders = render('pedidos');
+  for (const text of ['ORDER-02 · STAGING READY — TEST ONLY', 'Operational Persistence Port', 'Firestore Staging', 'Rollback', 'DISABLED por padrão', 'Solicitada', 'Parcial', 'Paga']) assert.ok(orders.includes(text), text);
+  const state = render('arquitetura');
+  for (const text of ['GATE_OPERATIONAL_PRODUCTION_WRITE_REQUIRED', 'GATE_META_TRUSTED_DEVICE_REQUIRED', 'AGUARDANDO AUTORIZAÇÃO HUMANA', 'STG-01', 'STG-02', 'STG-03']) assert.ok(state.includes(text), text);
+  const cash = render('caixa');
+  for (const text of ['Esperado', 'Informado', 'Diferença', 'Dinheiro', 'PIX', 'Débito', 'Crédito', 'NOTA']) assert.ok(cash.includes(text), text);
+  assert.match(render('whatsapp'), /PAUSADO.*GATE_META_TRUSTED_DEVICE_REQUIRED/);
+  assert.match(render('automacoes'), /canSend=false/);
+  assert.match(render('entregadores'), /Nenhum cadastro ou rastreamento real/);
+});
 test('all module navigation targets render the safety banner and correct title; unknown route stays put', () => {
-  assert.equal(modules.length, 19);
+  assert.equal(modules.length, 21);
   for (const [id, title] of modules) {
     assert.equal(selectModule('dashboard', id), id);
     const markup = render(id);
@@ -23,7 +35,7 @@ test('dashboard and capability map retain canonical gaps without promotion to li
   for (const c of capabilities) {
     assert.ok(!c.statuses.some(s => ['LIVE READY', 'OPERACIONAL COMPLETO'].includes(s)));
     if (c.statuses.includes('STAGING READY')) {
-      assert.ok(['staging', 'fixture-store', 'gateway'].includes(c.id));
+      assert.ok(['staging', 'fixture-store', 'gateway', 'orders'].includes(c.id));
       if (c.id === 'gateway') { assert.match(c.phase, /STG-02\/03/); assert.match(c.gap, /privados somente TEST/); assert.match(c.gap, /inbound real pendentes/); }
     }
   }
@@ -64,7 +76,7 @@ test('fixture names, addresses, tenant and orders are explicitly synthetic; no r
     const markup = render(id);
     assert.ok(!/<(?:form|textarea)/.test(markup));
     const inputs = markup.match(/<input\b[^>]*>/g) ?? [];
-    assert.equal(inputs.length, id === 'pedidos' || id === 'conversas' ? 5 : 0);
+    assert.equal(inputs.length, id === 'pedidos' || id === 'conversas' || id === 'caixa' ? 5 : 0);
     for (const input of inputs) {
       assert.match(input, /type="number"/);
       assert.match(input, /aria-label="Informado (DINHEIRO|PIX|DEBITO|CREDITO|NOTA)"/);

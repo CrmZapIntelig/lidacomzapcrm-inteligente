@@ -70,8 +70,16 @@ Preservados: `npm run build`, `npm run build:offline`, `npm run preview:offline`
 - Browser QA no Chrome: 19 módulos navegáveis, comparação de pedidos, preparo de dois drafts, budget 2/2, canal alternativo, Carla bloqueada, timeline de fatos conhecidos. UNI-08 reaberta e preparo existente confirmado, envio zero. O navegador interno não anexou o webview; Chrome permitiu validação integral do mesmo listener local.
 - Screenshots externos ao Git: C:/Users/dfant/.codex/visualizations/2026/09/30/01a0f21e-6cda-7eb1-965f-1a3fd5ad8b7b/PREVIEW-01-dashboard.jpg e PREVIEW-01-pedidos.jpg.
 
-## Limitações e parada
+## Limitações e parada na entrega inicial (histórico)
 
 Tela demonstrativa não comprova integração operacional, segurança de produção, capability real, assinatura de conta ou disponibilidade cloud. Não foram migrados dados, executados providers, criados pedidos/mensagens reais, secrets, staging ou deployment. Fontes históricas e alterações pessoais preservadas.
 
 Parada após PREVIEW-01 para revisão humana. **Não iniciar STG-01.** Próximo passo é revisar o preview; GATE_STAGING_PROJECT_REQUIRED e GATE_OUTBOUND_CANARY_REQUIRED continuam pendentes e não são autorizados por esta fase.
+
+## Atualização Firebase — 2026-10-04
+
+HEAD inicial: 891ce9c05412df61a1d6e442e7aa48caf8f4da65. Esta atualização sucede a entrega inicial e representa STG-01/02/03 e ORDER-02 comprovados, exclusivamente TEST. 21 áreas, incluindo Entregadores e Automações; Estado do Produto mostra os gates independentes de escrita operacional e Meta trusted-device. Pedidos mostra port/persistência/projeções/rollback como arquitetura comprovada, sem conexão de frontend. Conversas preserva revisão contextual em memória; Caixa apresenta cinco métodos, esperado/informado/diferença, NOTA e impressão central pura (sem driver físico).
+
+ORDER-02: STAGING READY — TEST ONLY; flag DISABLED por padrão e produção bloqueada. Meta/RCS outbound DISABLED. Nenhum dado real, backend no preview, nova tentativa Meta ou escrita operacional. CSP connect-src none preservada. Paleta/layout mantidos.
+
+Publicação somente via CI/WIF existente, projeto lidacomzapcrm-staging e canal pr-4, com todos os gates prévios. URL conhecida: https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app/ . URL/HEAD/expiração efetivos e confirmação CI/HTTP/browser no fechamento do ledger/relatório.

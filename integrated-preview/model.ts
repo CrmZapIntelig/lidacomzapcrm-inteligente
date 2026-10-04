@@ -5,13 +5,13 @@ import type { VisualSession } from '../offline-preview/scenario';
 import { budgetDay } from '../src/domain/dispatchPrerequisites';
 
 // Manually derived from the canonical state plus verified STG-01 Hosting; no runtime I/O.
-export const canonicalSource = 'ORDER-02 TEST / OPS-01 offline · 03/10/2026';
+export const canonicalSource = 'ORDER-02 · STAGING READY — TEST ONLY · 04/10/2026';
 export const modules = [
   ['dashboard', 'Dashboard', '◈'], ['crm', 'CRM', '▤'], ['clientes', 'Clientes', '◎'], ['conversas', 'Conversas', '◌'],
   ['marketing', 'Marketing', '◇'], ['venda', 'Venda Ativa', '↗'], ['dispatch', 'Disparador Inteligente', '≋'], ['funil', 'Funil', '⋮'],
   ['pedidos', 'Pedidos', '▧'], ['cardapio', 'Cardápio', '▥'], ['caixa', 'Caixa', '▣'], ['cozinha', 'Cozinha / KDS', '◫'],
-  ['delivery', 'Delivery', '↝'], ['timeline', 'Timeline', '◷'], ['whatsapp', 'WhatsApp', '◉'], ['rcs', 'RCS', '◍'],
-  ['gateway', 'Gateway / Worker', '⇄'], ['config', 'Configurações', '⚙'], ['arquitetura', 'Arquitetura / Status', '⬡'],
+  ['delivery', 'Delivery', '↝'], ['entregadores', 'Entregadores', '◎'], ['timeline', 'Timeline', '◷'], ['automacoes', 'Automações', '◇'], ['whatsapp', 'WhatsApp', '◉'], ['rcs', 'RCS', '◍'],
+  ['gateway', 'Gateway / Worker', '⇄'], ['config', 'Configurações', '⚙'], ['arquitetura', 'Estado do Produto', '⬡'],
 ] as const;
 export type ModuleId = typeof modules[number][0];
 export type ProductStatus = 'OPERACIONAL LEGADO' | 'CONTRATO' | 'ADAPTER' | 'OFFLINE IMPLEMENTADO' | 'VISUAL IMPLEMENTADO' | 'STAGING READY' | 'STAGING PENDENTE' | 'LIVE PENDENTE';
@@ -20,18 +20,18 @@ export const capabilities: readonly Capability[] = [
   { id: 'operation', title: 'Operação CRM', phase: 'CRM original', statuses: ['OPERACIONAL LEGADO'], gap: 'Consumidores canônicos ainda não ligados à operação.', module: 'crm' },
   { id: 'sales', title: 'Venda Ativa', phase: 'REC-01 / UNI-05 / UNI-08', statuses: ['OFFLINE IMPLEMENTADO', 'VISUAL IMPLEMENTADO'], gap: 'Execução operacional e persistência transacional pendentes.', module: 'venda' },
   { id: 'marketing', title: 'Marketing', phase: 'UNI-02/03/06', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO'], gap: 'Handoff persistido com campanhas operacionais pendente.', module: 'marketing' },
-  { id: 'orders', title: 'Pedidos', phase: 'UNI-02/03/04 / ORDER-01 / OPS-01', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO', 'VISUAL IMPLEMENTADO'], gap: 'Revisão contextual/NOTA somente memória. Pedidos unificados operacionalmente ainda incompletos.', module: 'pedidos' },
+  { id: 'orders', title: 'Pedidos', phase: 'ORDER-01/02 / OPS-01', statuses: ['STAGING READY', 'VISUAL IMPLEMENTADO'], gap: 'STAGING READY — TEST ONLY: persistência e rollback comprovados. Preview em memória. Pedidos unificados operacionalmente ainda incompletos.', module: 'pedidos' },
   { id: 'omni', title: 'Omnichannel', phase: 'UNI-02/03/04 / LIVE-00', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO'], gap: 'Inbox real e identidades persistidas pendentes.', module: 'conversas' },
-  { id: 'whatsapp', title: 'WhatsApp', phase: 'LIVE-00/01/02/03', statuses: ['OFFLINE IMPLEMENTADO', 'STAGING PENDENTE', 'LIVE PENDENTE'], gap: 'Transporte DISABLED; conta, secrets e canário não comprovados.', module: 'whatsapp' },
+  { id: 'whatsapp', title: 'WhatsApp', phase: 'LIVE-01/02/03 / META-01', statuses: ['OFFLINE IMPLEMENTADO', 'LIVE PENDENTE'], gap: 'Receiver/worker TEST pronto; META-01 PAUSADO no trusted-device. Outbound DISABLED.', module: 'whatsapp' },
   { id: 'rcs', title: 'RCS', phase: 'LIVE-04', statuses: ['OFFLINE IMPLEMENTADO', 'LIVE PENDENTE'], gap: 'Agente não configurado; capability real UNKNOWN.', module: 'rcs' },
   { id: 'gateway', title: 'Gateway / Worker', phase: 'LIVE-00/02 / STG-02/03', statuses: ['OFFLINE IMPLEMENTADO', 'STAGING READY'], gap: 'HTTPS/worker privados somente TEST comprovados. Callback público Meta e inbound real pendentes.', module: 'gateway' },
   { id: 'events', title: 'Timeline / Funil', phase: 'UNI-02/03/04/07', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO', 'VISUAL IMPLEMENTADO'], gap: 'Bus genérico e handlers operacionais não integrados.', module: 'timeline' },
   { id: 'staging', title: 'Staging · preview isolado', phase: 'STG-01/02/03', statuses: ['STAGING READY', 'VISUAL IMPLEMENTADO'], gap: 'Hosting/Firestore/HTTPS privados TEST comprovados. Backend do preview NONE; Meta real pausada.', module: 'config' },
-  { id: 'production', title: 'Produção · novo domínio', phase: 'GATE_OUTBOUND_CANARY_REQUIRED', statuses: ['LIVE PENDENTE'], gap: 'Novo fluxo sem primeiro envio, deploy ou integração real.', module: 'arquitetura' },
+  { id: 'production', title: 'Produção · novo domínio', phase: 'GATE_OPERATIONAL_PRODUCTION_WRITE_REQUIRED', statuses: ['LIVE PENDENTE'], gap: 'PRODUCTION WRITE BLOQUEADO — aguardando autorização humana; nenhuma escrita operacional nova.', module: 'arquitetura' },
   { id: 'identity', title: 'Contact / ChannelIdentity', phase: 'UNI-02/03 / REC-01', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO'], gap: 'Client legado preservado; resolução distribuída pendente.', module: 'clientes' },
   { id: 'queue', title: 'Eligibility / Queue / Budget', phase: 'REC-01 / UNI-05', statuses: ['CONTRATO', 'OFFLINE IMPLEMENTADO'], gap: 'Budget de preparo local não é quota do provider.', module: 'dispatch' },
   { id: 'policy', title: 'Janela / TemplatePolicy', phase: 'LIVE-00/01', statuses: ['CONTRATO', 'OFFLINE IMPLEMENTADO'], gap: 'Evidência real e ligação explícita à operação pendentes.', module: 'whatsapp' },
-  { id: 'automation', title: 'Automações / respostas', phase: 'LIVE-00/02', statuses: ['OFFLINE IMPLEMENTADO'], gap: 'DRAFT somente; escalonamento humano, sem auto-send.', module: 'gateway' },
+  { id: 'automation', title: 'Automações / respostas', phase: 'LIVE-00/02', statuses: ['OFFLINE IMPLEMENTADO'], gap: 'DRAFT somente; escalonamento humano, sem auto-send.', module: 'automacoes' },
   { id: 'fixture-store', title: 'Persistência staging · somente TEST', phase: 'STG-02', statuses: ['STAGING READY'], gap: 'Firestore servidor para fixtures: 200 work / 256 KiB. Sem ingresso real ou backend neste preview.', module: 'gateway' },
 ];
 export const stages = ['RASCUNHO', 'LEAD', 'EM_ATENDIMENTO', 'PEDIDO_GERADO', 'AGUARDANDO_PAGAMENTO', 'PAGO', 'PRODUCAO', 'ENTREGUE', 'FECHADO', 'POS_VENDA'] as const;

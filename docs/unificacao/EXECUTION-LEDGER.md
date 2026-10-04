@@ -363,3 +363,12 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 
 
 - COMMIT DOCUMENTAL/VISUAL: ed2b68d549ad2d48c303bdd4cfa2dd41ea6dfb22 publicado; PR #4 atualizada e permanece draft=true/merged=false. HEAD final é o commit de fechamento deste ledger, resolvível pelo título Record published ORDER-02 closure and successful functional CI. CI do HEAD final conferida antes do relatório.
+
+## PREVIEW-01 — atualização visual Firebase (2026-10-04)
+
+- HEAD INICIAL: 891ce9c05412df61a1d6e442e7aa48caf8f4da65; branch canônica/PR4 draft/main preservados.
+- ESCOPO: apenas preview isolado/documentação/teste; 21 áreas, ORDER-02 STAGING READY — TEST ONLY, NOTA/caixa/renderer, infraestrutura TEST e gates produção/Meta. Nenhum port real conectado.
+- PUBLICAÇÃO: CI existente autoriza exclusivamente Hosting lidacomzapcrm-staging/pr-4/dist-integrated, CSP connect-src none; sem backend/deploy operacional/produção/main/Meta.
+- TESTES: 183 testes consolidados aprovados, zero skipped; strict integrado/AST/baseline21→21/zero novos e build integrado. CI revalida todos os stricts e quatro builds no HEAD publicado.
+- URL esperada: https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app/ ; HEAD final/CI/expiração confirmados no relatório e PR após publicação, commit identificável por Refresh integrated preview with verified ORDER-02 state and blocked gates.
+- NEXT: parar após validação visual. GATE_OPERATIONAL_PRODUCTION_WRITE_REQUIRED e GATE_META_TRUSTED_DEVICE_REQUIRED preservados.
