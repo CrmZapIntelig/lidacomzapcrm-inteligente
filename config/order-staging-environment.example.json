@@ -1,0 +1,12 @@
+{
+  "APP_ENV": "staging",
+  "PROJECT_ID": "lidacomzapcrm-staging",
+  "OPERATIONAL_ORDER_WRITES": "DISABLED",
+  "COLLECTION": "stg_operational_orders",
+  "TENANT_NAMESPACE": "demo-TEST-",
+  "MODE": "SIMULATION",
+  "MAX_ORDERS": 30,
+  "MAX_COMMANDS": 300,
+  "MAX_BYTES": 262144,
+  "OUTBOUND": "DISABLED"
+}

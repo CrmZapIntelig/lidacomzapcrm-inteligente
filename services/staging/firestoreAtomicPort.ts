@@ -14,10 +14,11 @@ interface Document { fields?: { payload?: { stringValue?: string } } }
 export class FirestoreAtomicJsonPort implements AtomicJsonPort {
   private readonly document: string;
   readonly root = 'projects/lidacomzapcrm-staging/databases/(default)/documents';
-  constructor(private readonly http: FirestoreRequestPort, tenantId: string, accountId: string) {
+  constructor(private readonly http: FirestoreRequestPort, tenantId: string, accountId: string, collection: 'stg_inbound_synthetic' | 'stg_operational_orders' = 'stg_inbound_synthetic') {
     if (!/^demo(?:-|$)/.test(tenantId) || !/^\d+$/.test(accountId)) throw new Error('SYNTHETIC_CONTEXT_REQUIRED');
     const key = createHash('sha256').update(`${tenantId}\0${accountId}`).digest('hex');
-    this.document = `${this.root}/stg_inbound_synthetic/${key}`;
+    if (!['stg_inbound_synthetic', 'stg_operational_orders'].includes(collection)) throw new Error('STAGING_COLLECTION_FORBIDDEN');
+    this.document = `${this.root}/${collection}/${key}`;
   }
   async transaction<T>(update: (current: string | undefined) => { value: string; result: T }): Promise<T> {
     for (let attempt = 0; attempt < 5; attempt++) {
