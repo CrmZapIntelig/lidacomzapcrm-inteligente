@@ -5,7 +5,7 @@ import type { VisualSession } from '../offline-preview/scenario';
 import { budgetDay } from '../src/domain/dispatchPrerequisites';
 
 // Manually derived from the canonical state plus verified STG-01 Hosting; no runtime I/O.
-export const canonicalSource = 'ORDER-01 / OPS-01 offline · 03/10/2026';
+export const canonicalSource = 'ORDER-02 TEST / OPS-01 offline · 03/10/2026';
 export const modules = [
   ['dashboard', 'Dashboard', '◈'], ['crm', 'CRM', '▤'], ['clientes', 'Clientes', '◎'], ['conversas', 'Conversas', '◌'],
   ['marketing', 'Marketing', '◇'], ['venda', 'Venda Ativa', '↗'], ['dispatch', 'Disparador Inteligente', '≋'], ['funil', 'Funil', '⋮'],

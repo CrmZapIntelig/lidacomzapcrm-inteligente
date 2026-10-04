@@ -22,7 +22,7 @@ export function OrderOperationsDemo() {
       setFeedback(`Pedido Demo confirmado apenas na simulação · revisão ${result.revision}. Nenhuma venda ou mensagem real.`);
     } catch { setFeedback('Revise a aprovação de NOTA ou troque a forma de pagamento.'); }
   };
-  return <section className="panel"><h2>OPS-01 · Novo Pedido contextual</h2><span className="badge">OFFLINE IMPLEMENTADO / SIMULAÇÃO</span><p>Ana Exemplo → Conversation WhatsApp → Order canônico. Caixa/KDS/Delivery reais ainda não integrados.</p>
+  return <section className="panel"><h2>OPS-01 · Novo Pedido contextual</h2><span className="badge">OFFLINE IMPLEMENTADO / SIMULAÇÃO</span><p>Ana Exemplo → Conversation WhatsApp → Order canônico. Caixa/KDS/Delivery reais ainda não integrados.</p><span className="badge">ORDER-02 · STAGING PERSISTENCE TESTED</span><p>Persistência e rollback de fixtures comprovados no staging. Este preview continua somente em memória, sem conexão com esse backend.</p>
     <button onClick={() => { setReviewed(demoReview()); setPrint(''); }}>+ Novo Pedido Demo</button>
     {reviewed && <div className="draft"><h3>Revisão do Pedido Demo</h3><p>Cliente pré-preenchido: Ana Exemplo · 2 × Prato Demo · R$ 40,00</p>
       <label>Modalidade <select value={reviewed.fulfillment} onChange={e => setReviewed({ ...reviewed, fulfillment: e.target.value as ReviewedOrder['fulfillment'] })}><option value="PICKUP">Retirada</option><option value="DELIVERY">Delivery Demo</option><option value="TABLE">Mesa Demo</option></select></label>

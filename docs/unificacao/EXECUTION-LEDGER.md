@@ -1,5 +1,19 @@
 # Execution ledger — Unificação
 
+## ORDER-02 — persistência operacional controlada em staging (2026-10-03)
+
+- HEAD INICIAL: 6f4ac41c863fb8fabb3719a30adc30c641d7eff4. Branch canônica/origin/main60fb91f/PR #4 draft confirmados. CI inicial PR37143328495/push37143324591/dinâmico37143325201 success; 164 testes e baseline21→21 reexecutados.
+- AUTORIZAÇÃO: persistência/probe exclusivamente staging TEST. Gate anterior superado só para este escopo. META trusted-device pausado, nenhuma tentativa. Sem produção/main/envio/cadastro real/dual-write.
+- IMPLEMENTAÇÃO: OperationalOrderPersistencePort/core sem SDK, snapshot completo, CREATE/GET/CONFIRM/UPDATE/CANCEL/pagamento/NOTA/produção/delivery/rollback. StagingOperationalOrderStore transacional sobre port HTTP existente; namespace stg_operational_orders, aggregate por tenant TEST, records/cache/events/audit/projections/cash atômicos. Flag DISABLED default; TEST_ONLY exige staging+projeto exato+tenant demo-TEST antes de credencial/write. Ingress mantém namespace default e regras anteriores.
+- IDEMPOTÊNCIA / CONCORRÊNCIA: commandId+key+revision/context hash; replay sem segunda mutação lógica; 409 retried com revisão verificada; actor/context/financial evidence protegidos. Campos/desvios de schema/test/estado/totais/audit recusados; nunca overwrite/reset silencioso.
+- TESTES: **182/182** (164 preservados + 18), stricts núcleo/messaging/UNI-08/integrado/Functions, AST e baseline **21/21/0**, mesmas assinaturas. Builds operacional/UNI-08/integrado/Functions verdes. Fechamento em 2026-10-04 reexecutou os 182 testes (zero skipped), cinco stricts, AST/isolation, baseline e quatro builds. O executor PowerShell foi interrompido por warning nativo do build; os builds foram executados diretamente e passaram, sem correção funcional.
+- CLOUD PROBE: somente lidacomzapcrm-staging/(default)/stg_operational_orders; create/read/restart/retry/concurrent confirm+update/SALE+CREDIT_RECEIPT/round-trip/KDS+Delivery/cash closing/rollback+recreate PASS. Probe final em 2026-10-03T19:48:41.499Z, posterior à última alteração funcional; nenhuma nova chamada Firestore no fechamento. Zero pedidos ativos restantes; audit/cache TEST preservados e replays antigos fenced. Nenhum novo IAM/rules/billing/resource/endpoint/provider. Auth somente nova fresh-config/preload; saída sanitizada, prova versionada sem credentials em evidence/ORDER-02-staging-probe.json.
+- ROUND-TRIP: envelope TEST com snapshot autoritativo, JSON/date restoration; cliente/vínculos/origem/itens/opções/valores/estado/NOTA/refs preservados. Legacy gaps de NOTA/débito/desconto/contexto explícitos; old adapter intacto. FECHADO TEST não gera recebimento. Caixa TEST separa SALE/RECEIPT/CREDIT_RECEIPT e gaveta; fundo/movimentos/contagem são inputs do consumer, não sessões operacionais portadas.
+- ROLLBACK: revisão por fixture, remove ativos/projeções/fatos financeiros selecionados; mantém outros pedidos e audit/tombstones, permite nova criação por comando novo. disable() recusa chamadas antes do port. Sem collection delete ou dado real.
+- COMMITS / HEAD FINAL / CI: commits pequenos da fase e evidências finais registrados no fechamento abaixo; push exclusivamente codex/unificacao-gestao-inteligente, PR #4 draft.
+- PRESERVAÇÃO: App/components/lib/types/compatAdapters/UNI-08/listeners/operacional e quatro arquivos pessoais intactos. Preview offline recebe somente badge da prova TEST, sem backend/conexão. MemoryRegistrationPort/renderer preservados, sem cadastro/driver real. Runtime Functions antigo continua privado e sem port de pedidos habilitado.
+- GATE / NEXT: **GATE_OPERATIONAL_PRODUCTION_WRITE_REQUIRED** antes de primeira escrita real em orders/deliveryOrders/caixaSessions. Requer autorização humana específica; revisar consumers, persistência/cash sessions/reconciliação/rules/IAM/volume/rollback operacional antes de rollout. META só retoma após usuário informar liberação.
+
 ## ORDER-01 / OPS-01 — continuidade local após gate Meta (2026-10-03)
 
 - HEAD INICIAL: 29dd5e5f990b6f6ef6142312e9b248a63731fbae. Pre-flight confirmou branch/origin/PR #4 draft/main 60fb91f; CI inicial push 37091397844 e PR 37091400883 success. 153 testes reexecutados; baseline 21→21.
@@ -339,3 +353,11 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - PR #4 atualizada e draft; main remoto 60fb91fdf048a8e0d4f9adc29a532be8bf4356dd; pessoal/fontes/operacional/UNI-08 preservados. Busca de padrões sensíveis no diff novo sem ocorrências; credenciais temporárias/cache ignorados.
 - ESTADO: STG-01 PARTIAL LOCAL_PREPARED; ID somente reservado em config, alias default intacto. Sem URL/projeto staging confirmado, Firestore staging, endpoint público, worker distribuído, billing ou envio. Meta/RCS DISABLED; Order operacional incompleto; UX-OPS registrado, crédito/impressão/UX reais não implementados.
 - GATE: GATE_FIREBASE_REAUTH_REQUIRED. AÇÃO MÍNIMA: Autorize o login Firebase no navegador. NEXT: agente reautentica com logs sanitizados e provisiona staging gratuito isolado; STG-02 somente após publicação/isolamento comprovados. Não há pedido antecipado de credenciais Meta/RCS.
+
+### Publicação funcional ORDER-02 — fechamento 2026-10-04
+
+- COMMIT FUNCIONAL: 346011a38ab6ff9d63d620739e5c7fcc24b5c030, publicado somente na branch autorizada.
+- CI funcional push: https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37217079042 success; check dinâmico 37217079357 success. Na PR 37217081946, job offline executado success; Hosting preview verificado no fechamento final.
+- Validação local final: 182/182, zero skipped; cinco stricts, isolamento, baseline 21→21/zero novos e quatro builds verdes. Evidência cloud final anterior suficiente, sem novo probe/billing/recurso.
+- STATUS: STAGING READY — TEST ONLY. Flag default DISABLED; produção/main/Meta/outbound preservados. Documentação e badge estático publicados no commit de fechamento, cujo SHA é identificável no Git pelo título abaixo.
+

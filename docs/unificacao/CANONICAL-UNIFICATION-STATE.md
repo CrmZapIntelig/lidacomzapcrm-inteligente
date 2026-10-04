@@ -4,6 +4,16 @@ Auditoria corretiva de 2026-10-01, solicitada antes de qualquer staging. Checkou
 
 ## Um único projeto
 
+### ORDER-02 — persistência operacional somente TEST (2026-10-03)
+
+Novo avanço **STAGING READY — TEST ONLY**, limitado a fixtures de pedidos: OperationalOrderPersistencePort/core puro, snapshot completo com eixos separados, confirmação idempotente/revisionada, port Firestore transacional na coleção stg_operational_orders do projeto lidacomzapcrm-staging. Nenhuma escrita no projeto operacional/default. Flag OPERATIONAL_ORDER_WRITES permanece DISABLED por padrão; TEST_ONLY foi aplicado somente no host/tenant do probe. Functions/preview não foram conectados ao port novo.
+
+Prova real: create/read/restart/retry, confirmação/edição concorrentes, SALE e CREDIT_RECEIPT separados, round-trip JSON/envelope completo, KDS/Delivery/Caixa projections TEST e rollback/recreate PASS; zero pedidos ativos após rollback, audit/cache TEST retidos. Snapshot preserva itens/opções/taxa/desconto/contexto/endereço/mesa/pagamento/NOTA/refs. FECHADO não implica PAID. Gaps legados exigem sidecar; NOTA não é coercida em forma de pagamento antiga.
+
+Validação: 182 testes, baseline 21→21/zero novos, stricts/AST e quatro builds verdes. Consumer financeiro TEST calcula fechamento por método a partir dos fatos persistidos e entradas TEST de fundo/suprimento/sangria; sessões de caixa reais/duráveis próprias não foram portadas. Refund parcial/crédito, consumers operacionais e escala de produção seguem pendentes. Documentação: ORDER-02-staging-operational-persistence.md e evidence/ORDER-02-staging-probe.json; SHAs/CI finais no ledger.
+
+O gate anterior de persistência foi superado **somente para staging TEST** pela autorização atual. Próximo gate obrigatório: **GATE_OPERATIONAL_PRODUCTION_WRITE_REQUIRED**, antes de primeira escrita real em orders/deliveryOrders/caixaSessions. META-01 continua PAUSADA no trusted-device, RCS/Meta outbound DISABLED. Operação legada, main, produção, cadastros reais e adapters anteriores preservados.
+
 ### Continuidade local — 2026-10-03
 
 META-01 **PAUSADA**, GATE_META_TRUSTED_DEVICE_REQUIRED: restrição temporária de dispositivo/contexto não reconhecido informada pelo usuário. Nenhuma nova tentativa, App/WABA ou callback público. Retomada somente após o usuário informar liberação do cadastro Developer. Não confundir STG-03 sintético privado com inbound Meta real.
