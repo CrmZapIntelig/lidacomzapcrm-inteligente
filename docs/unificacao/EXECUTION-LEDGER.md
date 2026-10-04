@@ -1,5 +1,17 @@
 # Execution ledger — Unificação
 
+## PROD-ORDER-01 — pre-flight bloqueado sem canário (2026-10-04)
+
+- HEAD INICIAL: 41cd5c4d48bb011708b5f145fa22c613ac47a667; branch/origin/PR #4 draft/main60fb91f confirmados. CI inicial push37221487295/PR37221489969/check37221487671 success.
+- AUTORIZAÇÃO: exatamente1 Order TEST operacional totalzero/Pendente, sem efeitos financeiros/clientes/KDS/delivery/outbound. Nenhum write executado porque pre-flight não fechou. Flag DISABLED; rollback não aplicável; nenhum segundo pedido ou remoção.
+- CLOUD READ-ONLY: projeto operacional exato ACTIVE; somente metadados e ausência dos três caminhos TEST planejados. Identidade nova verificada sem token/log/PII exposto, atual roles/owner; aliases preservados. Rules efetivas globais read/write if true. Inventários Functions v1/v2/Eventarc/Extensions SERVICE_DISABLED, não comprovados vazios. Nenhuma regra, IAM, API, billing ou infraestrutura alterada.
+- EVIDÊNCIA: evidence/PROD-ORDER-01-preflight.json sanitizado; fonte rules/credencial somente armazenamento privado. Proposta de contenção restrita aos dois IDs TEST e descendentes em PROD-ORDER-01-single-canary.md: rascunho NÃO compilado/NÃO aplicado, não associado ao deploy. Inventário/quiescência/executor menos privilegiado continuam pré-requisitos.
+- META: trusted-device RESOLVIDO conforme declaração humana; assets não auditados, META-01 não retomada antes de conclusão/rollback do canário. Meta/RCS outbound DISABLED.
+- PRESERVAÇÃO: seis caminhos pessoais/operacionais preexistentes fora dos commits (.vscode/extensions.json, App.tsx, CommercialIntelligenceView.tsx, AGENTS.md, FONTES-CHATS.md, backup.patch). Sem migração, deploy backend/produção, merge ou envio.
+- TESTES: 188/188, zero skipped; cinco stricts e AST/source isolation aprovados; baseline21→21/zero novos com digest anterior preservado. Quatro builds/CI registrados no fechamento abaixo após verificação.
+- STATUS / GATE / NEXT: BLOCKED — PREFLIGHT ONLY; GATE_OPERATIONAL_CANARY_CONTAINMENT_REQUIRED. Autorização do único pedido já concedida, mas não cobre mudança operacional de rules. Solicitar somente contenção limitada proposta e janela sem intervenção; eventuais APIs/IAM/custo novos exigem gate separado. Não executar canário nem Meta antes dos pré-requisitos.
+
+
 ## ORDER-02 — persistência operacional controlada em staging (2026-10-03)
 
 - HEAD INICIAL: 6f4ac41c863fb8fabb3719a30adc30c641d7eff4. Branch canônica/origin/main60fb91f/PR #4 draft confirmados. CI inicial PR37143328495/push37143324591/dinâmico37143325201 success; 164 testes e baseline21→21 reexecutados.
@@ -390,3 +402,7 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - TESTES: 188/188 (183 preservados +5 dry-run/guards/replay/no-I-O/rollback), zero skipped; baseline21→21/zero novos, stricts/isolamento e quatro builds revalidados antes de publicação. Evidências no documento e evidence/PROD-ORDER-00-dry-run.json.
 - COMMITS/CI: pacote publicado na branch canônica; commit funcional identificável por Plan production order readiness with non-writing canary and rollback dry run. CI final/HEAD publicados confirmados na PR e relatório antes de conclusão. CI existente pode republicar apenas Hosting preview sintético; nenhum deploy backend/operacional autorizado.
 - NEXT: GATE_OPERATIONAL_CANARY_WRITE_REQUIRED. Readiness completo como plano, produção não pronta para executar sem pré-requisitos; flagDISABLED/canWritefalse/META pausada. Parar sem canário.
+
+### Validação do registro PROD-ORDER-01
+
+Quatro builds locais aprovados: operacional, UNI-08, integrado e Functions. 188/188 testes; cinco stricts/AST/isolation; baseline21→21/zero novos. Commit documental identificado por Record blocked operational canary preflight and scoped containment proposal; SHA e CI serão confirmados no relatório/checks da PR, sem declarar canário concluído. Nenhum código/executor funcional ou regra cloud alterado.

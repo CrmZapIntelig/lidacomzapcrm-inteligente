@@ -4,6 +4,13 @@ Auditoria corretiva de 2026-10-01, solicitada antes de qualquer staging. Checkou
 
 ## Um único projeto
 
+### Estado mais recente — PROD-ORDER-01 bloqueado no pre-flight (2026-10-04)
+
+Único canário TEST autorizado pelo usuário, mas NÃO executado. Projeto operacional confirmado; alvo/contact/audit TEST ausentes; rules globais permitem read/write if true e não protegem o canário. Functions/Eventarc/Extensions retornam SERVICE_DISABLED, inventário não comprovado; identidade atual Owner não é executor de menor privilégio. Zero escrita cloud, flag DISABLED, nenhum rollback necessário. GATE_OPERATIONAL_CANARY_CONTAINMENT_REQUIRED: proposta limitada aos dois IDs TEST documentada, nenhuma rules/API/IAM alterada. Detalhes e evidência sanitizada: PROD-ORDER-01-single-canary.md; evidence/PROD-ORDER-01-preflight.json.
+
+Meta trusted-device RESOLVIDO conforme declaração humana atual; META-01 ainda não retomada, condicionada ao canário e rollback completos/CI. Sem auditoria de assets Meta ou outbound. Registros abaixo representam checkpoints históricos, inclusive a pausa Meta e autorização do canário ainda pendentes naqueles momentos. ORDER-02 continua STAGING READY — TEST ONLY; produção não foi promovida.
+
+
 ### PROD-ORDER-00 — readiness sem escrita (2026-10-04)
 
 Mapa de consumidores/schema e pacote de planejamento concluídos localmente: estratégia legado-first em orders com projeção canônica somente leitura, canário mínimo1 TEST/Pendente/totalzero/Pix sem recebimento, sem cliente real/phone/NOTA/KDS/delivery/caixa/outbound. Dry-run puro gera candidato e guards, rollback seletivo ensaiado, sempre canWrite=false. Production flag permanece DISABLED; sem executor operacional, cloud read/write, backup/export, IAM/rules ou deploy de produção. IAM/rules/triggers/quiescência/backup manifest reais permanecem pré-requisitos não comprovados.
