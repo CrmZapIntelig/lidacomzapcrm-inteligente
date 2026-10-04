@@ -1,0 +1,106 @@
+{
+  "mode": "DRY_RUN",
+  "canWrite": false,
+  "authorization": "CANARY NOT AUTHORIZED",
+  "gate": "GATE_OPERATIONAL_CANARY_WRITE_REQUIRED",
+  "strategy": "LEGACY_FIRST_CANONICAL_READ_PROJECTION",
+  "candidate": {
+    "collection": "orders",
+    "operation": "CREATE_IF_ABSENT",
+    "order": {
+      "id": "TEST-canary-001",
+      "clientId": "TEST-contact-TEST-canary-001",
+      "clientName": "Cliente TEST Canary Exemplo",
+      "items": [
+        {
+          "id": "TEST-item-TEST-canary-001",
+          "productName": "Produto TEST sem producao",
+          "price": 0,
+          "quantity": 1
+        }
+      ],
+      "total": 0,
+      "paymentMethod": "Pix",
+      "status": "Pendente",
+      "createdAt": "2026-10-04T12:00:00.000Z",
+      "channel": "balcao",
+      "notes": "TEST ONLY / CANARY / TEST-command-001 / NAO PRODUZIR / NAO COBRAR"
+    }
+  },
+  "projection": {
+    "order": {
+      "id": "TEST-canary-001",
+      "tenantId": "TEST-production-canary",
+      "contactId": "TEST-contact-TEST-canary-001",
+      "entryPoint": "POS",
+      "channel": "NONE",
+      "creationMode": "HUMAN_OPERATOR",
+      "total": 0,
+      "status": "CREATED",
+      "paymentMethod": "Pix",
+      "createdAt": "2026-10-04T12:00:00.000Z",
+      "updatedAt": "2026-10-04T12:00:00.000Z"
+    },
+    "items": [
+      {
+        "id": "TEST-item-TEST-canary-001",
+        "orderId": "TEST-canary-001",
+        "productId": "TEST-item-TEST-canary-001",
+        "productName": "Produto TEST sem producao",
+        "quantity": 1,
+        "price": 0
+      }
+    ],
+    "source": {
+      "id": "TEST-canary-001",
+      "clientId": "TEST-contact-TEST-canary-001",
+      "clientName": "Cliente TEST Canary Exemplo",
+      "items": [
+        {
+          "id": "TEST-item-TEST-canary-001",
+          "productName": "Produto TEST sem producao",
+          "price": 0,
+          "quantity": 1
+        }
+      ],
+      "total": 0,
+      "paymentMethod": "Pix",
+      "status": "Pendente",
+      "createdAt": "2026-10-04T12:00:00.000Z",
+      "channel": "balcao",
+      "notes": "TEST ONLY / CANARY / TEST-command-001 / NAO PRODUZIR / NAO COBRAR"
+    }
+  },
+  "effects": {
+    "sale": 0,
+    "receipt": 0,
+    "cashDelta": 0,
+    "nota": false,
+    "kds": false,
+    "delivery": false,
+    "clientWrite": false,
+    "messageWrite": false,
+    "outbound": false
+  },
+  "prerequisites": [
+    "HUMAN_SINGLE_ORDER_AUTHORIZATION",
+    "SERVER_IDENTITY_AND_RULES_VERIFIED",
+    "TEST_CONTACT_ABSENT",
+    "EXACT_ORDER_ABSENT",
+    "WRITERS_QUIESCED",
+    "AUDIT_AND_ROLLBACK_REHEARSED",
+    "BACKUP_MANIFEST_VERIFIED"
+  ],
+  "audit": {
+    "canaryId": "TEST-canary-001",
+    "commandId": "TEST-command-001",
+    "orderId": "TEST-canary-001",
+    "revision": 0,
+    "actor": "TEST-authorized-operator",
+    "handler": "PROPOSED_SERVER_CANARY_CREATE",
+    "collection": "orders",
+    "result": "DRY_RUN_ACCEPTED",
+    "rollbackStatus": "NOT_NEEDED",
+    "at": "2026-10-04T12:00:00.000Z"
+  }
+}

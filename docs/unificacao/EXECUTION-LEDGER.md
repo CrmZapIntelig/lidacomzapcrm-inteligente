@@ -379,3 +379,14 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - Browser Firebase confirmou Dashboard 21 áreas, Conversas → revisão cliente Demo → NOTA bloqueada sem aprovação → aprovação/confirm memória, Pedidos ORDER-02 TEST ONLY, Caixa cinco métodos e Estado do Produto com ambos os gates.
 - QA identificou tabela estática NOTA com esperado zero enquanto cálculo financeiro já esperava4000; correção apenas visual para R$40 e diferença coerente, sem alterar regra financeira. Strict/build/testes integrados reexecutados; CI final republica exclusivamente o mesmo pr-4.
 - URL: https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app/ . Release verificado 2026-10-04T16:50:17.773Z; expiração então 2026-10-11T16:50:15.887688145Z, renovada pela republicação final. CSP connect-src none confirmada na configuração Hosting. HEAD final resolvível pelo commit Align NOTA cash table with verified closing and record Firebase QA; CI/HTTP/expiração definitivos verificados antes do relatório e na PR.
+
+## PROD-ORDER-00 — production readiness (2026-10-04)
+
+- HEAD INICIAL: 6bfb38ec921627a08713dc273329fc4c643a6fd1; origin/branch/main60fb91f/PR4 draft confirmados. Mudanças pessoais4 preservadas.
+- ESCOPO: auditoria versionada de creators/updates/listeners/schema/caixa/KDS/delivery/menu/QR/chat/history; nenhuma leitura ou escrita de documentos cloud.
+- DECISÃO: A legado-first, exatamente1 orders TEST/Pendente/total0/Pix sem recebimento; projeção canônica memória, sem segundo pedido. Auditoria futura atômica; sem executor/IAM/rules/runtime habilitado.
+- RISCOS: caixa legacy dedupe local e currentBalance independente de método; FECHADO gera venda sem evidência; handlers têm múltiplos writes não atômicos e caches/fallbacks. Primeiro canário exclui financeiro/NOTA/KDS/delivery/client/messages; exige quiescência e verificação de triggers/regras/identidade.
+- BACKUP/ROLLBACK: manifesto create-only de ausência/digest/versão, rollback somente alvo exato com precondição e audit/tombstone; conflito/efeito financeiro HALT. Backup remoto inexistente/não comprovado; custo novo exige GATE_OPERATIONAL_BACKUP_REQUIRED.
+- TESTES: 188/188 (183 preservados +5 dry-run/guards/replay/no-I-O/rollback), zero skipped; baseline21→21/zero novos, stricts/isolamento e quatro builds revalidados antes de publicação. Evidências no documento e evidence/PROD-ORDER-00-dry-run.json.
+- COMMITS/CI: pacote publicado na branch canônica; commit funcional identificável por Plan production order readiness with non-writing canary and rollback dry run. CI final/HEAD publicados confirmados na PR e relatório antes de conclusão. CI existente pode republicar apenas Hosting preview sintético; nenhum deploy backend/operacional autorizado.
+- NEXT: GATE_OPERATIONAL_CANARY_WRITE_REQUIRED. Readiness completo como plano, produção não pronta para executar sem pré-requisitos; flagDISABLED/canWritefalse/META pausada. Parar sem canário.

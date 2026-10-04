@@ -4,6 +4,13 @@ Auditoria corretiva de 2026-10-01, solicitada antes de qualquer staging. Checkou
 
 ## Um único projeto
 
+### PROD-ORDER-00 — readiness sem escrita (2026-10-04)
+
+Mapa de consumidores/schema e pacote de planejamento concluídos localmente: estratégia legado-first em orders com projeção canônica somente leitura, canário mínimo1 TEST/Pendente/totalzero/Pix sem recebimento, sem cliente real/phone/NOTA/KDS/delivery/caixa/outbound. Dry-run puro gera candidato e guards, rollback seletivo ensaiado, sempre canWrite=false. Production flag permanece DISABLED; sem executor operacional, cloud read/write, backup/export, IAM/rules ou deploy de produção. IAM/rules/triggers/quiescência/backup manifest reais permanecem pré-requisitos não comprovados.
+
+Status: READINESS / DRY_RUN IMPLEMENTADO; CANARY NOT AUTHORIZED. Não equivale a PRODUCTION READY. Próximo gate: GATE_OPERATIONAL_CANARY_WRITE_REQUIRED, exatamente1 pedidoTEST create-only e audit/control metadata atômicos, condicionado aos pré-requisitos e gates externos. ORDER-02 segue STAGING READY — TEST ONLY; META trusted-device continua pausada. Detalhes: PROD-ORDER-00-production-readiness.md.
+
+
 ### ORDER-02 — persistência operacional somente TEST (2026-10-03)
 
 Novo avanço **STAGING READY — TEST ONLY**, limitado a fixtures de pedidos: OperationalOrderPersistencePort/core puro, snapshot completo com eixos separados, confirmação idempotente/revisionada, port Firestore transacional na coleção stg_operational_orders do projeto lidacomzapcrm-staging. Nenhuma escrita no projeto operacional/default. Flag OPERATIONAL_ORDER_WRITES permanece DISABLED por padrão; TEST_ONLY foi aplicado somente no host/tenant do probe. Functions/preview não foram conectados ao port novo.
