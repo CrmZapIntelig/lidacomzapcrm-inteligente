@@ -357,7 +357,9 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 ### Publicação funcional ORDER-02 — fechamento 2026-10-04
 
 - COMMIT FUNCIONAL: 346011a38ab6ff9d63d620739e5c7fcc24b5c030, publicado somente na branch autorizada.
-- CI funcional push: https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37217079042 success; check dinâmico 37217079357 success. Na PR 37217081946, job offline executado success; Hosting preview verificado no fechamento final.
+- CI funcional push: https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37217079042 success; check dinâmico 37217079357 success. CI PR https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente/actions/runs/37217081946 success; jobs offline e staging-preview executados success.
 - Validação local final: 182/182, zero skipped; cinco stricts, isolamento, baseline 21→21/zero novos e quatro builds verdes. Evidência cloud final anterior suficiente, sem novo probe/billing/recurso.
 - STATUS: STAGING READY — TEST ONLY. Flag default DISABLED; produção/main/Meta/outbound preservados. Documentação e badge estático publicados no commit de fechamento, cujo SHA é identificável no Git pelo título abaixo.
 
+
+- COMMIT DOCUMENTAL/VISUAL: ed2b68d549ad2d48c303bdd4cfa2dd41ea6dfb22 publicado; PR #4 atualizada e permanece draft=true/merged=false. HEAD final é o commit de fechamento deste ledger, resolvível pelo título Record published ORDER-02 closure and successful functional CI. CI do HEAD final conferida antes do relatório.
