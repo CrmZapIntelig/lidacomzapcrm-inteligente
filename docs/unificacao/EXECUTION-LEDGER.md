@@ -372,3 +372,10 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 - TESTES: 183 testes consolidados aprovados, zero skipped; strict integrado/AST/baseline21→21/zero novos e build integrado. CI revalida todos os stricts e quatro builds no HEAD publicado.
 - URL esperada: https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app/ ; HEAD final/CI/expiração confirmados no relatório e PR após publicação, commit identificável por Refresh integrated preview with verified ORDER-02 state and blocked gates.
 - NEXT: parar após validação visual. GATE_OPERATIONAL_PRODUCTION_WRITE_REQUIRED e GATE_META_TRUSTED_DEVICE_REQUIRED preservados.
+
+### Validação Firebase publicada
+
+- HEAD visual e2a9da3099333edce462b49cbb1b3ee0a9da7a2c: CI push37218109455/PR37218112411/dinâmico37218110473 success; jobs técnico e Hosting executados.
+- Browser Firebase confirmou Dashboard 21 áreas, Conversas → revisão cliente Demo → NOTA bloqueada sem aprovação → aprovação/confirm memória, Pedidos ORDER-02 TEST ONLY, Caixa cinco métodos e Estado do Produto com ambos os gates.
+- QA identificou tabela estática NOTA com esperado zero enquanto cálculo financeiro já esperava4000; correção apenas visual para R$40 e diferença coerente, sem alterar regra financeira. Strict/build/testes integrados reexecutados; CI final republica exclusivamente o mesmo pr-4.
+- URL: https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app/ . Release verificado 2026-10-04T16:50:17.773Z; expiração então 2026-10-11T16:50:15.887688145Z, renovada pela republicação final. CSP connect-src none confirmada na configuração Hosting. HEAD final resolvível pelo commit Align NOTA cash table with verified closing and record Firebase QA; CI/HTTP/expiração definitivos verificados antes do relatório e na PR.

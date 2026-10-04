@@ -83,3 +83,5 @@ HEAD inicial: 891ce9c05412df61a1d6e442e7aa48caf8f4da65. Esta atualização suced
 ORDER-02: STAGING READY — TEST ONLY; flag DISABLED por padrão e produção bloqueada. Meta/RCS outbound DISABLED. Nenhum dado real, backend no preview, nova tentativa Meta ou escrita operacional. CSP connect-src none preservada. Paleta/layout mantidos.
 
 Publicação somente via CI/WIF existente, projeto lidacomzapcrm-staging e canal pr-4, com todos os gates prévios. URL conhecida: https://lidacomzapcrm-staging--pr-4-vgm30gaf.web.app/ . URL/HEAD/expiração efetivos e confirmação CI/HTTP/browser no fechamento do ledger/relatório.
+
+Publicação e2a9da3 validada no canal pr-4 em 2026-10-04: CI37218112411 success; navegador confirmou 21 áreas, pedido/NOTA em memória e gates. Ajuste final alinha tabela Caixa ao cálculo: NOTA esperado R$40, dinheiro em gaveta R$0. QA/limites no ledger; expiração renovada e HEAD final informados na PR/relatório.
