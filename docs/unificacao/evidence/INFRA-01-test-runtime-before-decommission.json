@@ -1,0 +1,834 @@
+{
+  "at": "2026-10-06T23:09:13.002Z",
+  "projectId": "project-1300957a-ea82-4645-845",
+  "service": "projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente",
+  "readOnly": true,
+  "apiEnableCalls": 0,
+  "checks": {
+    "service": {
+      "name": "projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente",
+      "uid": "a2d510cf-86c0-4121-b72b-e10ed87f3bd7",
+      "etag": "\"CIy3nNIGEOjwrmI/cHJvamVjdHMvcHJvamVjdC0xMzAwOTU3YS1lYTgyLTQ2NDUtODQ1L2xvY2F0aW9ucy91cy13ZXN0Mi9zZXJ2aWNlcy9saWRhY29temFwY3JtLWludGVsaWdlbnRl\"",
+      "generation": "4",
+      "observedGeneration": "4",
+      "createTime": "2026-06-10T23:16:39.467698Z",
+      "updateTime": "2026-07-03T02:16:44.206289Z",
+      "ingress": "INGRESS_TRAFFIC_ALL",
+      "uri": "https://lidacomzapcrm-inteligente-lmddrvd4eq-wl.a.run.app",
+      "urls": [
+        "https://lidacomzapcrm-inteligente-483558069545.us-west2.run.app",
+        "https://lidacomzapcrm-inteligente-lmddrvd4eq-wl.a.run.app"
+      ],
+      "latestReadyRevision": "projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente/revisions/lidacomzapcrm-inteligente-00002-wqh",
+      "latestCreatedRevision": "projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente/revisions/lidacomzapcrm-inteligente-00002-wqh",
+      "traffic": [
+        {
+          "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST",
+          "percent": 100
+        }
+      ],
+      "trafficStatuses": [
+        {
+          "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST",
+          "revision": "lidacomzapcrm-inteligente-00002-wqh",
+          "percent": 100
+        }
+      ],
+      "scaling": {
+        "maxInstanceCount": 1
+      },
+      "labels": {
+        "managed-by": "gcp-cloud-build-deploy-cloud-run",
+        "gcb-trigger-id": "368a078f-c3f0-4690-a2a3-5d88921a2dd2",
+        "gcb-trigger-region": "global"
+      },
+      "annotationKeys": [
+        "generativelanguage.googleapis.com/type",
+        "generativelanguage.googleapis.com/applet-id"
+      ],
+      "template": {
+        "serviceAccount": "483558069545-compute@developer.gserviceaccount.com",
+        "timeout": "300s",
+        "maxInstanceRequestConcurrency": 1000,
+        "scaling": {
+          "maxInstanceCount": 3
+        },
+        "containers": [
+          {
+            "image": "scratch",
+            "name": "app-container",
+            "ports": [
+              {
+                "name": "http1",
+                "containerPort": 3000
+              }
+            ],
+            "resources": {
+              "limits": {
+                "cpu": "1",
+                "memory": "3Gi"
+              },
+              "cpuIdle": true
+            },
+            "env": [
+              {
+                "name": "SQL_DB_NAME",
+                "valuePresent": true
+              },
+              {
+                "name": "GEMINI_API_KEY",
+                "valuePresent": true
+              },
+              {
+                "name": "APP_URL",
+                "valuePresent": true
+              }
+            ],
+            "commandPresent": true,
+            "argsPresent": true
+          }
+        ]
+      },
+      "terminalCondition": {
+        "type": "Ready",
+        "state": "CONDITION_SUCCEEDED"
+      }
+    },
+    "revision": {
+      "name": "projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente/revisions/lidacomzapcrm-inteligente-00002-wqh",
+      "uid": "0f45bdce-d530-4990-8a30-334b9c34a164",
+      "etag": "\"CMqZnNIGEMDLoN0C/cHJvamVjdHMvcHJvamVjdC0xMzAwOTU3YS1lYTgyLTQ2NDUtODQ1L2xvY2F0aW9ucy91cy13ZXN0Mi9zZXJ2aWNlcy9saWRhY29temFwY3JtLWludGVsaWdlbnRlL3JldmlzaW9ucy9saWRhY29temFwY3JtLWludGVsaWdlbnRlLTAwMDAyLXdxaA\"",
+      "generation": "1",
+      "observedGeneration": "1",
+      "createTime": "2026-07-03T01:13:46.732440Z",
+      "updateTime": "2026-07-03T01:13:46.732440Z",
+      "scaling": {
+        "maxInstanceCount": 3
+      },
+      "labels": {
+        "managed-by": "gcp-cloud-build-deploy-cloud-run"
+      },
+      "annotationKeys": [],
+      "serviceAccount": "483558069545-compute@developer.gserviceaccount.com",
+      "timeout": "300s",
+      "maxInstanceRequestConcurrency": 1000,
+      "containers": [
+        {
+          "image": "scratch",
+          "name": "app-container",
+          "ports": [
+            {
+              "name": "http1",
+              "containerPort": 3000
+            }
+          ],
+          "resources": {
+            "limits": {
+              "cpu": "1",
+              "memory": "3Gi"
+            },
+            "cpuIdle": true
+          },
+          "env": [
+            {
+              "name": "SQL_DB_NAME",
+              "valuePresent": true
+            },
+            {
+              "name": "GEMINI_API_KEY",
+              "valuePresent": true
+            },
+            {
+              "name": "APP_URL",
+              "valuePresent": true
+            }
+          ],
+          "commandPresent": true,
+          "argsPresent": true
+        }
+      ]
+    },
+    "service-v1": {
+      "sourceAnnotations": {
+        "generativelanguage.googleapis.com/type": "fullstack-applet",
+        "generativelanguage.googleapis.com/applet-id": "d0a1f98e-eb48-4e21-bf06-e17eab23635c",
+        "run.googleapis.com/invoker-iam-disabled": "true",
+        "run.googleapis.com/maxScale": "1"
+      },
+      "imageDigest": null,
+      "latestReadyRevisionName": "lidacomzapcrm-inteligente-00002-wqh"
+    },
+    "domain-mappings": {
+      "count": 0,
+      "paginated": false
+    },
+    "service-iam": {
+      "etag": "ACAB",
+      "bindings": []
+    },
+    "firebase-hosting-sites": {
+      "count": 1,
+      "paginated": false
+    },
+    "hosting-config-projects/project-1300957a-ea82-4645-845/sites/project-1300957a-ea82-4645-845": {
+      "version": "projects/project-1300957a-ea82-4645-845/sites/project-1300957a-ea82-4645-845/versions/71a01c9e9e04f315",
+      "status": "FINALIZED",
+      "serviceReferences": []
+    },
+    "request-metadata": {
+      "paginated": true,
+      "entries": [
+        {
+          "timestamp": "2026-09-23T19:21:39.433672Z",
+          "severity": "INFO",
+          "revision": "lidacomzapcrm-inteligente-00002-wqh",
+          "method": "GET",
+          "status": 200,
+          "latency": "0.005524087s"
+        },
+        {
+          "timestamp": "2026-09-23T19:21:34.957107Z",
+          "severity": "WARNING",
+          "revision": "lidacomzapcrm-inteligente-00002-wqh",
+          "method": "GET",
+          "status": 404,
+          "latency": "0.006049104s"
+        },
+        {
+          "timestamp": "2026-09-23T19:21:30.569956Z",
+          "severity": "INFO",
+          "revision": "lidacomzapcrm-inteligente-00002-wqh",
+          "method": "GET",
+          "status": 200,
+          "latency": "2.021196239s"
+        },
+        {
+          "timestamp": "2026-09-22T23:17:47.026705Z",
+          "severity": "INFO",
+          "revision": "lidacomzapcrm-inteligente-00002-wqh",
+          "method": "GET",
+          "status": 200,
+          "latency": "0.011568586s"
+        },
+        {
+          "timestamp": "2026-09-22T23:03:13.839811Z",
+          "severity": "WARNING",
+          "revision": "lidacomzapcrm-inteligente-00002-wqh",
+          "method": "GET",
+          "status": 404,
+          "latency": "0.003673437s"
+        }
+      ]
+    },
+    "asset-content": {
+      "count": 241,
+      "paginated": false,
+      "types": {
+        "aiplatform.googleapis.com/Dataset": 1,
+        "aiplatform.googleapis.com/MetadataStore": 1,
+        "apikeys.googleapis.com/Key": 2,
+        "artifactregistry.googleapis.com/Repository": 1,
+        "cloudbilling.googleapis.com/ProjectBillingInfo": 1,
+        "cloudbuild.googleapis.com/Build": 11,
+        "cloudbuild.googleapis.com/BuildTrigger": 1,
+        "cloudbuild.googleapis.com/GlobalTriggerSettings": 2,
+        "cloudresourcemanager.googleapis.com/Project": 1,
+        "compute.googleapis.com/Firewall": 4,
+        "compute.googleapis.com/Network": 1,
+        "compute.googleapis.com/Project": 1,
+        "compute.googleapis.com/Route": 43,
+        "compute.googleapis.com/Subnetwork": 42,
+        "dataplex.googleapis.com/EntryGroup": 1,
+        "firebase.googleapis.com/FirebaseAppInfo": 2,
+        "firebase.googleapis.com/FirebaseProject": 1,
+        "firebaserules.googleapis.com/Release": 3,
+        "firebaserules.googleapis.com/Ruleset": 4,
+        "firestore.googleapis.com/Database": 1,
+        "iam.googleapis.com/ServiceAccountKey": 3,
+        "iam.googleapis.com/ServiceAccount": 3,
+        "identitytoolkit.googleapis.com/Config": 1,
+        "identitytoolkit.googleapis.com/DefaultSupportedIdpConfig": 1,
+        "identitytoolkit.googleapis.com/OauthIdpConfig": 1,
+        "logging.googleapis.com/LogBucket": 2,
+        "logging.googleapis.com/RecentQuery": 1,
+        "logging.googleapis.com/LogSink": 2,
+        "run.googleapis.com/Revision": 2,
+        "run.googleapis.com/Service": 1,
+        "serviceusage.googleapis.com/Service": 96,
+        "storage.googleapis.com/Bucket": 4
+      },
+      "matching": [
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/02860f82-4aa3-49d5-a77b-ee18d1fb85f4",
+          "type": "cloudbuild.googleapis.com/Build",
+          "paths": [
+            "sourceProvenance.resolvedGitSource.url",
+            "artifacts.images[0]",
+            "source.gitSource.url",
+            "steps[0].args[3]",
+            "steps[1].args[1]",
+            "steps[2].args[3]",
+            "steps[2].args[5]",
+            "images[0]",
+            "tags[2]",
+            "substitutions._SERVICE_NAME",
+            "substitutions.TRIGGER_NAME",
+            "substitutions.REPO_FULL_NAME",
+            "substitutions.REPO_NAME"
+          ]
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/1b3fb261-ea24-4cf8-9512-299eb919996b",
+          "type": "cloudbuild.googleapis.com/Build",
+          "paths": [
+            "images[0]",
+            "source.gitSource.url",
+            "steps[0].args[3]",
+            "steps[1].args[1]",
+            "steps[2].args[3]",
+            "steps[2].args[5]",
+            "artifacts.images[0]",
+            "tags[2]",
+            "sourceProvenance.resolvedGitSource.url",
+            "substitutions.REPO_FULL_NAME",
+            "substitutions._SERVICE_NAME",
+            "substitutions.REPO_NAME",
+            "substitutions.TRIGGER_NAME"
+          ]
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/52e89370-7641-4d65-b36e-36ea71cb5cc6",
+          "type": "cloudbuild.googleapis.com/Build",
+          "paths": [
+            "source.gitSource.url",
+            "steps[0].args[3]",
+            "steps[1].args[1]",
+            "steps[2].args[3]",
+            "steps[2].args[5]",
+            "images[0]",
+            "sourceProvenance.resolvedGitSource.url",
+            "artifacts.images[0]",
+            "substitutions.REPO_FULL_NAME",
+            "substitutions.TRIGGER_NAME",
+            "substitutions.REPO_NAME",
+            "substitutions._SERVICE_NAME",
+            "tags[2]"
+          ]
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/7da9b5c5-9fc8-4428-a495-3c8fe95fc036",
+          "type": "cloudbuild.googleapis.com/Build",
+          "paths": [
+            "artifacts.images[0]",
+            "sourceProvenance.resolvedGitSource.url",
+            "images[0]",
+            "source.gitSource.url",
+            "tags[2]",
+            "substitutions.REPO_FULL_NAME",
+            "substitutions._SERVICE_NAME",
+            "substitutions.TRIGGER_NAME",
+            "substitutions.REPO_NAME",
+            "steps[0].args[3]",
+            "steps[1].args[1]",
+            "steps[2].args[3]",
+            "steps[2].args[5]"
+          ]
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/835205cb-7419-46c7-95ea-1f5aad09e3f5",
+          "type": "cloudbuild.googleapis.com/Build",
+          "paths": [
+            "source.gitSource.url",
+            "steps[0].args[3]",
+            "steps[1].args[1]",
+            "steps[2].args[3]",
+            "steps[2].args[5]",
+            "images[0]",
+            "sourceProvenance.resolvedGitSource.url",
+            "tags[2]",
+            "artifacts.images[0]",
+            "substitutions.REPO_NAME",
+            "substitutions._SERVICE_NAME",
+            "substitutions.TRIGGER_NAME",
+            "substitutions.REPO_FULL_NAME"
+          ]
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/91d696a9-6706-426a-84c3-69a6921b2efc",
+          "type": "cloudbuild.googleapis.com/Build",
+          "paths": [
+            "steps[0].args[3]",
+            "steps[1].args[1]",
+            "steps[2].args[3]",
+            "steps[2].args[5]",
+            "substitutions.TRIGGER_NAME",
+            "substitutions.REPO_NAME",
+            "substitutions.REPO_FULL_NAME",
+            "substitutions._SERVICE_NAME",
+            "tags[2]",
+            "artifacts.images[0]",
+            "sourceProvenance.resolvedGitSource.url",
+            "images[0]",
+            "source.gitSource.url"
+          ]
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/accc3749-161e-414b-91f4-f85d7c81cae9",
+          "type": "cloudbuild.googleapis.com/Build",
+          "paths": [
+            "artifacts.images[0]",
+            "steps[0].args[3]",
+            "steps[1].args[1]",
+            "steps[2].args[3]",
+            "steps[2].args[5]",
+            "sourceProvenance.resolvedGitSource.url",
+            "tags[2]",
+            "substitutions.REPO_NAME",
+            "substitutions.TRIGGER_NAME",
+            "substitutions.REPO_FULL_NAME",
+            "substitutions._SERVICE_NAME",
+            "images[0]",
+            "source.gitSource.url"
+          ]
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/cbedfba2-277b-43b2-a5fa-1316032f4027",
+          "type": "cloudbuild.googleapis.com/Build",
+          "paths": [
+            "substitutions._SERVICE_NAME",
+            "substitutions.REPO_FULL_NAME",
+            "substitutions.REPO_NAME",
+            "substitutions.TRIGGER_NAME",
+            "steps[0].args[3]",
+            "steps[1].args[1]",
+            "steps[2].args[3]",
+            "steps[2].args[5]",
+            "sourceProvenance.resolvedGitSource.url",
+            "images[0]",
+            "source.gitSource.url",
+            "artifacts.images[0]",
+            "tags[2]"
+          ]
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/cd5ad6fb-6f2e-4979-a8af-3a3ce9195a73",
+          "type": "cloudbuild.googleapis.com/Build",
+          "paths": [
+            "substitutions._SERVICE_NAME",
+            "substitutions.TRIGGER_NAME",
+            "substitutions.REPO_NAME",
+            "substitutions.REPO_FULL_NAME",
+            "steps[0].args[3]",
+            "steps[1].args[1]",
+            "steps[2].args[3]",
+            "steps[2].args[5]",
+            "sourceProvenance.resolvedGitSource.url",
+            "artifacts.images[0]",
+            "tags[2]",
+            "images[0]",
+            "source.gitSource.url"
+          ]
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/db635a7a-9a0f-4fb6-8fe0-42225a046b00",
+          "type": "cloudbuild.googleapis.com/Build",
+          "paths": [
+            "substitutions._SERVICE_NAME",
+            "substitutions.REPO_NAME",
+            "substitutions.TRIGGER_NAME",
+            "substitutions.REPO_FULL_NAME",
+            "sourceProvenance.resolvedGitSource.url",
+            "tags[2]",
+            "source.gitSource.url",
+            "images[0]",
+            "artifacts.images[0]",
+            "steps[0].args[3]",
+            "steps[1].args[1]",
+            "steps[2].args[3]",
+            "steps[2].args[5]"
+          ]
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/eba47ea7-c127-4d7c-913b-39dd580f12a6",
+          "type": "cloudbuild.googleapis.com/Build",
+          "paths": [
+            "artifacts.images[0]",
+            "tags[2]",
+            "steps[0].args[3]",
+            "steps[1].args[1]",
+            "steps[2].args[3]",
+            "steps[2].args[5]",
+            "substitutions.REPO_NAME",
+            "substitutions._SERVICE_NAME",
+            "substitutions.REPO_FULL_NAME",
+            "substitutions.TRIGGER_NAME",
+            "sourceProvenance.resolvedGitSource.url",
+            "source.gitSource.url",
+            "images[0]"
+          ]
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/triggers/368a078f-c3f0-4690-a2a3-5d88921a2dd2",
+          "type": "cloudbuild.googleapis.com/BuildTrigger",
+          "paths": [
+            "github.name",
+            "description",
+            "substitutions._SERVICE_NAME",
+            "build.substitutions._SERVICE_NAME",
+            "build.tags[2]",
+            "name",
+            "tags[2]"
+          ]
+        },
+        {
+          "name": "//cloudresourcemanager.googleapis.com/projects/483558069545",
+          "type": "cloudresourcemanager.googleapis.com/Project",
+          "paths": [
+            "name"
+          ]
+        },
+        {
+          "name": "//firebase.googleapis.com/projects/483558069545",
+          "type": "firebase.googleapis.com/FirebaseProject",
+          "paths": [
+            "displayName"
+          ]
+        },
+        {
+          "name": "//run.googleapis.com/projects/project-1300957a-ea82-4645-845/locations/us-west2/revisions/lidacomzapcrm-inteligente-00001-6wb",
+          "type": "run.googleapis.com/Revision",
+          "paths": [
+            "metadata.annotations.run.googleapis.com/sources",
+            "metadata.labels.serving.knative.dev/configuration",
+            "metadata.labels.serving.knative.dev/service",
+            "metadata.ownerReferences[0].name",
+            "metadata.name",
+            "metadata.selfLink",
+            "status.logUrl"
+          ]
+        },
+        {
+          "name": "//run.googleapis.com/projects/project-1300957a-ea82-4645-845/locations/us-west2/revisions/lidacomzapcrm-inteligente-00002-wqh",
+          "type": "run.googleapis.com/Revision",
+          "paths": [
+            "status.logUrl",
+            "metadata.selfLink",
+            "metadata.name",
+            "metadata.labels.serving.knative.dev/service",
+            "metadata.labels.serving.knative.dev/route",
+            "metadata.labels.serving.knative.dev/configuration",
+            "metadata.annotations.run.googleapis.com/sources",
+            "metadata.ownerReferences[0].name"
+          ]
+        },
+        {
+          "name": "//run.googleapis.com/projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente",
+          "type": "run.googleapis.com/Service",
+          "paths": [
+            "spec.template.metadata.annotations.run.googleapis.com/sources",
+            "status.url",
+            "status.latestReadyRevisionName",
+            "status.traffic[0].revisionName",
+            "status.address.url",
+            "status.latestCreatedRevisionName",
+            "metadata.name",
+            "metadata.annotations.run.googleapis.com/urls",
+            "metadata.annotations.generativelanguage.googleapis.com/applet-id",
+            "metadata.selfLink"
+          ]
+        }
+      ]
+    },
+    "scheduler": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ]
+    },
+    "extensions": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ]
+    },
+    "pubsub": {
+      "count": 0,
+      "paginated": false,
+      "unreachable": []
+    },
+    "eventarc": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ]
+    },
+    "functions": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ]
+    }
+  },
+  "dependencies": [
+    {
+      "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/02860f82-4aa3-49d5-a77b-ee18d1fb85f4",
+      "type": "cloudbuild.googleapis.com/Build",
+      "paths": [
+        "sourceProvenance.resolvedGitSource.url",
+        "artifacts.images[0]",
+        "source.gitSource.url",
+        "steps[0].args[3]",
+        "steps[1].args[1]",
+        "steps[2].args[3]",
+        "steps[2].args[5]",
+        "images[0]",
+        "tags[2]",
+        "substitutions._SERVICE_NAME",
+        "substitutions.TRIGGER_NAME",
+        "substitutions.REPO_FULL_NAME",
+        "substitutions.REPO_NAME"
+      ],
+      "classification": "HISTORICAL_BUILD_OR_TRIGGER"
+    },
+    {
+      "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/1b3fb261-ea24-4cf8-9512-299eb919996b",
+      "type": "cloudbuild.googleapis.com/Build",
+      "paths": [
+        "images[0]",
+        "source.gitSource.url",
+        "steps[0].args[3]",
+        "steps[1].args[1]",
+        "steps[2].args[3]",
+        "steps[2].args[5]",
+        "artifacts.images[0]",
+        "tags[2]",
+        "sourceProvenance.resolvedGitSource.url",
+        "substitutions.REPO_FULL_NAME",
+        "substitutions._SERVICE_NAME",
+        "substitutions.REPO_NAME",
+        "substitutions.TRIGGER_NAME"
+      ],
+      "classification": "HISTORICAL_BUILD_OR_TRIGGER"
+    },
+    {
+      "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/52e89370-7641-4d65-b36e-36ea71cb5cc6",
+      "type": "cloudbuild.googleapis.com/Build",
+      "paths": [
+        "source.gitSource.url",
+        "steps[0].args[3]",
+        "steps[1].args[1]",
+        "steps[2].args[3]",
+        "steps[2].args[5]",
+        "images[0]",
+        "sourceProvenance.resolvedGitSource.url",
+        "artifacts.images[0]",
+        "substitutions.REPO_FULL_NAME",
+        "substitutions.TRIGGER_NAME",
+        "substitutions.REPO_NAME",
+        "substitutions._SERVICE_NAME",
+        "tags[2]"
+      ],
+      "classification": "HISTORICAL_BUILD_OR_TRIGGER"
+    },
+    {
+      "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/7da9b5c5-9fc8-4428-a495-3c8fe95fc036",
+      "type": "cloudbuild.googleapis.com/Build",
+      "paths": [
+        "artifacts.images[0]",
+        "sourceProvenance.resolvedGitSource.url",
+        "images[0]",
+        "source.gitSource.url",
+        "tags[2]",
+        "substitutions.REPO_FULL_NAME",
+        "substitutions._SERVICE_NAME",
+        "substitutions.TRIGGER_NAME",
+        "substitutions.REPO_NAME",
+        "steps[0].args[3]",
+        "steps[1].args[1]",
+        "steps[2].args[3]",
+        "steps[2].args[5]"
+      ],
+      "classification": "HISTORICAL_BUILD_OR_TRIGGER"
+    },
+    {
+      "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/835205cb-7419-46c7-95ea-1f5aad09e3f5",
+      "type": "cloudbuild.googleapis.com/Build",
+      "paths": [
+        "source.gitSource.url",
+        "steps[0].args[3]",
+        "steps[1].args[1]",
+        "steps[2].args[3]",
+        "steps[2].args[5]",
+        "images[0]",
+        "sourceProvenance.resolvedGitSource.url",
+        "tags[2]",
+        "artifacts.images[0]",
+        "substitutions.REPO_NAME",
+        "substitutions._SERVICE_NAME",
+        "substitutions.TRIGGER_NAME",
+        "substitutions.REPO_FULL_NAME"
+      ],
+      "classification": "HISTORICAL_BUILD_OR_TRIGGER"
+    },
+    {
+      "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/91d696a9-6706-426a-84c3-69a6921b2efc",
+      "type": "cloudbuild.googleapis.com/Build",
+      "paths": [
+        "steps[0].args[3]",
+        "steps[1].args[1]",
+        "steps[2].args[3]",
+        "steps[2].args[5]",
+        "substitutions.TRIGGER_NAME",
+        "substitutions.REPO_NAME",
+        "substitutions.REPO_FULL_NAME",
+        "substitutions._SERVICE_NAME",
+        "tags[2]",
+        "artifacts.images[0]",
+        "sourceProvenance.resolvedGitSource.url",
+        "images[0]",
+        "source.gitSource.url"
+      ],
+      "classification": "HISTORICAL_BUILD_OR_TRIGGER"
+    },
+    {
+      "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/accc3749-161e-414b-91f4-f85d7c81cae9",
+      "type": "cloudbuild.googleapis.com/Build",
+      "paths": [
+        "artifacts.images[0]",
+        "steps[0].args[3]",
+        "steps[1].args[1]",
+        "steps[2].args[3]",
+        "steps[2].args[5]",
+        "sourceProvenance.resolvedGitSource.url",
+        "tags[2]",
+        "substitutions.REPO_NAME",
+        "substitutions.TRIGGER_NAME",
+        "substitutions.REPO_FULL_NAME",
+        "substitutions._SERVICE_NAME",
+        "images[0]",
+        "source.gitSource.url"
+      ],
+      "classification": "HISTORICAL_BUILD_OR_TRIGGER"
+    },
+    {
+      "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/cbedfba2-277b-43b2-a5fa-1316032f4027",
+      "type": "cloudbuild.googleapis.com/Build",
+      "paths": [
+        "substitutions._SERVICE_NAME",
+        "substitutions.REPO_FULL_NAME",
+        "substitutions.REPO_NAME",
+        "substitutions.TRIGGER_NAME",
+        "steps[0].args[3]",
+        "steps[1].args[1]",
+        "steps[2].args[3]",
+        "steps[2].args[5]",
+        "sourceProvenance.resolvedGitSource.url",
+        "images[0]",
+        "source.gitSource.url",
+        "artifacts.images[0]",
+        "tags[2]"
+      ],
+      "classification": "HISTORICAL_BUILD_OR_TRIGGER"
+    },
+    {
+      "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/cd5ad6fb-6f2e-4979-a8af-3a3ce9195a73",
+      "type": "cloudbuild.googleapis.com/Build",
+      "paths": [
+        "substitutions._SERVICE_NAME",
+        "substitutions.TRIGGER_NAME",
+        "substitutions.REPO_NAME",
+        "substitutions.REPO_FULL_NAME",
+        "steps[0].args[3]",
+        "steps[1].args[1]",
+        "steps[2].args[3]",
+        "steps[2].args[5]",
+        "sourceProvenance.resolvedGitSource.url",
+        "artifacts.images[0]",
+        "tags[2]",
+        "images[0]",
+        "source.gitSource.url"
+      ],
+      "classification": "HISTORICAL_BUILD_OR_TRIGGER"
+    },
+    {
+      "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/db635a7a-9a0f-4fb6-8fe0-42225a046b00",
+      "type": "cloudbuild.googleapis.com/Build",
+      "paths": [
+        "substitutions._SERVICE_NAME",
+        "substitutions.REPO_NAME",
+        "substitutions.TRIGGER_NAME",
+        "substitutions.REPO_FULL_NAME",
+        "sourceProvenance.resolvedGitSource.url",
+        "tags[2]",
+        "source.gitSource.url",
+        "images[0]",
+        "artifacts.images[0]",
+        "steps[0].args[3]",
+        "steps[1].args[1]",
+        "steps[2].args[3]",
+        "steps[2].args[5]"
+      ],
+      "classification": "HISTORICAL_BUILD_OR_TRIGGER"
+    },
+    {
+      "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/builds/eba47ea7-c127-4d7c-913b-39dd580f12a6",
+      "type": "cloudbuild.googleapis.com/Build",
+      "paths": [
+        "artifacts.images[0]",
+        "tags[2]",
+        "steps[0].args[3]",
+        "steps[1].args[1]",
+        "steps[2].args[3]",
+        "steps[2].args[5]",
+        "substitutions.REPO_NAME",
+        "substitutions._SERVICE_NAME",
+        "substitutions.REPO_FULL_NAME",
+        "substitutions.TRIGGER_NAME",
+        "sourceProvenance.resolvedGitSource.url",
+        "source.gitSource.url",
+        "images[0]"
+      ],
+      "classification": "HISTORICAL_BUILD_OR_TRIGGER"
+    },
+    {
+      "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/triggers/368a078f-c3f0-4690-a2a3-5d88921a2dd2",
+      "type": "cloudbuild.googleapis.com/BuildTrigger",
+      "paths": [
+        "github.name",
+        "description",
+        "substitutions._SERVICE_NAME",
+        "build.substitutions._SERVICE_NAME",
+        "build.tags[2]",
+        "name",
+        "tags[2]"
+      ],
+      "classification": "HISTORICAL_BUILD_OR_TRIGGER"
+    },
+    {
+      "name": "//cloudresourcemanager.googleapis.com/projects/483558069545",
+      "type": "cloudresourcemanager.googleapis.com/Project",
+      "paths": [
+        "name"
+      ],
+      "classification": "NAME_ONLY_MATCH"
+    },
+    {
+      "name": "//firebase.googleapis.com/projects/483558069545",
+      "type": "firebase.googleapis.com/FirebaseProject",
+      "paths": [
+        "displayName"
+      ],
+      "classification": "NAME_ONLY_MATCH"
+    }
+  ],
+  "guards": {
+    "projectExact": true,
+    "revisionExact": true,
+    "appletExact": true
+  },
+  "snapshotDigest": "70bb126b20798e2f80783151aaead58cdc85a90f0758f5d9a94d0223ddcba6ba"
+}

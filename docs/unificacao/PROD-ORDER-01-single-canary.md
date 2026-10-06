@@ -1,5 +1,9 @@
 # PROD-ORDER-01 — canário único: pre-flight bloqueado
 
+## Checkpoint atual — runtime de teste removido (2026-10-06)
+
+Após autorização humana, somente Cloud Run lidacomzapcrm-inteligente/us-west2 no projeto operacional foi descomissionado; evidência/configuração sanitizada preservada, sem dependência operacional direta conhecida, trigger disabled/etag inalterado, operação done e service/revisão404. INFRA-01 registra limites e prova. Proveniência não bloqueia mais esse recurso. Canário0/1, flagDISABLED, Rules hash inalterado e paths TEST ausentes. Nenhuma contenção publicada, identidade temporária criada ou auditoria cloud gravada. **GATE_OPERATIONAL_INVENTORY_VERIFICATION_REQUIRED** permanece antes de qualquer create: Functions/Eventarc/Extensions não tiveram inventário direto comprovado porque APIs estão desabilitadas; índice complementar não foi tomado como inventário completo. Não habilitar APIs sem exceção humana à proibição existente. Autorizações anteriores preservadas. Meta aguarda fechamento do canário; sem rollout/outbound. Seções anteriores são checkpoints históricos.
+
 ## Checkpoint atual — INFRA-01 (2026-10-06)
 
 ZIP fornecido auditado somente leitura: SHA-256 ef7627f76365a9bfcd9a97c3bce40d39a9d2eb1c24bfe89f7523229d2a5c2a65, 67/67 arquivos idênticos à main60fb91f. README aponta ao mesmo applet d0a1f98e-eb48-4e21-bf06-e17eab23635c encontrado na annotation Cloud Run. **PROVENANCE_HIGH_CONFIDENCE** para origem comum; versão da revisão00002-wqh não comprovada. Fonte usa SDK/handlers WRITE no Firestore operacional, inclusive orders/deliveryOrders/caixaSessions. Não é preview isolado. Listener orders apenas atualiza memória/tela; nenhum efeito financeiro automático desse listener foi demonstrado.

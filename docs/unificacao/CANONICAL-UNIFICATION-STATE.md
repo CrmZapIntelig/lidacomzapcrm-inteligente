@@ -1,5 +1,11 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## Estado atual — retirada do teste AI/Agent Studio, 2026-10-06
+
+**RUNTIME DE TESTE DO AI/AGENT STUDIO — DESCOMISSIONADO:** somente Cloud Run operacional-projeto/us-west2/lidacomzapcrm-inteligente removido após preservação sanitizada, checagem de dependências conhecidas, trigger disabled e precondição etag/UID/revisão/applet. Operação concluída; service/revisão00002-wqh GET404. Applet/contas/build/buckets/Firebase/Firestore/APIs/IAM compartilhados preservados. Configuração e prova em INFRA-01-runtime-provenance.md/evidence INFRA-01. Nenhuma escrita de pedidos/caixa/delivery; Rules hash preservado e IDs TEST ausentes.
+
+Gate de proveniência desse runtime RESOLVIDO; canário permanece BLOCKED — PREFLIGHT ONLY por **GATE_OPERATIONAL_INVENTORY_VERIFICATION_REQUIRED**, antes de contenção/IAM/write: inventários Functions/Eventarc/Extensions SERVICE_DISABLED e não comprovados vazios. Não habilitar APIs para contornar proibição. FlagDISABLED/quota0/1/zero audit cloud/zero identidade canary; autorizações anteriores preservadas. Meta só após canário fechado, outbound/RCS DISABLED; Marketing/Venda Ativa requisitos mantidos. Prototipação futura em projeto isolado lidacomzapcrm-ai-dev PLANEJADA, sem criar agora. Checkpoints abaixo são históricos.
+
 ## Estado atual — INFRA-01, 2026-10-06
 
 Auditoria read-only do ZIP informado encerrada com **PROVENANCE_HIGH_CONFIDENCE** de origem comum ao applet d0a1f98e-eb48-4e21-bf06-e17eab23635c. Os67 arquivos são idênticos à main60fb91f; não representam o preview integrado/ORDER-02 recente. Fonte auditada **escreve Firestore operacional** via SDK/client handlers, incluindo orders/deliveryOrders/caixaSessions. A revisão Cloud Run00002-wqh efetivamente servida ainda não tem código/digest comprovado. **BLOCK_CANARY**; GATE_OPERATIONAL_RUNTIME_PROVENANCE_REQUIRED permanece pendente, sem repetir autorizações já concedidas do único pedido/contenção/identidade temporária. Nenhum canário, Rules deploy, IAM/API/recurso ou alteração cloud executado nesta fase. FlagDISABLED; rollout proibido. Documento/evidência: INFRA-01-runtime-provenance.md e evidence/INFRA-01-zip-audit.json.

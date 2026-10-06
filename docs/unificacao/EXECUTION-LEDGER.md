@@ -1,5 +1,15 @@
 # Execution ledger — Unificação
 
+## INFRA-01 — descomissionar somente runtime de teste (2026-10-06)
+
+- HEAD INICIAL: bbbefc1900c9430066e9899b75c4d1ab4278fcc2; HEAD final identificável pelo commit `Record authorized AI Studio test runtime decommission and remaining inventory gate`.
+- AUTORIZAÇÃO: usuário confirmou runtime descartável; preservar evidências/dependências antes de remover só lidacomzapcrm-inteligente. Não apagar compartilhados, habilitar APIs ou ampliar canário.
+- EVIDÊNCIA PRÉVIA: service/revision sanitizados, UID/etag/applet/projeto exatos, env somente nomes, IAM local/ingress/traffic/min-max/request metadados; imageDigest indisponível. Hosting publicado sem referência, domínio0/PubSub0; asset RESOURCE241 sem dependência operacional direta encontrada, builds históricos/triggerdisabled/nome do projeto classificados. Inventários API desabilitados mantidos como limitação. Fontes JSON before-decommission e documentação INFRA-01.
+- EXECUÇÃO: DELETE validateOnly200 e DELETE real com etag, operação9f0f1084-742f-4dfb-be0c-c2be445d5a60 done=true/sem error,2026-10-06T23:10:04.696Z. Serviço/revisão00002-wqh GET404 NOT_FOUND. **RUNTIME DE TESTE DO AI/AGENT STUDIO DESCOMISSIONADO.** Applet não removido via UI; nenhum recurso compartilhado/IAM/API/billing/Firestore modificado. FirestoreCalls0 no executor.
+- PÓS: Cloud Run list direto0/algumas regiõesunreachable; Cloud Asset índice ainda mostra removidos, registrado como eventual. Rules release/hash inalterados35e884...; paths TEST ausentes, flagDISABLED, nenhum canário/audit. Produção documental intacta no escopo desta execução; nenhuma cópia/leitura de dados reais para afirmar snapshot integral. Provas post-decommission-inventory/canary-preflight.
+- TESTES/BASELINE/BUILD/CI: check de sintaxe dos wrappers, JSON/diff e cloud read-only; nenhuma alteração funcional.188 testes/cinco stricts/21→21/quatro builds são referência anterior. Commit LOCAL, sem push que dispararia Hosting; HEAD remoto cf2e3eb/CI verde nesse SHA, não alegar CI dos commits locais. PR4 draft/descrição atualizada.
+- GATE/NEXT: proveniência resolvida pela retirada; GATE_OPERATIONAL_INVENTORY_VERIFICATION_REQUIRED antes da contenção/IAM/create. APIs Functions/Eventarc/Extensions desabilitadas impedem inventário direto, e usuário proíbe enable só para busca. Exigir inventário verificável equivalente ou exceção explícita se habilitação for indispensável. Autorizações do único Order/regras/identidade não são repetidas. Zero rollout/outbound; Meta após fechamento seguro, requisitos MKT-AUTO-01/Venda Ativa preservados. AI-dev isolado PLANEJADO, não criado.
+
 ## INFRA-01 — ZIP / proveniência do Cloud Run (2026-10-06)
 
 - HEAD INICIAL: cf2e3eb15d51f487a50614ff52b8d04c9e2aa6ba; branch/main60fb91f/PR4 draft e CI inicial success revalidados. HEAD final/commit identificável por `Audit AI Studio ZIP lineage and block unverified operational runtime`.

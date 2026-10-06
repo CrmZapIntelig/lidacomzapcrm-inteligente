@@ -1,5 +1,9 @@
 # PROD-ORDER-01 — inventário ampliado e origem do runtime
 
+## Atualização — serviço TEST removido (2026-10-06)
+
+Autorização humana de descartabilidade/remoção executada após preservação e checagem de dependências conhecidas. Serviço exato e revisão00002-wqh404; operação de exclusão concluída. Ver INFRA-01-runtime-provenance.md e proofs before/decommission/post. **GATE_OPERATIONAL_RUNTIME_PROVENANCE_REQUIRED RESOLVIDO** pela retirada do teste, sem afirmar proveniência criptográfica do artefato anterior. **GATE_OPERATIONAL_INVENTORY_VERIFICATION_REQUIRED** é o bloqueio remanescente: Functions/Eventarc/Extensions SERVICE_DISABLED, inventário direto não comprovado; APIs mantidas desabilitadas. Quota0/1/flagDISABLED/nenhum canário ou contenção/IAM criado. Registros seguintes são históricos.
+
 ## Atualização INFRA-01 — ZIP fornecido (2026-10-06)
 
 O ZIP disponibilizado pelo usuário foi auditado fora do workspace, sem execução:67/67 arquivos idênticos à main60fb91f, comentário Git correspondente, README com o mesmo applet UUID da annotation fullstack-applet. Classificação atual **PROVENANCE_HIGH_CONFIDENCE** de origem comum, **BLOCK_CANARY**. A hipótese de fonte só visual/offline foi contradita por handlers reais de Firestore configurados para o projeto operacional. A versão efetiva da revisão Ready continua não comprovada; o gate abaixo permanece, agora delimitado à versão publicada/efeitos e inventários remanescentes. Relatório: INFRA-01-runtime-provenance.md. Nenhuma contenção/IAM/API/Order/cloud mutation foi executada. Texto seguinte preserva a coleta anterior e seus limites.
