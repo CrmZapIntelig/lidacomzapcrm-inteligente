@@ -1,0 +1,380 @@
+{
+  "at": "2026-10-06T21:13:47.933Z",
+  "projectId": "project-1300957a-ea82-4645-845",
+  "readOnly": true,
+  "checks": {
+    "service": {
+      "name": "projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente",
+      "updateTime": "2026-07-03T02:16:44.206289Z",
+      "latestReadyRevision": "projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente/revisions/lidacomzapcrm-inteligente-00002-wqh",
+      "latestCreatedRevision": "projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente/revisions/lidacomzapcrm-inteligente-00002-wqh",
+      "serviceAccount": "483558069545-compute@developer.gserviceaccount.com",
+      "ingress": "INGRESS_TRAFFIC_ALL",
+      "terminalCondition": {
+        "type": "Ready",
+        "state": "CONDITION_SUCCEEDED"
+      },
+      "conditions": [
+        {
+          "type": "RoutesReady",
+          "state": "CONDITION_SUCCEEDED"
+        },
+        {
+          "type": "BaseImageValidated",
+          "state": "CONDITION_SUCCEEDED"
+        },
+        {
+          "type": "ConfigurationsReady",
+          "state": "CONDITION_SUCCEEDED"
+        }
+      ],
+      "traffic": [
+        {
+          "type": "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST",
+          "percent": 100
+        }
+      ],
+      "buildConfig": null,
+      "labels": {
+        "managed-by": "gcp-cloud-build-deploy-cloud-run",
+        "gcb-trigger-id": "368a078f-c3f0-4690-a2a3-5d88921a2dd2",
+        "gcb-trigger-region": "global"
+      },
+      "containers": [
+        {
+          "image": "scratch",
+          "envNames": [
+            "SQL_DB_NAME",
+            "GEMINI_API_KEY",
+            "APP_URL"
+          ],
+          "ports": [
+            {
+              "name": "http1",
+              "containerPort": 3000
+            }
+          ]
+        }
+      ]
+    },
+    "revision": {
+      "name": "projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente/revisions/lidacomzapcrm-inteligente-00002-wqh",
+      "createTime": "2026-07-03T01:13:46.732440Z",
+      "conditions": [
+        {
+          "type": "Ready",
+          "state": "CONDITION_SUCCEEDED"
+        },
+        {
+          "type": "Active",
+          "state": "CONDITION_SUCCEEDED"
+        },
+        {
+          "type": "ResourcesAvailable",
+          "state": "CONDITION_SUCCEEDED"
+        },
+        {
+          "type": "ContainerReady",
+          "state": "CONDITION_SUCCEEDED"
+        },
+        {
+          "type": "ContainerHealthy",
+          "state": "CONDITION_SUCCEEDED"
+        }
+      ],
+      "serviceAccount": "483558069545-compute@developer.gserviceaccount.com",
+      "labels": {
+        "managed-by": "gcp-cloud-build-deploy-cloud-run"
+      },
+      "annotationsKeys": [],
+      "containers": [
+        {
+          "image": "scratch",
+          "envNames": [
+            "SQL_DB_NAME",
+            "GEMINI_API_KEY",
+            "APP_URL"
+          ]
+        }
+      ]
+    },
+    "service-v1": {
+      "annotationKeys": [
+        "run.googleapis.com/ingress",
+        "serving.knative.dev/creator",
+        "serving.knative.dev/lastModifier",
+        "generativelanguage.googleapis.com/type",
+        "generativelanguage.googleapis.com/applet-id",
+        "run.googleapis.com/client-name",
+        "run.googleapis.com/operation-id",
+        "run.googleapis.com/ingress-status",
+        "run.googleapis.com/invoker-iam-disabled",
+        "run.googleapis.com/maxScale",
+        "run.googleapis.com/urls"
+      ],
+      "sourceAnnotations": {
+        "generativelanguage.googleapis.com/type": "fullstack-applet",
+        "generativelanguage.googleapis.com/applet-id": "d0a1f98e-eb48-4e21-bf06-e17eab23635c"
+      },
+      "latestReadyRevisionName": "lidacomzapcrm-inteligente-00002-wqh"
+    },
+    "build-trigger": {
+      "id": "368a078f-c3f0-4690-a2a3-5d88921a2dd2",
+      "name": "rmgpgab-lidacomzapcrm-inteligente-us-west2-CrmZapIntelig-lidpyx",
+      "disabled": true,
+      "github": {
+        "push": {
+          "branch": "^main$"
+        },
+        "owner": "CrmZapIntelig",
+        "name": "lidacomzapcrm-inteligente"
+      },
+      "serviceAccount": "projects/project-1300957a-ea82-4645-845/serviceAccounts/483558069545-compute@developer.gserviceaccount.com",
+      "webhookConfigPresent": false,
+      "pubsubConfigPresent": false,
+      "stepImages": [
+        "gcr.io/cloud-builders/docker",
+        "gcr.io/cloud-builders/docker",
+        "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+      ],
+      "substitutionKeys": [
+        "_TRIGGER_ID",
+        "_AR_HOSTNAME",
+        "_AR_PROJECT_ID",
+        "_AR_REPOSITORY",
+        "_DEPLOY_REGION",
+        "_PLATFORM",
+        "_SERVICE_NAME"
+      ]
+    },
+    "runtime-roles": [
+      {
+        "role": "roles/artifactregistry.writer",
+        "conditional": false
+      },
+      {
+        "role": "roles/iam.serviceAccountUser",
+        "conditional": false
+      },
+      {
+        "role": "roles/logging.logWriter",
+        "conditional": false
+      },
+      {
+        "role": "roles/run.admin",
+        "conditional": false
+      },
+      {
+        "role": "roles/storage.admin",
+        "conditional": false
+      }
+    ],
+    "build-provenance": {
+      "paginated": false,
+      "builds": [
+        {
+          "id": "cd5ad6fb-6f2e-4979-a8af-3a3ce9195a73",
+          "status": "FAILURE",
+          "finishTime": "2026-07-22T23:10:59.822107Z",
+          "source": {
+            "gitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "f374c20be80cbcc63316bb421f264ce9aa702eed"
+            }
+          },
+          "resolvedSource": {
+            "resolvedGitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "f374c20be80cbcc63316bb421f264ce9aa702eed"
+            }
+          },
+          "images": []
+        },
+        {
+          "id": "02860f82-4aa3-49d5-a77b-ee18d1fb85f4",
+          "status": "FAILURE",
+          "finishTime": "2026-07-15T19:50:45.086617Z",
+          "source": {
+            "gitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "a7dc7ff2552770ec0ebb2f8b215bd89372909e66"
+            }
+          },
+          "resolvedSource": {
+            "resolvedGitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "a7dc7ff2552770ec0ebb2f8b215bd89372909e66"
+            }
+          },
+          "images": []
+        },
+        {
+          "id": "7da9b5c5-9fc8-4428-a495-3c8fe95fc036",
+          "status": "FAILURE",
+          "finishTime": "2026-07-08T06:16:22.444683Z",
+          "source": {
+            "gitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "a8e601a1d20efb9acefa0eb19cc734df6d80416c"
+            }
+          },
+          "resolvedSource": {
+            "resolvedGitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "a8e601a1d20efb9acefa0eb19cc734df6d80416c"
+            }
+          },
+          "images": []
+        },
+        {
+          "id": "cbedfba2-277b-43b2-a5fa-1316032f4027",
+          "status": "FAILURE",
+          "finishTime": "2026-07-04T22:17:36.099137Z",
+          "source": {
+            "gitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "bb4c53f62f13d646a47fcc95fd3eb7b314bef1fc"
+            }
+          },
+          "resolvedSource": {
+            "resolvedGitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "bb4c53f62f13d646a47fcc95fd3eb7b314bef1fc"
+            }
+          },
+          "images": []
+        },
+        {
+          "id": "accc3749-161e-414b-91f4-f85d7c81cae9",
+          "status": "FAILURE",
+          "finishTime": "2026-07-04T20:31:58.905938Z",
+          "source": {
+            "gitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "ced44d5bc9041852527290e575ae8b3ca5554612"
+            }
+          },
+          "resolvedSource": {
+            "resolvedGitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "ced44d5bc9041852527290e575ae8b3ca5554612"
+            }
+          },
+          "images": []
+        },
+        {
+          "id": "1b3fb261-ea24-4cf8-9512-299eb919996b",
+          "status": "FAILURE",
+          "finishTime": "2026-07-03T03:47:08.665548Z",
+          "source": {
+            "gitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "35956360157694d43991826aead27eb4f11bb7fd"
+            }
+          },
+          "resolvedSource": {
+            "resolvedGitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "35956360157694d43991826aead27eb4f11bb7fd"
+            }
+          },
+          "images": []
+        },
+        {
+          "id": "91d696a9-6706-426a-84c3-69a6921b2efc",
+          "status": "FAILURE",
+          "finishTime": "2026-07-03T02:14:41.283917Z",
+          "source": {
+            "gitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "11dd6a8555fb029d01a8e98032d182b7faeea886"
+            }
+          },
+          "resolvedSource": {
+            "resolvedGitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "11dd6a8555fb029d01a8e98032d182b7faeea886"
+            }
+          },
+          "images": []
+        },
+        {
+          "id": "52e89370-7641-4d65-b36e-36ea71cb5cc6",
+          "status": "FAILURE",
+          "finishTime": "2026-07-03T02:07:16.850219Z",
+          "source": {
+            "gitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "11dd6a8555fb029d01a8e98032d182b7faeea886"
+            }
+          },
+          "resolvedSource": {
+            "resolvedGitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "11dd6a8555fb029d01a8e98032d182b7faeea886"
+            }
+          },
+          "images": []
+        },
+        {
+          "id": "eba47ea7-c127-4d7c-913b-39dd580f12a6",
+          "status": "FAILURE",
+          "finishTime": "2026-07-03T02:04:25.572805Z",
+          "source": {
+            "gitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "11dd6a8555fb029d01a8e98032d182b7faeea886"
+            }
+          },
+          "resolvedSource": {
+            "resolvedGitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "11dd6a8555fb029d01a8e98032d182b7faeea886"
+            }
+          },
+          "images": []
+        },
+        {
+          "id": "db635a7a-9a0f-4fb6-8fe0-42225a046b00",
+          "status": "FAILURE",
+          "finishTime": "2026-07-03T01:17:25.361100Z",
+          "source": {
+            "gitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "11dd6a8555fb029d01a8e98032d182b7faeea886"
+            }
+          },
+          "resolvedSource": {
+            "resolvedGitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "11dd6a8555fb029d01a8e98032d182b7faeea886"
+            }
+          },
+          "images": []
+        },
+        {
+          "id": "835205cb-7419-46c7-95ea-1f5aad09e3f5",
+          "status": "FAILURE",
+          "finishTime": "2026-07-03T01:14:12.490848Z",
+          "source": {
+            "gitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "11dd6a8555fb029d01a8e98032d182b7faeea886"
+            }
+          },
+          "resolvedSource": {
+            "resolvedGitSource": {
+              "url": "https://github.com/CrmZapIntelig/lidacomzapcrm-inteligente.git",
+              "revision": "11dd6a8555fb029d01a8e98032d182b7faeea886"
+            }
+          },
+          "images": []
+        }
+      ]
+    },
+    "run-jobs-region": {
+      "count": 0,
+      "paginated": false
+    }
+  }
+}

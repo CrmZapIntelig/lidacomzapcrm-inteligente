@@ -1,0 +1,222 @@
+{
+  "at": "2026-10-06T21:09:10.484Z",
+  "phase": "PROD-ORDER-01",
+  "projectId": "project-1300957a-ea82-4645-845",
+  "writes": 0,
+  "apiEnableCalls": 0,
+  "iamChanges": 0,
+  "checks": {
+    "cloud-asset": {
+      "total": 230,
+      "paginated": false,
+      "byType": {
+        "serviceusage.googleapis.com/Service": 96,
+        "identitytoolkit.googleapis.com/DefaultSupportedIdpConfig": 1,
+        "cloudbuild.googleapis.com/GlobalTriggerSettings": 2,
+        "dataplex.googleapis.com/EntryGroup": 1,
+        "storage.googleapis.com/Bucket": 4,
+        "aiplatform.googleapis.com/MetadataStore": 1,
+        "aiplatform.googleapis.com/Dataset": 1,
+        "iam.googleapis.com/ServiceAccountKey": 3,
+        "cloudbilling.googleapis.com/ProjectBillingInfo": 1,
+        "identitytoolkit.googleapis.com/Config": 1,
+        "firebaserules.googleapis.com/Release": 3,
+        "firebaserules.googleapis.com/Ruleset": 4,
+        "compute.googleapis.com/Firewall": 4,
+        "compute.googleapis.com/Route": 43,
+        "compute.googleapis.com/Subnetwork": 42,
+        "compute.googleapis.com/Network": 1,
+        "compute.googleapis.com/Project": 1,
+        "run.googleapis.com/Revision": 2,
+        "cloudbuild.googleapis.com/BuildTrigger": 1,
+        "artifactregistry.googleapis.com/Repository": 1,
+        "run.googleapis.com/Service": 1,
+        "iam.googleapis.com/ServiceAccount": 3,
+        "apikeys.googleapis.com/Key": 2,
+        "firestore.googleapis.com/Database": 1,
+        "cloudresourcemanager.googleapis.com/Project": 1,
+        "logging.googleapis.com/LogBucket": 2,
+        "logging.googleapis.com/RecentQuery": 1,
+        "firebase.googleapis.com/FirebaseProject": 1,
+        "identitytoolkit.googleapis.com/OauthIdpConfig": 1,
+        "firebase.googleapis.com/FirebaseAppInfo": 2,
+        "logging.googleapis.com/LogSink": 2
+      },
+      "potentialRuntime": [
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/globalTriggerSettings/483558069545",
+          "assetType": "cloudbuild.googleapis.com/GlobalTriggerSettings",
+          "location": "global"
+        },
+        {
+          "name": "//run.googleapis.com/projects/project-1300957a-ea82-4645-845/locations/us-west2/revisions/lidacomzapcrm-inteligente-00002-wqh",
+          "assetType": "run.googleapis.com/Revision",
+          "location": "us-west2"
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/global/triggers/368a078f-c3f0-4690-a2a3-5d88921a2dd2",
+          "assetType": "cloudbuild.googleapis.com/BuildTrigger",
+          "location": "global"
+        },
+        {
+          "name": "//run.googleapis.com/projects/project-1300957a-ea82-4645-845/locations/us-west2/revisions/lidacomzapcrm-inteligente-00001-6wb",
+          "assetType": "run.googleapis.com/Revision",
+          "location": "us-west2"
+        },
+        {
+          "name": "//run.googleapis.com/projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente",
+          "assetType": "run.googleapis.com/Service",
+          "location": "us-west2"
+        },
+        {
+          "name": "//cloudbuild.googleapis.com/projects/483558069545/locations/us-west2/globalTriggerSettings/483558069545",
+          "assetType": "cloudbuild.googleapis.com/GlobalTriggerSettings",
+          "location": "us-west2"
+        }
+      ]
+    },
+    "pubsub-topics": {
+      "count": 0,
+      "paginated": false,
+      "unreachable": [],
+      "resources": []
+    },
+    "run-jobs": {
+      "http": 400,
+      "status": "INVALID_ARGUMENT",
+      "reasons": [],
+      "consumer": [],
+      "quotaProject": "project-1300957a-ea82-4645-845"
+    },
+    "functions-v1": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ],
+      "consumer": [
+        "projects/project-1300957a-ea82-4645-845"
+      ],
+      "quotaProject": "project-1300957a-ea82-4645-845"
+    },
+    "scheduler": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ],
+      "consumer": [
+        "projects/project-1300957a-ea82-4645-845"
+      ],
+      "quotaProject": "project-1300957a-ea82-4645-845"
+    },
+    "run-services": {
+      "count": 1,
+      "paginated": false,
+      "unreachable": [
+        "europe-west15",
+        "me-central2",
+        "us-central2",
+        "us-east7",
+        "us-west8"
+      ],
+      "resources": [
+        {
+          "name": "projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente",
+          "eventTriggerPresent": false,
+          "envNames": [
+            "SQL_DB_NAME",
+            "GEMINI_API_KEY",
+            "APP_URL"
+          ],
+          "imageRefs": [
+            "scratch"
+          ]
+        }
+      ]
+    },
+    "extensions": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ],
+      "consumer": [
+        "projects/project-1300957a-ea82-4645-845"
+      ],
+      "quotaProject": "project-1300957a-ea82-4645-845"
+    },
+    "pubsub-subscriptions": {
+      "count": 0,
+      "paginated": false,
+      "unreachable": [],
+      "resources": []
+    },
+    "workflows": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ],
+      "consumer": [
+        "projects/project-1300957a-ea82-4645-845"
+      ],
+      "quotaProject": "project-1300957a-ea82-4645-845"
+    },
+    "functions-v2": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ],
+      "consumer": [
+        "projects/project-1300957a-ea82-4645-845"
+      ],
+      "quotaProject": "project-1300957a-ea82-4645-845"
+    },
+    "eventarc": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ],
+      "consumer": [
+        "projects/project-1300957a-ea82-4645-845"
+      ],
+      "quotaProject": "project-1300957a-ea82-4645-845"
+    },
+    "functions-v1-existing-staging-quota": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ],
+      "consumer": [
+        "projects/project-1300957a-ea82-4645-845"
+      ],
+      "quotaProject": "lidacomzapcrm-staging"
+    },
+    "functions-v2-existing-staging-quota": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ],
+      "consumer": [
+        "projects/project-1300957a-ea82-4645-845"
+      ],
+      "quotaProject": "lidacomzapcrm-staging"
+    },
+    "eventarc-existing-staging-quota": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ],
+      "consumer": [
+        "projects/project-1300957a-ea82-4645-845"
+      ],
+      "quotaProject": "lidacomzapcrm-staging"
+    }
+  }
+}

@@ -1,0 +1,1402 @@
+{
+  "at": "2026-10-06T22:15:46.708Z",
+  "zipName": "lidacomzapcrm-inteligente-main (2).zip",
+  "zipSha256": "ef7627f76365a9bfcd9a97c3bce40d39a9d2eb1c24bfe89f7523229d2a5c2a65",
+  "mainRef": "60fb91fdf048a8e0d4f9adc29a532be8bf4356dd",
+  "fileCount": 67,
+  "gitExact": 67,
+  "changes": [],
+  "package": {
+    "name": "react-example",
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+      "dev": "vite --port=3000 --host=0.0.0.0",
+      "build": "vite build",
+      "preview": "vite preview",
+      "clean": "rm -rf dist server.js",
+      "lint": "tsc --noEmit"
+    },
+    "dependencies": {
+      "@google/genai": "^2.4.0",
+      "@supabase/supabase-js": "^2.106.2",
+      "@tailwindcss/vite": "^4.1.14",
+      "@vitejs/plugin-react": "^5.0.4",
+      "dotenv": "^17.2.3",
+      "express": "^4.21.2",
+      "firebase": "^12.14.0",
+      "lucide-react": "^0.546.0",
+      "motion": "^12.23.24",
+      "qrcode.react": "^4.2.0",
+      "react": "^19.0.1",
+      "react-dom": "^19.0.1",
+      "recharts": "^3.8.1",
+      "vite": "^6.2.3"
+    },
+    "devDependencies": {
+      "@types/express": "^4.17.21",
+      "@types/node": "^22.14.0",
+      "autoprefixer": "^10.4.21",
+      "esbuild": "^0.25.0",
+      "tailwindcss": "^4.1.14",
+      "tsx": "^4.21.0",
+      "typescript": "~5.8.2",
+      "vite": "^6.2.3"
+    }
+  },
+  "firebase": {
+    "firebaseProjectId": "project-1300957a-ea82-4645-845"
+  },
+  "nodes": [
+    {
+      "file": "src/lib/firebase.ts",
+      "line": 15,
+      "operation": "initializeApp"
+    },
+    {
+      "file": "src/lib/firebase.ts",
+      "line": 18,
+      "operation": "getFirestore"
+    }
+  ],
+  "imports": [
+    {
+      "file": "src/App.tsx",
+      "line": 78,
+      "module": "./lib/firebase"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 79,
+      "module": "firebase/auth"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 80,
+      "module": "firebase/firestore"
+    },
+    {
+      "file": "src/components/LoginView.tsx",
+      "line": 3,
+      "module": "firebase/auth"
+    },
+    {
+      "file": "src/components/LoginView.tsx",
+      "line": 4,
+      "module": "../lib/firebase"
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 14,
+      "module": "firebase/firestore"
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 15,
+      "module": "../lib/firebase"
+    },
+    {
+      "file": "src/lib/firebase.ts",
+      "line": 1,
+      "module": "firebase/app"
+    },
+    {
+      "file": "src/lib/firebase.ts",
+      "line": 2,
+      "module": "firebase/auth"
+    },
+    {
+      "file": "src/lib/firebase.ts",
+      "line": 3,
+      "module": "firebase/firestore"
+    },
+    {
+      "file": "src/lib/firebase.ts",
+      "line": 4,
+      "module": "firebase/storage"
+    },
+    {
+      "file": "src/lib/supabase.ts",
+      "line": 1,
+      "module": "@supabase/supabase-js"
+    }
+  ],
+  "calls": [
+    {
+      "file": "src/App.tsx",
+      "line": 220,
+      "handler": "callback@219",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "clients"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 240,
+      "handler": "callback@239",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "messages"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 284,
+      "handler": "callback@283",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "history"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 308,
+      "handler": "callback@307",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "campaigns"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 339,
+      "handler": "callback@338",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "commercialSegments"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 370,
+      "handler": "callback@369",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "campaignTemplates"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 401,
+      "handler": "callback@400",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "campaignSchedules"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 432,
+      "handler": "callback@431",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "campaignResults"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 463,
+      "handler": "callback@462",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "orders"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 494,
+      "handler": "callback@493",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "automations"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 525,
+      "handler": "callback@524",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "settings"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 552,
+      "handler": "callback@551",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "productsDigitalMenu"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 583,
+      "handler": "callback@582",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "cardapios"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 614,
+      "handler": "callback@613",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "deliveryOrders"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 641,
+      "handler": "callback@640",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "couriers"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 666,
+      "handler": "callback@665",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "routes"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 691,
+      "handler": "callback@690",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "reviews"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 716,
+      "handler": "callback@715",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "deliveryHistories"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 748,
+      "handler": "callback@747",
+      "operation": "onSnapshot",
+      "actions": [
+        "READ",
+        "LISTENER"
+      ],
+      "collections": [
+        "caixaSessions"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 847,
+      "handler": "handleUpdateSettings",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "settings"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 947,
+      "handler": "handleAddHistoryEvent",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "history"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 961,
+      "handler": "saveFirestoreDocument",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [],
+      "dynamicTarget": true
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 974,
+      "handler": "deleteFirestoreDocument",
+      "operation": "deleteDoc",
+      "actions": [
+        "DELETE"
+      ],
+      "collections": [],
+      "dynamicTarget": true
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 983,
+      "handler": "handleSaveSegment",
+      "operation": "saveFirestoreDocument",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "commercialSegments"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 988,
+      "handler": "handleDeleteSegment",
+      "operation": "deleteFirestoreDocument",
+      "actions": [
+        "DELETE"
+      ],
+      "collections": [
+        "commercialSegments"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 993,
+      "handler": "handleSaveTemplate",
+      "operation": "saveFirestoreDocument",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "campaignTemplates"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 998,
+      "handler": "handleDeleteTemplate",
+      "operation": "deleteFirestoreDocument",
+      "actions": [
+        "DELETE"
+      ],
+      "collections": [
+        "campaignTemplates"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1003,
+      "handler": "handleSaveCampaign",
+      "operation": "saveFirestoreDocument",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "campaigns"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1008,
+      "handler": "handleDeleteCampaign",
+      "operation": "deleteFirestoreDocument",
+      "actions": [
+        "DELETE"
+      ],
+      "collections": [
+        "campaigns"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1013,
+      "handler": "handleSaveSchedule",
+      "operation": "saveFirestoreDocument",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "campaignSchedules"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1018,
+      "handler": "handleDeleteSchedule",
+      "operation": "deleteFirestoreDocument",
+      "actions": [
+        "DELETE"
+      ],
+      "collections": [
+        "campaignSchedules"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1032,
+      "handler": "handleUpdateClient",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "clients"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1053,
+      "handler": "saveMessagesToFirestore",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "messages"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1166,
+      "handler": "handleSaveOrderCreated",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "orders"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1239,
+      "handler": "callback@1235",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "messages"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1270,
+      "handler": "handleToggleAutomation",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "automations"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1332,
+      "handler": "callback@1298",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "caixaSessions"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1369,
+      "handler": "handleOpenCashier",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "caixaSessions"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1412,
+      "handler": "handleRegisterCaixaTransaction",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "caixaSessions"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1462,
+      "handler": "handleCloseCashier",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "caixaSessions"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1480,
+      "handler": "callback@1476",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "deliveryOrders"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1511,
+      "handler": "callback@1476",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "deliveryHistories"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1699,
+      "handler": "callback@1696",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "cardapios"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1718,
+      "handler": "callback@1715",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "productsDigitalMenu"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1764,
+      "handler": "callback@1761",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "couriers"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 47,
+      "handler": "loadPublicMenuData",
+      "operation": "getDocs",
+      "actions": [
+        "READ"
+      ],
+      "collections": [
+        "cardapios"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 48,
+      "handler": "loadPublicMenuData",
+      "operation": "getDocs",
+      "actions": [
+        "READ"
+      ],
+      "collections": [
+        "productsDigitalMenu"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 151,
+      "handler": "handleSubmitOrder",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "deliveryOrders"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 154,
+      "handler": "handleSubmitOrder",
+      "operation": "getDoc",
+      "actions": [
+        "READ"
+      ],
+      "collections": [
+        "clients"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 159,
+      "handler": "handleSubmitOrder",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "clients"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 181,
+      "handler": "handleSubmitOrder",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "clients"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 206,
+      "handler": "handleSubmitOrder",
+      "operation": "getDoc",
+      "actions": [
+        "READ"
+      ],
+      "collections": [
+        "messages"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 218,
+      "handler": "handleSubmitOrder",
+      "operation": "updateDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "messages"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 222,
+      "handler": "handleSubmitOrder",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "messages"
+      ],
+      "dynamicTarget": false
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 230,
+      "handler": "handleSubmitOrder",
+      "operation": "setDoc",
+      "actions": [
+        "WRITE"
+      ],
+      "collections": [
+        "history"
+      ],
+      "dynamicTarget": false
+    }
+  ],
+  "effects": [
+    {
+      "file": "src/App.tsx",
+      "line": 774,
+      "handler": "callback@772",
+      "operation": "localStorage.getItem",
+      "argumentKind": "Identifier"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 792,
+      "handler": "callback@790",
+      "operation": "localStorage.setItem",
+      "argumentKind": "Identifier"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 895,
+      "handler": "handleTriggerSync",
+      "operation": "setTimeout",
+      "argumentKind": "ArrowFunction"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1100,
+      "handler": "handleSendMessage",
+      "operation": "setTimeout",
+      "argumentKind": "ArrowFunction"
+    },
+    {
+      "file": "src/components/CardapioView.tsx",
+      "line": 148,
+      "handler": "callback@145",
+      "operation": "localStorage.getItem",
+      "argumentKind": "TemplateExpression"
+    },
+    {
+      "file": "src/components/CardapioView.tsx",
+      "line": 416,
+      "handler": "handleFinalizeSimulatedOrder",
+      "operation": "localStorage.setItem",
+      "argumentKind": "TemplateExpression"
+    },
+    {
+      "file": "src/components/CommercialIntelligenceView.tsx",
+      "line": 187,
+      "handler": "handleRefreshPreview",
+      "operation": "window.setTimeout",
+      "argumentKind": "ArrowFunction"
+    },
+    {
+      "file": "src/components/CommercialIntelligenceView.tsx",
+      "line": 201,
+      "handler": "handleRefreshPreparation",
+      "operation": "window.setTimeout",
+      "argumentKind": "ArrowFunction"
+    },
+    {
+      "file": "src/components/CommercialIntelligenceView.tsx",
+      "line": 247,
+      "handler": "callback@244",
+      "operation": "window.setTimeout",
+      "argumentKind": "ArrowFunction"
+    },
+    {
+      "file": "src/components/CozinhaView.tsx",
+      "line": 63,
+      "handler": "callback@62",
+      "operation": "setInterval",
+      "argumentKind": "ArrowFunction"
+    },
+    {
+      "file": "src/components/CozinhaView.tsx",
+      "line": 90,
+      "handler": "playAlertSound",
+      "operation": "setTimeout",
+      "argumentKind": "ArrowFunction"
+    },
+    {
+      "file": "src/components/CozinhaView.tsx",
+      "line": 109,
+      "handler": "playAlertSound",
+      "operation": "setTimeout",
+      "argumentKind": "ArrowFunction"
+    },
+    {
+      "file": "src/components/RotasView.tsx",
+      "line": 98,
+      "handler": "callback@97",
+      "operation": "setInterval",
+      "argumentKind": "ArrowFunction"
+    },
+    {
+      "file": "src/components/WhatsAppView.tsx",
+      "line": 99,
+      "handler": "callback@96",
+      "operation": "setInterval",
+      "argumentKind": "ArrowFunction"
+    },
+    {
+      "file": "src/lib/supabase.ts",
+      "line": 8,
+      "handler": "module",
+      "operation": "createClient",
+      "argumentKind": "Identifier"
+    },
+    {
+      "file": "src/utils/mockData.ts",
+      "line": 637,
+      "handler": "loadData",
+      "operation": "localStorage.getItem",
+      "argumentKind": "TemplateExpression"
+    },
+    {
+      "file": "src/utils/mockData.ts",
+      "line": 649,
+      "handler": "saveData",
+      "operation": "localStorage.setItem",
+      "argumentKind": "TemplateExpression"
+    }
+  ],
+  "collectionRefs": [
+    {
+      "file": "src/App.tsx",
+      "line": 221,
+      "collection": "clients"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 241,
+      "collection": "messages"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 285,
+      "collection": "history"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 309,
+      "collection": "campaigns"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 340,
+      "collection": "commercialSegments"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 371,
+      "collection": "campaignTemplates"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 402,
+      "collection": "campaignSchedules"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 433,
+      "collection": "campaignResults"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 464,
+      "collection": "orders"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 495,
+      "collection": "automations"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 526,
+      "collection": "settings"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 553,
+      "collection": "productsDigitalMenu"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 584,
+      "collection": "cardapios"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 615,
+      "collection": "deliveryOrders"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 642,
+      "collection": "couriers"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 667,
+      "collection": "routes"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 692,
+      "collection": "reviews"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 717,
+      "collection": "deliveryHistories"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 749,
+      "collection": "caixaSessions"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 799,
+      "collection": "clients"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 803,
+      "collection": "messages"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 807,
+      "collection": "history"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 811,
+      "collection": "campaigns"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 815,
+      "collection": "commercialSegments"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 819,
+      "collection": "campaignTemplates"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 823,
+      "collection": "campaignSchedules"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 827,
+      "collection": "campaignResults"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 831,
+      "collection": "orders"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 835,
+      "collection": "automations"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 839,
+      "collection": "settings"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 847,
+      "collection": "settings"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 855,
+      "collection": "productsDigitalMenu"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 859,
+      "collection": "cardapios"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 863,
+      "collection": "deliveryOrders"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 867,
+      "collection": "couriers"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 871,
+      "collection": "routes"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 875,
+      "collection": "reviews"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 879,
+      "collection": "deliveryHistories"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 947,
+      "collection": "history"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 983,
+      "collection": "commercialSegments"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 988,
+      "collection": "commercialSegments"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 993,
+      "collection": "campaignTemplates"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 998,
+      "collection": "campaignTemplates"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1003,
+      "collection": "campaigns"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1008,
+      "collection": "campaigns"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1013,
+      "collection": "campaignSchedules"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1018,
+      "collection": "campaignSchedules"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1032,
+      "collection": "clients"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1054,
+      "collection": "messages"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1166,
+      "collection": "orders"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1240,
+      "collection": "messages"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1270,
+      "collection": "automations"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1332,
+      "collection": "caixaSessions"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1369,
+      "collection": "caixaSessions"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1412,
+      "collection": "caixaSessions"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1462,
+      "collection": "caixaSessions"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1480,
+      "collection": "deliveryOrders"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1511,
+      "collection": "deliveryHistories"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1648,
+      "collection": "campaigns"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1682,
+      "collection": "cardapio"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1699,
+      "collection": "cardapios"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1718,
+      "collection": "productsDigitalMenu"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1764,
+      "collection": "couriers"
+    },
+    {
+      "file": "src/App.tsx",
+      "line": 1849,
+      "collection": "automations"
+    },
+    {
+      "file": "src/components/CardapioView.tsx",
+      "line": 64,
+      "collection": "cardapios"
+    },
+    {
+      "file": "src/components/CardapioView.tsx",
+      "line": 64,
+      "collection": "cardapios"
+    },
+    {
+      "file": "src/components/CardapioView.tsx",
+      "line": 543,
+      "collection": "cardapios"
+    },
+    {
+      "file": "src/components/CardapioView.tsx",
+      "line": 545,
+      "collection": "cardapios"
+    },
+    {
+      "file": "src/components/CardapioView.tsx",
+      "line": 601,
+      "collection": "cardapios"
+    },
+    {
+      "file": "src/components/CommercialIntelligenceView.tsx",
+      "line": 69,
+      "collection": "campaigns"
+    },
+    {
+      "file": "src/components/CommercialIntelligenceView.tsx",
+      "line": 69,
+      "collection": "settings"
+    },
+    {
+      "file": "src/components/CommercialIntelligenceView.tsx",
+      "line": 101,
+      "collection": "campaigns"
+    },
+    {
+      "file": "src/components/CommercialIntelligenceView.tsx",
+      "line": 105,
+      "collection": "settings"
+    },
+    {
+      "file": "src/components/CommercialIntelligenceView.tsx",
+      "line": 362,
+      "collection": "campaigns"
+    },
+    {
+      "file": "src/components/CommercialIntelligenceView.tsx",
+      "line": 448,
+      "collection": "settings"
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 47,
+      "collection": "cardapios"
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 48,
+      "collection": "productsDigitalMenu"
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 151,
+      "collection": "deliveryOrders"
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 153,
+      "collection": "clients"
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 205,
+      "collection": "messages"
+    },
+    {
+      "file": "src/components/PublicCardapioView.tsx",
+      "line": 230,
+      "collection": "history"
+    },
+    {
+      "file": "src/components/Sidebar.tsx",
+      "line": 60,
+      "collection": "cardapio"
+    },
+    {
+      "file": "src/components/Sidebar.tsx",
+      "line": 66,
+      "collection": "automations"
+    }
+  ],
+  "conclusion": {
+    "provenance": "PROVENANCE_HIGH_CONFIDENCE",
+    "scope": "common applet lineage; deployed revision source unverified",
+    "firestore": "C_WRITES",
+    "canary": "BLOCK_CANARY",
+    "zipCodeExecuted": false,
+    "cloudChanged": false
+  }
+}

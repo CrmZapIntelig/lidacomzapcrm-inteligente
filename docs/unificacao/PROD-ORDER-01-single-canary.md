@@ -1,5 +1,11 @@
 # PROD-ORDER-01 — canário único: pre-flight bloqueado
 
+## Checkpoint atual — INFRA-01 (2026-10-06)
+
+ZIP fornecido auditado somente leitura: SHA-256 ef7627f76365a9bfcd9a97c3bce40d39a9d2eb1c24bfe89f7523229d2a5c2a65, 67/67 arquivos idênticos à main60fb91f. README aponta ao mesmo applet d0a1f98e-eb48-4e21-bf06-e17eab23635c encontrado na annotation Cloud Run. **PROVENANCE_HIGH_CONFIDENCE** para origem comum; versão da revisão00002-wqh não comprovada. Fonte usa SDK/handlers WRITE no Firestore operacional, inclusive orders/deliveryOrders/caixaSessions. Não é preview isolado. Listener orders apenas atualiza memória/tela; nenhum efeito financeiro automático desse listener foi demonstrado.
+
+**BLOCK_CANARY / GATE_OPERATIONAL_RUNTIME_PROVENANCE_REQUIRED**: falta o código/artefato efetivamente publicado e exclusão dos efeitos laterais/inventário pendentes. Fonte e análise completas em [INFRA-01-runtime-provenance.md](INFRA-01-runtime-provenance.md); prova sanitizada em evidence/INFRA-01-zip-audit.json. Zero Order, zero rule deploy, zero IAM/API/cloud mutations nesta auditoria; flagDISABLED. Autorizações de exatamente1 TEST, contenção limitada e identidade temporária preservadas; não executadas. Meta e Marketing não antecipados. As seções abaixo registram os checkpoints históricos, não substituem este estado atual.
+
 Data: 2026-10-04. HEAD inicial: 41cd5c4d48bb011708b5f145fa22c613ac47a667. Branch codex/unificacao-gestao-inteligente; PR #4 draft; main 60fb91fdf048a8e0d4f9adc29a532be8bf4356dd.
 
 ## Atualização mais recente — contenção autorizada e simulada, publicação suspensa

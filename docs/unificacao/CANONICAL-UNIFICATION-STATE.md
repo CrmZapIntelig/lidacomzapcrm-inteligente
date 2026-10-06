@@ -1,5 +1,11 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## Estado atual — INFRA-01, 2026-10-06
+
+Auditoria read-only do ZIP informado encerrada com **PROVENANCE_HIGH_CONFIDENCE** de origem comum ao applet d0a1f98e-eb48-4e21-bf06-e17eab23635c. Os67 arquivos são idênticos à main60fb91f; não representam o preview integrado/ORDER-02 recente. Fonte auditada **escreve Firestore operacional** via SDK/client handlers, incluindo orders/deliveryOrders/caixaSessions. A revisão Cloud Run00002-wqh efetivamente servida ainda não tem código/digest comprovado. **BLOCK_CANARY**; GATE_OPERATIONAL_RUNTIME_PROVENANCE_REQUIRED permanece pendente, sem repetir autorizações já concedidas do único pedido/contenção/identidade temporária. Nenhum canário, Rules deploy, IAM/API/recurso ou alteração cloud executado nesta fase. FlagDISABLED; rollout proibido. Documento/evidência: INFRA-01-runtime-provenance.md e evidence/INFRA-01-zip-audit.json.
+
+ORDER-02 mantém STAGING READY — TEST ONLY; previews isolados preservados. Meta Developer desbloqueado, META-01 aguardando fechamento seguro do canário; outbound/RCS DISABLED. MKT-AUTO-01 por agendamento e Venda Ativa por draft/manual/lote iniciado pelo operador seguem requisitos aprovados, não promovidos por esta auditoria. SEC-01 PLANEJADO. Checkpoints abaixo preservados como histórico; este é o estado mais recente.
+
 Auditoria corretiva de 2026-10-01, solicitada antes de qualquer staging. Checkout: C:/Users/dfant/LidacomZapCRM. Branch: codex/unificacao-gestao-inteligente. HEAD auditado: ad30da8e657723c4a9da6cf913c235078c169ba4.
 
 ## Um único projeto

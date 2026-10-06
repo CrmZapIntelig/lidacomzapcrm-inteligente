@@ -1,5 +1,16 @@
 # Execution ledger — Unificação
 
+## INFRA-01 — ZIP / proveniência do Cloud Run (2026-10-06)
+
+- HEAD INICIAL: cf2e3eb15d51f487a50614ff52b8d04c9e2aa6ba; branch/main60fb91f/PR4 draft e CI inicial success revalidados. HEAD final/commit identificável por `Audit AI Studio ZIP lineage and block unverified operational runtime`.
+- FONTE: lidacomzapcrm-inteligente-main (2).zip, SHA256 ef7627f76365a9bfcd9a97c3bce40d39a9d2eb1c24bfe89f7523229d2a5c2a65, revalidado inalterado; extração privada fora do repo,67/67 arquivos byte-idênticos à main60fb91f. Nenhum código do ZIP executado/instalado/buildado ou copiado para operação.
+- PROVENIÊNCIA: README e annotation Cloud Run compartilham applet d0a1f98e-eb48-4e21-bf06-e17eab23635c. PROVENANCE_HIGH_CONFIDENCE para origem comum; versão efetivamente publicada da revisão00002-wqh não comprovada por fonte/digest/build.
+- FIRESTORE: C/escreve via SDK configurado para projeto operacional. Matriz READ/WRITE/DELETE/LISTENER e handlers no INFRA-01; orders listener não demonstrou write automático, mas handlers do pacote podem alterar orders/clientes/caixa/delivery/mensagens/histórico. ZIP não é preview recente isolado. Backend executável/worker/triggers não encontrados no pacote, sem afirmar ausência cloud.
+- CLOUD: somente evidência/metadados previamente coletados; nenhuma chamada ou mutação cloud nesta auditoria. Inventário ampliado e runtime sanitizado pendentes da retomada anterior registrados localmente com o relatório. Não habilitar APIs, alterar IAM/serviço/revisão/Rules/applet. Zero Order TEST/audit cloud/identidade temporária; flagDISABLED/rollback não aplicável.
+- VALIDAÇÃO: 67 comparações/hash original/AST estático/diff; referência funcional188 testes/cinco stricts/isolamento/baseline21→21/zero novos/quatro builds preservada, sem mudança funcional. CI inicial push37531587170/PR37531593227 success. Commit de fechamento local somente, sem push/CI nova: synchronize da PR acionaria Hosting staging, proibido durante esta auditoria. Workflow/vars intactos; remoto cf2e3eb/main60fb91f preservados. Não confundir auditoria de ZIP com testes executados nele.
+- STATUS: INFRA-01 audit complete; PROD-ORDER-01 BLOCKED — PREFLIGHT ONLY / BLOCK_CANARY. GATE_OPERATIONAL_RUNTIME_PROVENANCE_REQUIRED exige export/fonte/artefato da versão efetivamente servida, sem secrets, para comparar efeitos e reconciliar inventário antes de SAFE_FOR_ORDER_CANARY. Autorizações anteriores preservadas, sem rollout.
+- PRESERVAÇÃO/NEXT: pessoal/main/default/produção intactos; ZIP não versionado. SEC-01 PLANEJADO; Marketing agendado/Venda Ativa operador preservados como requisitos. Meta Developer desbloqueado; META-01 somente após canário/rollback/CI fechados. Nenhum outbound.
+
 ## PROD-ORDER-01 — contenção autorizada/simulada; inventário gate (2026-10-04)
 
 - HEAD INICIAL:4fece9a0eed29bf691f595f89c80e21dcc55b0a2. PR4draft/main60fb91f/branch confirmados. CI anterior push37241712349/PR37241715805/check37241713172 success.
