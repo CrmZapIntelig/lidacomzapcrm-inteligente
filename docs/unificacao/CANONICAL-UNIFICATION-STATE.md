@@ -4,6 +4,13 @@ Auditoria corretiva de 2026-10-01, solicitada antes de qualquer staging. Checkou
 
 ## Um único projeto
 
+### Continuidade atual — contenção simulada / gate de inventário (2026-10-04)
+
+Autorização de contenção dos dois documentos TEST e janela sem intervenção recebida; não pedir novamente essa autorização. Ruleset/hash operacional inalterados, backup privado separado, alvo/contact/audit ausentes no recheck. Candidato restrito aos DOIS documentos exatos compilou/passou110 requests no simulador oficial; original passou110, zero issues. Descendentes/outros caminhos e leituras mantêm comportamento anterior. Nenhuma regra publicada.
+
+Service Usage confirmou APIs Functions/Eventarc/Extensions DISABLED. Cloud Asset já habilitado retornou zero Functions/Eventarc sem paginação, evidência eventualmente consistente insuficiente para inventário completo;3 service accounts sem identidade canary dedicada. Sem API enable/IAM/recurso/billing/write. GATE_OPERATIONAL_INVENTORY_API_REQUIRED; executor de menor privilégio ainda requer gate separado. Flag DISABLED, canário não executado. SEC-01 FIRESTORE SECURITY HARDENING registrada PLANEJADO, sem alteração global. Meta desbloqueada conforme usuário, retomada continua condicionada ao fechamento do canário. Evidências e escopo em PROD-ORDER-01-single-canary.md e SEC-01-firestore-security-hardening.md.
+
+
 ### Estado mais recente — PROD-ORDER-01 bloqueado no pre-flight (2026-10-04)
 
 Único canário TEST autorizado pelo usuário, mas NÃO executado. Projeto operacional confirmado; alvo/contact/audit TEST ausentes; rules globais permitem read/write if true e não protegem o canário. Functions/Eventarc/Extensions retornam SERVICE_DISABLED, inventário não comprovado; identidade atual Owner não é executor de menor privilégio. Zero escrita cloud, flag DISABLED, nenhum rollback necessário. GATE_OPERATIONAL_CANARY_CONTAINMENT_REQUIRED: proposta limitada aos dois IDs TEST documentada, nenhuma rules/API/IAM alterada. Detalhes e evidência sanitizada: PROD-ORDER-01-single-canary.md; evidence/PROD-ORDER-01-preflight.json.

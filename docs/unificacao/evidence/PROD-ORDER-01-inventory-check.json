@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-04T23:37:08.88Z",
+  "projectId": "project-1300957a-ea82-4645-845",
+  "writes": 0,
+  "apiEnableCalls": 0,
+  "iamChanges": 0,
+  "checks": {
+    "asset-inventory": {
+      "count": 0,
+      "paginated": false,
+      "types": []
+    },
+    "cloudfunctions.googleapis.com": {
+      "state": "DISABLED"
+    },
+    "eventarc.googleapis.com": {
+      "state": "DISABLED"
+    },
+    "firebaseextensions.googleapis.com": {
+      "state": "DISABLED"
+    },
+    "service-accounts": {
+      "count": 3,
+      "paginated": false,
+      "canaryDedicated": []
+    }
+  }
+}

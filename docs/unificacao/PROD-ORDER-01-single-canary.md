@@ -2,7 +2,31 @@
 
 Data: 2026-10-04. HEAD inicial: 41cd5c4d48bb011708b5f145fa22c613ac47a667. Branch codex/unificacao-gestao-inteligente; PR #4 draft; main 60fb91fdf048a8e0d4f9adc29a532be8bf4356dd.
 
-## Autorização e resultado
+## Atualização mais recente — contenção autorizada e simulada, publicação suspensa
+
+HEAD inicial desta continuidade: 4fece9a0eed29bf691f595f89c80e21dcc55b0a2. O usuário autorizou somente os dois documentos TEST e confirmou janela sem intervenção. GATE_OPERATIONAL_CANARY_CONTAINMENT_REQUIRED foi superado para esse escopo; não autoriza APIs/IAM adicionais.
+
+Recheck 2026-10-04T23:35:27.861Z: mesmo ruleset/release/hash anterior, alvo/contact/audit ausentes. Fonte anterior preservada em cópia privada separada antes do recheck; backup não publicado. Nenhuma regra operacional publicada, nenhuma flag habilitada e nenhuma escrita de Order/audit.
+
+Candidato atual: evidence/PROD-ORDER-01-containment.rules, não associado a firebase.json/deploy. Usa o match global existente e condição `request.path` diferente dos dois documentos exatos. Refinamento de escopo mínimo: descendentes mantêm comportamento anterior, sem bloquear caminhos adicionais. Substitui o rascunho anterior com wildcard por coleção/ID descrito abaixo; esse rascunho histórico NÃO foi publicado.
+
+Simulador oficial Firebase Rules `projects.test` recebeu source inline no projeto lidacomzapcrm-staging, sem criar ruleset/release, sem consultas get/exists/getAfter, sem ler/escrever dados Firestore e sem cliente/credencial real no payload. Fonte original compilou/passou110 casos; candidato compilou/passou110 casos, zero issues: get/list/create/update/delete, anônimo e autenticado TEST, dois alvos exatos, IDs vizinhos, clientes/delivery/caixa, caminhos aninhados e descendentes dos alvos. Original permite tudo; candidato nega create/update/delete exclusivamente nos dois documentos e preserva reads e todas as outras expectativas. Prova evidence/PROD-ORDER-01-containment-simulator.json. Isto comprova semântica de requests SDK no simulador, não publicação ou ensaio SDK contra produção. Emulador local não usado (Java8 instalado); nenhum runtime foi instalado/modificado.
+
+Inventário suplementar somente leitura: Service Usage confirmou cloudfunctions.googleapis.com, eventarc.googleapis.com e firebaseextensions.googleapis.com em DISABLED no projeto operacional. Cloud Asset Inventory, API já habilitada, respondeu zero Functions/Eventarc sem paginação usando quota project explícito; é índice eventualmente consistente e não comprova Extensions nem substitui consulta direta. IAM lista3 service accounts, sem identidade dedicada canary. Nenhuma API, IAM, recurso, billing ou credencial alterada. Prova evidence/PROD-ORDER-01-inventory-check.json.
+
+Correção de interpretação: erro SERVICE_DISABLED inicial da consulta Cloud Asset referia-se ao consumer OAuth da CLI, não ao projeto alvo. Requisição somente leitura com x-goog-user-project operacional explícito resolveu Cloud Asset sem habilitar API. O estado DISABLED das três APIs operacionais foi confirmado separadamente via Service Usage; não inferido do erro anterior. Nenhum erro foi tratado como inventário vazio.
+
+**GATE_OPERATIONAL_INVENTORY_API_REQUIRED.** Conforme instrução humana, parar quando a comprovação exigir habilitação de API. Ação mínima proposta: autorizar habilitar SOMENTE cloudfunctions.googleapis.com, eventarc.googleapis.com e firebaseextensions.googleapis.com no projeto operacional para leitura dos inventários, sem deploy/instância/billing/IAM. Se exigir custo/permissão/recurso adicional, parar novamente. Executor de menor privilégio ainda não existe/comprovado; sua configuração requer gate IAM específico posterior, antes de qualquer write. Não usar Owner como executor e não afirmar que Rules limitam Admin SDK.
+
+Publicação da contenção fica suspensa até cumprir todos os requisitos anteriores à publicação, incluindo inventários e executor IAM. Autorização da contenção/um pedido/janela permanece válida; nenhuma nova autorização para o mesmo pedido está sendo solicitada.
+
+SEC-01 registrada como prioridade PLANEJADO — NÃO EXECUTADO em SEC-01-firestore-security-hardening.md, sem saneamento global agora. META-01 aguarda fechamento completo do canário/rollback/CI. Zero Order, rollback não aplicável, flag DISABLED, produção sem mutações desta fase; não há garantia retrospectiva de ausência de alterações feitas por terceiros no banco inteiro.
+
+Fontes oficiais verificadas em 2026-10-04: [simulador Rules](https://firebase.google.com/docs/reference/rules/rest/v1/projects/test), [Service Usage](https://docs.cloud.google.com/service-usage/docs/reference/rest/v1/services/list), [limites de consistência do Cloud Asset](https://docs.cloud.google.com/asset-inventory/docs/asset-types). Requests simulados são inteiramente sintéticos; fontes não usam acesso a dados e nenhum novo recurso foi criado.
+
+Os itens abaixo preservam o checkpoint anterior; autorização/gate/proposta mais recentes são os desta seção.
+
+## Autorização e resultado (checkpoint anterior)
 
 Autorizado exatamente um Order TEST no projeto operacional project-1300957a-ea82-4645-845, total zero/Pendente/Pix, sem cliente persistido, telefone, endereço, NOTA, KDS, delivery, caixa, venda, recebimento ou mensagem. A autorização é condicionada ao pre-flight fail-closed; não autoriza alteração geral das regras, IAM ou habilitação de APIs.
 

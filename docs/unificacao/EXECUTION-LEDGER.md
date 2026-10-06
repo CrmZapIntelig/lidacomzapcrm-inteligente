@@ -1,5 +1,17 @@
 # Execution ledger — Unificação
 
+## PROD-ORDER-01 — contenção autorizada/simulada; inventário gate (2026-10-04)
+
+- HEAD INICIAL:4fece9a0eed29bf691f595f89c80e21dcc55b0a2. PR4draft/main60fb91f/branch confirmados. CI anterior push37241712349/PR37241715805/check37241713172 success.
+- AUTORIZAÇÃO: somente orders/TEST-canary-20261004-41cd5c4 e operationalCanaryAudit/mesmoID; janela sem intervenção confirmada. Contenção gate superado neste escopo; APIs/IAM/recurso/custo continuam não autorizados.
+- PRE-FLIGHT: fonte/release/hash rules inalterados; backup privado separado; ausência dos três IDs TEST revalidada. Nenhuma escrita operacional, flagDISABLED; rollback não aplicável. Zero audit cloud criado.
+- SIMULADOR: projects.test no staging com source inline, sem functions get/exists/getAfter/dados reais; original110/candidato110 SUCCESS, zero issues. Condição de path exato nega SDK mutations apenas nos dois documentos; reads/IDs vizinhos/descendentes/outros caminhos preservados. Candidato não conectado a firebase.json e NÃO publicado.
+- INVENTÁRIO: Service Usage estadosDISABLED Functions/Eventarc/Extensions; Cloud Asset existente respondeu count0 Functions/Eventarc sem paginação com quota-project explícito. Índice eventual não substitui inventários diretos/Extensions.3 service accounts/nenhuma canary dedicada; Owner não usado como executor. Nenhuma API/IAM modificada. Correção: primeiro SERVICE_DISABLED Cloud Asset era do consumer OAuth da CLI; alternativa resolveu sem enable. Não presumir projeto vazio.
+- DOCUMENTAÇÃO: provas sanitizadas preflight-recheck/inventory-check/containment-simulator, candidato.rules e status atual publicados; SEC-01 hardening priorizado PLANEJADO, não executado. Meta assets não auditados, inbound/outbound não retomados.
+- GATE / NEXT:GATE_OPERATIONAL_INVENTORY_API_REQUIRED. Proposta somente habilitação das três APIs para ler inventários, sem criação/deploy/billing/IAM; se necessário executor mínimo, gateIAM posterior. Publicação da contenção e canário aguardam TODOS os pré-requisitos. Não pedir autorização duplicada do único pedido/contencão/janela.
+- PRESERVAÇÃO: alterações pessoais/operacionais anteriores fora dos commits; main/default/operação/cloud preservados. Código operacional/runtime não alterado; baseline/build/testes anteriores188/five stricts/four builds permanecem referência, validação consolidada/CI desta continuidade registrada após execução.
+
+
 ## PROD-ORDER-01 — pre-flight bloqueado sem canário (2026-10-04)
 
 - HEAD INICIAL: 41cd5c4d48bb011708b5f145fa22c613ac47a667; branch/origin/PR #4 draft/main60fb91f confirmados. CI inicial push37221487295/PR37221489969/check37221487671 success.
@@ -406,3 +418,7 @@ alterou main (60fb91f), fontes históricas ou arquivos pessoais. Não houve depl
 ### Validação do registro PROD-ORDER-01
 
 Quatro builds locais aprovados: operacional, UNI-08, integrado e Functions. 188/188 testes; cinco stricts/AST/isolation; baseline21→21/zero novos. Commit documental identificado por Record blocked operational canary preflight and scoped containment proposal; SHA e CI serão confirmados no relatório/checks da PR, sem declarar canário concluído. Nenhum código/executor funcional ou regra cloud alterado.
+
+### Retomada do checkpoint — 2026-10-06
+
+Publicação primeiro da evidência local pendente (220 casos oficiais SUCCESS, fonte/hash/backup privado, Cloud Asset/Service Usage, zero rules deploy/Order/write). Nenhum arquivo funcional mudou nesta retomada; validação funcional188/21→21/quatro builds já comprovada em4fece9a foi preservada, sem repetir. Outputs das sessões adicionais interrompidas não foram recuperados e não são usados como nova prova. Nova autorização humana cobre identidade temporária/role mínima/impersonação/revogação; APIs somente para inventário continuam proibidas. Próxima ação: inventário ampliado read-only já disponível, sem assumir que SERVICE_DISABLED significa vazio. Commit identificado por Publish preserved canary containment simulation and security backlog evidence; CI será verificada nos checks publicados.
