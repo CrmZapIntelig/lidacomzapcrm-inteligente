@@ -1,5 +1,15 @@
 # Execution ledger — Unificação
 
+## META-01 — confirmação jurídica SaaS / revisão final do app (2026-10-06)
+
+- HEAD INICIAL: df088193885e95099ee9ca11c300dd3b065d9ef7; branch/main/remote conferidos, alterações pessoais preservadas. Sem mudança funcional.
+- AUTORIZAÇÃO: proprietário confirmado pelo usuário: lidacomdigital/1694546150694544/LIDACOM BUSINESS EVOLUTION. Gate de titularidade resolvido. Prato Mineiro é cliente, não proprietário do app; deve manter portfólio/WABA/número próprios. Gate específico futuro GATE_PRATO_MINEIRO_OWN_META_ASSETS_ONBOARDING_REQUIRED.
+- UI: rascunho LidacomZapCRM/caso de uso WhatsApp/empresa lidacomdigital preparado até Visão geral, sem submissão. Empresa não verificada selecionável; UI mostra nenhum requisito identificado atualmente. Business Verification Rejeitada continua pendência separada, sem contorno/novo portfólio. Conta Lidacom Digital Agência não selecionada.
+- SEGURANÇA: nenhuma criação App/WABA/phone/subscription/secret; zero outbound/Firestore writes/IAM/API/billing/produção. Botão final aceita Termos da Plataforma/Políticas do Desenvolvedor e cria recurso persistente; confirmação na hora da ação conforme política de automação. GATE_META_APP_CREATION_CONFIRMATION_REQUIRED.
+- FONTES: UI oficial do assistente inspecionada; páginas técnicas oficiais WhatsApp use case/webhooks tentadas via web retornaram429/inacessível. Não usadas como documentação técnica comprovada. Revisar antes de configurar webhook.
+- VALIDAÇÃO: JSON/diff e proteção piloto;213 testes/cinco stricts/baseline21→21/quatro builds/511 Rules permanecem evidência funcional anterior, sem alegar repetição. HEAD final identificável pelo commit de confirmação de proprietário; CI revalidada ao push. PR4draft, main preservada; Hosting staging CI continua preview isolado.
+- NEXT: confirmar criação do app preparado; depois auditar recursos TEST oficiais, secrets server-side e receiver mínimo/worker privado, gates próprios. Nenhum ativo real do restaurante nesta etapa.
+
 ## META-01 — identidade confirmada / auditoria de portfólio concluída (2026-10-06)
 
 - HEAD INICIAL: a7e9d5a4a3c3bef84b387287c036fec6293ff80e; working tree pessoal preservado. Nenhuma mudança funcional neste bloco.

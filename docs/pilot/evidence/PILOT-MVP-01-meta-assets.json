@@ -4,16 +4,20 @@
   "appsList": "NONE_VISIBLE",
   "portfolios": [
     {"businessId":"144789471002545","displayName":"Por Lidacom Digital","visibleApps":0,"legalName":"NOT_SET","verification":"NOT_VERIFIED","currentUserAccess":"FULL","createdYear":2021,"legalSaasOwnership":"NOT_PROVEN"},
-    {"businessId":"1694546150694544","displayName":"lidacomdigital","visibleApps":0,"appsBusinessSettings":"NONE_ADDED","currentUserAccess":"FULL","legalNamePrefix":"LIDACOM BUSINESS EVOLUTION","personalIdentifiers":"OMITTED","website":"https://lidacom.com.br/","verification":"REJECTED","createdYear":2020,"legalSaasOwnership":"USER_CONFIRMATION_REQUIRED"},
+    {"businessId":"1694546150694544","displayName":"lidacomdigital","visibleApps":0,"appsBusinessSettings":"NONE_ADDED","currentUserAccess":"FULL","legalNamePrefix":"LIDACOM BUSINESS EVOLUTION","personalIdentifiers":"OMITTED","website":"https://lidacom.com.br/","verification":"REJECTED","createdYear":2020,"legalSaasOwnership":"USER_CONFIRMED"},
     {"businessId":"108180028128224","displayName":"Curso vivendo de IPHONE","visibleApps":0,"legalSaasOwnership":"NOT_AUDITED"}
   ],
-  "selectedSaasPortfolio": null,
+  "selectedSaasPortfolio": "1694546150694544",
+  "ownershipGate": "RESOLVED_BY_EXPLICIT_USER_CONFIRMATION",
+  "appDraft": {"name":"LidacomZapCRM","useCase":"WHATSAPP","stage":"FINAL_REVIEW_NOT_SUBMITTED","portfolio":"1694546150694544","companyVerified":false,"publicationRequirementsShown":"NONE_IDENTIFIED_FOR_SELECTED_USE_CASE"},
+  "clientAssetBoundary": {"pratoMineiroIsSaasOwner":false,"restaurantOwnPortfolioRequired":true,"restaurantOwnWabaRequired":true,"restaurantOwnPhoneRequired":true,"realOnboardingGate":"GATE_PRATO_MINEIRO_OWN_META_ASSETS_ONBOARDING_REQUIRED"},
+  "businessVerificationPending": "REJECTED_NO_BYPASS_NO_ALTERNATE_PORTFOLIO",
   "appCreated": false,
   "wabaCreated": false,
   "phoneConfigured": false,
   "secretsCollected": false,
   "authenticationGate": "RESOLVED_USER_CONFIRMED_AND_UI_VERIFIED",
   "existingWhatsAppAssets": [{"assetId":"1589099725538820","name":"Lidacom Digital Agência","ownerPortfolio":"1694546150694544","type":"WHATSAPP_BUSINESS_APP","accountStatus":"APPROVED","businessVerification":"NOT_VERIFIED","testAsset":"NOT_PROVEN","usedForPratoMineiro":false}],
-  "gate": "GATE_META_SAAS_BUSINESS_PORTFOLIO_REQUIRED",
-  "reason": "Confirm legal SaaS owner before app creation; existing agency WhatsApp is separate from restaurant assets"
+  "gate": "GATE_META_APP_CREATION_CONFIRMATION_REQUIRED",
+  "reason": "Final app creation review prepared; creation not submitted. Agency account not selected; only official TEST resources authorized after creation"
 }

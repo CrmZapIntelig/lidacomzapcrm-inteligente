@@ -1,5 +1,11 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## META-01 — proprietário SaaS confirmado / criação em revisão final (2026-10-06)
+
+Usuário confirmou **lidacomdigital / Business ID1694546150694544 / LIDACOM BUSINESS EVOLUTION** como proprietário do app principal **LidacomZapCRM**. GATE_META_SAAS_BUSINESS_PORTFOLIO_REQUIRED RESOLVIDO. Prato Mineiro é cliente piloto, com portfólio/WABA/número próprios e separados; onboarding real exige **GATE_PRATO_MINEIRO_OWN_META_ASSETS_ONBOARDING_REQUIRED**. Conta Lidacom Digital Agência não selecionada.
+
+Assistente oficial preparado até revisão final: nome LidacomZapCRM, caso de uso WhatsApp, empresa lidacomdigital não verificada. UI permite esse vínculo e informa nenhum requisito identificado para o caso de uso atual; não equivale a autorização de publicação/acesso a ativos de terceiros. Business Verification **REJEITADA** permanece pendência própria, sem tentativa de contorno/reverificação/novo portfólio. **GATE_META_APP_CREATION_CONFIRMATION_REQUIRED** antes de clicar Criar aplicativo; nenhum App/WABA/test phone/subscription/secret criado. Somente TEST autorizado. Meta/RCS/outbound e writes operacionais permanecem DISABLED. Seções seguintes preservam checkpoints históricos.
+
 ## Estado vigente — PILOT-MVP-01 / retomada do checkpoint (2026-10-06)
 
 **PROD-ORDER-01 PAUSED — PILOT PRIORITIZATION**, por nova instrução humana. Canário0/1, flagDISABLED, sem Rule deploy/IAM/identidade temporária/Order cloud. Inventário operacional pendente é histórico para futura retomada; não habilitar APIs nem usar esse canário como pré-requisito para META-01. Cloud Run AI/Agent Studio removido permanece removido. Seções anteriores abaixo são checkpoints históricos, inclusive o vínculo antigo Meta→canário, superado pelo controlador do piloto.
