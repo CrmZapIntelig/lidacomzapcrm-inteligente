@@ -1,5 +1,9 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## META-01 — App criado / recursos TEST aguardam novos termos (2026-10-07)
+
+Reautenticação concluída e criação comprovada pelo painel: **LidacomZapCRM / App ID1480563193903800 / proprietário lidacomdigital1694546150694544 / NÃO PUBLICADO**. Gate de login resolvido. Etapa WhatsApp Experimente oferece número oficial TEST para até5 telefones, ainda não configurado. **GATE_META_TEST_TERMS_ACCEPTANCE_REQUIRED**: botão Continuar aceita termos adicionais WhatsApp Business/Meta Cloud API Hosting; não acionado antes de confirmação específica. Sem WABA/phone/recipient/subscription/secret configurado, zero outbound/inbound real. Verificação empresarial REJEITADA pendente própria; conta agência e ativos do Prato Mineiro não selecionados. Produção/main/default/preview e worker privado intactos. Checkpoints abaixo históricos.
+
 ## META-01 — criação autorizada / reautenticação humana (2026-10-07)
 
 Autorização específica do botão final recebida; Criar aplicativo acionado uma vez para LidacomZapCRM/WhatsApp/lidacomdigital1694546150694544. Meta exige senha novamente na janela oficial: **GATE_META_INTERACTIVE_LOGIN_REQUIRED**. Criação NÃO CONFIRMADA, sem App ID, nenhum WABA/phone/subscription/secret; não repetir requisição enquanto aguarda autenticação humana. Nenhuma credencial coletada. Titularidade SaaS resolvida; verificação empresarial REJEITADA permanece pendência própria; ativos do restaurante e conta da agência não selecionados. Outbound/produção DISABLED. Próximo: usuário autentica diretamente no navegador, depois verificar resultado antes de continuar TEST. Checkpoints abaixo são históricos.

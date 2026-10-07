@@ -55,6 +55,8 @@ Fila autorizada de envio e execução por lote ainda dependem de provider/creden
 
 ## Meta — titularidade confirmada e revisão final do app
 
+**Estado vigente2026-10-07:** reautenticação concluída; painel confirmou **App LidacomZapCRM /1480563193903800 / proprietário1694546150694544 / NÃO PUBLICADO**. Etapa WhatsApp Experimente oferece número TEST para até5 telefones; botão Continuar aceita novos termos WhatsApp Business/Cloud API Hosting e aguarda **GATE_META_TEST_TERMS_ACCEPTANCE_REQUIRED**. Nenhum destinatário/número/subscription/secret configurado ou mensagem enviada. Gate de autenticação resolvido. Checkpoints seguintes históricos; detalhes atuais em ../unificacao/META-01-inbound-staging.md.
+
 **Checkpoint2026-10-07:** confirmação específica recebida e Criar aplicativo acionado uma vez. Meta abriu Digite sua senha novamente. **GATE_META_INTERACTIVE_LOGIN_REQUIRED**, criação ainda não confirmada. Autenticar diretamente no navegador; nenhuma credencial pelo chat, nenhum retry da criação. Revisão descrita abaixo registra a configuração submetida; o gate de confirmação anterior está resolvido. Ainda não há App ID/WABA/phone/secret comprovado criado. Estado detalhado em ../unificacao/META-01-inbound-staging.md.
 
 O usuário confirmou **lidacomdigital / Business ID1694546150694544 / LIDACOM BUSINESS EVOLUTION** como proprietário do app principal SaaS **LidacomZapCRM**. Autenticação e GATE_META_SAAS_BUSINESS_PORTFOLIO_REQUIRED RESOLVIDOS. O portfólio não pertence ao Prato Mineiro: o restaurante é primeiro cliente piloto e deve manter seu próprio Business Portfolio, WABA, número e demais ativos. Futuro onboarding exige **GATE_PRATO_MINEIRO_OWN_META_ASSETS_ONBOARDING_REQUIRED**; não criar ativos do restaurante dentro da Lidacom.

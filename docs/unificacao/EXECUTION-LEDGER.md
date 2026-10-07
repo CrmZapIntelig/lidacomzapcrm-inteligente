@@ -1,5 +1,14 @@
 # Execution ledger — Unificação
 
+## META-01 — app criado comprovado / gate termos TEST (2026-10-07)
+
+- HEAD INICIAL:8c943dbcb384a70e2d0f0e873f5a952773788d25; pessoal preservado; documental somente.
+- AUTH/APP: usuário concluiu autenticação; painel oficial LidacomZapCRM confirmou App ID1480563193903800/proprietário1694546150694544/statusNão publicado. Login gate resolvido; não criar duplicata. Business Verification Rejeitada pendente própria, conta da agência/ativos reais Prato separados.
+- TEST: etapa Experimente oferece número oficial TEST para até5 telefones; Continuar aceita termos adicionais WhatsApp Business/Cloud API Hosting. Não clicado; GATE_META_TEST_TERMS_ACCEPTANCE_REQUIRED pela política de navegador para novo aceite vinculante. Sem número/destinatário/subscription/secret coletado/configurado, zero send/inbound real. Callback público/worker privado ainda não ligados Meta.
+- FONTES: UI oficial comprovada, links legais registrados na META-01; get-started web429 não usado como leitura técnica. Worker STG-03 privado preservado, produção/IAM/API/billing/Firestore não alterados.
+- VALIDAÇÃO: JSON/diff/proteção piloto;213 testes/cinco stricts/baseline21→21/quatro builds anterior preservados; CI do commit documental conferida após push na PR. HEAD final identificável por Record created SaaS Meta app and TEST terms gate.
+- NEXT: confirmação específica dos novos termos, então mínimo TEST sem outbound; gates futuros de secrets/destinatário/mensagem inbound conforme necessidade. PR4draft/main/default preservados.
+
 ## META-01 — criação especificamente autorizada / senha requerida (2026-10-07)
 
 - HEAD INICIAL:8534e33dbc2552eac124675af9682fa911abece0; working tree pessoal preservado; alteração documental somente.

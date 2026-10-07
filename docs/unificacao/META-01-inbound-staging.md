@@ -1,5 +1,17 @@
 # META-01 — inbound TEST em staging
 
+## Checkpoint vigente — app criado / termos TEST (2026-10-07)
+
+HEAD inicial8c943dbcb384a70e2d0f0e873f5a952773788d25. Usuário concluiu reautenticação; painel oficial confirmou **LidacomZapCRM / App ID1480563193903800 / Business ID1694546150694544**, status **Não publicado**. GATE_META_INTERACTIVE_LOGIN_REQUIRED RESOLVIDO. Criação autorizada encerrada, não criar segundo app. Valores pessoais/credenciais omitidos.
+
+Caso de uso WhatsApp → Configuração básica → **Etapa1.Experimente**: portfólio lidacomdigital fixo; UI oferece número oficial TEST para no máximo5 telefones. **Nenhum destinatário selecionado, nenhum número configurado e nenhum envio.** Não avançar para Configuração da produção nem usar conta da agência/ativos do restaurante.
+
+Botão **Continuar** aceita termos adicionais: [Termos do Facebook para o WhatsApp Business](https://www.whatsapp.com/legal/FB-terms-whatsapp-business) e [Termos de Hospedagem da Meta para a API de Nuvem](https://www.facebook.com/legal/Meta-Hosting-Terms-Cloud-API). **GATE_META_TEST_TERMS_ACCEPTANCE_REQUIRED** na hora da ação: aceite juridicamente vinculante distinto dos termos já aceitos na criação do app. Autorização genérica não substitui essa confirmação da política de navegador. Tela preparada/privada fora do Git; botão não acionado.
+
+Após confirmação, configurar somente recursos TEST oficiais, sem sender/número real/outbound. Destinatário autorizado e primeira mensagem inbound manual continuam gates próprios quando necessários. App SaaS Lidacom e ativos próprios do Prato Mineiro separados; Business Verification REJEITADA é pendência separada, sem contorno. Callback público mínimo/worker privado/secrets server-side ainda pendentes; STG-03 privado sintético preservado, não público.
+
+Fontes desta continuidade: painel/UI oficiais inspecionados em2026-10-07; consulta web get-started/documentation/business-messaging retornou429, não considerada documentação técnica lida. Limite5 é oferta da UI TEST, não quota comercial/provider inventada. Inbound real ainda NÃO VALIDADO, Meta/RCS/outbound DISABLED.
+
 ## Checkpoint atual — reautenticação na criação do app (2026-10-07)
 
 HEAD inicial8534e33dbc2552eac124675af9682fa911abece0, branch codex/unificacao-gestao-inteligente/PR4draft. Restrição trusted-device anterior resolvida pelo usuário; cadastro Developer e acesso ao painel comprovados nas etapas posteriores. Não criar outro cadastro/portfólio para contornar verificação.
