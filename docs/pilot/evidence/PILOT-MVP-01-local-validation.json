@@ -16,5 +16,7 @@
   "outboundMessages": 0,
   "canonicalOrderCanary": "PAUSED_PILOT_PRIORITIZATION",
   "metaGate": "GATE_META_INTERACTIVE_AUTHENTICATION_REQUIRED",
-  "ci": "VERIFY_AFTER_BRANCH_PUBLICATION"
+  "rootDependencyAudit": {"total":17,"critical":2,"high":9,"moderate":5,"low":1,"lockfileChanged":false,"resolved":false},
+  "publishedPreparationHead": "6d2b4a0ba59dcb9ebfc10b3f7be277a3d0d8b2f8",
+  "ci": {"verifiedHead":"6d2b4a0ba59dcb9ebfc10b3f7be277a3d0d8b2f8","pushRun":37561373123,"pushResult":"success","codeAnalysisRun":37561373241,"codeAnalysisResult":"success","prRun":37561377544,"prResult":"success","prTechnicalJob":"success","stagingPreview":"success"}
 }
