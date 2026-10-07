@@ -49,5 +49,5 @@ export interface PrintSnapshot { version: 1; mode: 'SIMULATION'; kind: PrintKind
 export function renderPrintSnapshot(snapshot: PrintSnapshot): string {
   if (snapshot.version !== 1 || snapshot.mode !== 'SIMULATION' || !['PEDIDO', 'COMANDA', 'COZINHA', 'RECIBO', 'ABERTURA_CAIXA', 'FECHAMENTO_CAIXA', 'MESA'].includes(snapshot.kind)) throw new Error('UNSUPPORTED_PRINT_SNAPSHOT');
   const escape = (value: string) => value.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
-  return `<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>${escape(snapshot.kind)}</title><body><h1>${escape(snapshot.kind)} · DEMO</h1><p>SIMULAÇÃO — sem valor fiscal</p><p>${escape(snapshot.reference)}</p>${snapshot.lines.map(line => `<p>${escape(line)}</p>`).join('')}</body></html>`;
+  return `<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>${escape(snapshot.kind)}</title><style>@page{size:80mm auto;margin:3mm}body{max-width:74mm;margin:0 auto;font:12px monospace;color:#000;background:#fff}h1{font-size:16px}p{white-space:pre-wrap;overflow-wrap:anywhere;margin:5px 0}@media print{body{width:74mm}}</style><body><h1>${escape(snapshot.kind)} · DEMO</h1><p>SIMULAÇÃO — sem valor fiscal</p><p>${escape(snapshot.reference)}</p>${snapshot.lines.map(line => `<p>${escape(line)}</p>`).join('')}</body></html>`;
 }

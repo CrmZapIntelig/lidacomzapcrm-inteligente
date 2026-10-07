@@ -24,6 +24,7 @@ jobs:
       - run: node node_modules/typescript/bin/tsc -p tsconfig.staging-functions.json
       - run: npm run build --prefix staging-functions
       - run: node --test tools/unification/staging-runtime.test.mjs
+      - run: node --test tools/pilot/pilot-safety.test.mjs
       - run: node tools/unification/check-messaging-safety.mjs
       - run: node tools/unification/check-baseline.mjs
       - run: npm run build

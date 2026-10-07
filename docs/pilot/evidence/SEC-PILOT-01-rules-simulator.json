@@ -1,0 +1,63 @@
+{
+  "at": "2026-10-07T02:10:10.002Z",
+  "phase": "SEC-PILOT-01",
+  "simulatorProject": "lidacomzapcrm-staging",
+  "sourceSha256": "c19e00df45af7c4840ddd9e713707cba1e97cfc15c1f63327742858bbeed2086",
+  "total": 511,
+  "groups": {
+    "access-matrix": 330,
+    "protected-descendants": 144,
+    "public-projection": 30,
+    "public-invalid": 4,
+    "invalid-client": 3
+  },
+  "results": [
+    {
+      "count": 100,
+      "states": {
+        "SUCCESS": 100
+      },
+      "issues": []
+    },
+    {
+      "count": 100,
+      "states": {
+        "SUCCESS": 100
+      },
+      "issues": []
+    },
+    {
+      "count": 100,
+      "states": {
+        "SUCCESS": 100
+      },
+      "issues": []
+    },
+    {
+      "count": 100,
+      "states": {
+        "SUCCESS": 100
+      },
+      "issues": []
+    },
+    {
+      "count": 100,
+      "states": {
+        "SUCCESS": 100
+      },
+      "issues": []
+    },
+    {
+      "count": 11,
+      "states": {
+        "SUCCESS": 11
+      },
+      "issues": []
+    }
+  ],
+  "rulesPublished": false,
+  "firestoreDataLookups": 0,
+  "operationalWrites": 0,
+  "source": "INLINE_SOURCE_SYNTHETIC_REQUESTS_ONLY",
+  "status": "CANDIDATE_SIMULATOR_VALIDATED_NOT_DEPLOYED"
+}

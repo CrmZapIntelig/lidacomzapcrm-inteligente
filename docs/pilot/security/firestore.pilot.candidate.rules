@@ -1,0 +1,50 @@
+rules_version = '2';
+// CANDIDATE ONLY: not linked to any deployment config, not operationally approved.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function operator() {
+      return request.auth != null
+        && request.auth.token.get('pilotOrganizationId', '') == 'prato-mineiro'
+        && request.auth.token.get('pilotOperator', false) == true;
+    }
+    function legacyOperator() {
+      return operator() && request.auth.token.get('legacyOperator', false) == true;
+    }
+    match /clients/{id} {
+      allow read: if operator();
+      allow create, update: if operator()
+        && request.resource.data.id == id
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 160;
+      allow delete: if false;
+    }
+    match /messages/{id} {
+      allow read: if operator();
+      // Sender/provider facts must be written through authenticated server ports.
+      allow write: if false;
+    }
+    match /history/{id} {
+      allow read: if operator();
+      allow create: if operator() && request.resource.data.id == id
+        && request.resource.data.clientId is string;
+      allow update, delete: if false;
+    }
+    match /pilotPublicMenus/{id} {
+      allow get: if resource.data.published == true
+        && resource.data.keys().hasOnly(['id', 'name', 'description', 'products', 'published'])
+        && resource.data.name is string && resource.data.products is list
+        && resource.data.id == id;
+      allow list, write: if false;
+    }
+    match /{collection}/{id} {
+      allow read: if operator() && collection in ['cardapios', 'productsDigitalMenu', 'orders', 'deliveryOrders', 'settings'];
+      allow write: if legacyOperator() && collection in ['cardapios', 'productsDigitalMenu', 'orders', 'deliveryOrders', 'settings'];
+    }
+    match /{collection}/{document=**} {
+      // No overlapping allow can reopen protected collections or their children.
+      allow read, write: if legacyOperator()
+        && !(collection in ['clients', 'messages', 'history', 'cardapios', 'productsDigitalMenu', 'orders', 'deliveryOrders', 'settings', 'pilotPublicMenus', 'operationalCanaryAudit']);
+    }
+  }
+}
