@@ -1,5 +1,15 @@
 # Execution ledger — Unificação
 
+## META-01 — rotação informada / Secret Manager staging gate (2026-10-07)
+
+- HEAD INICIAL:9b6ee8da8911a2fffce6694a73e1172f318ea0a3; pessoal/main/branch preservados. Sem mudança funcional.
+- ROTATION: usuário informou redefinição e0horas; gate resolvido por relato, sem verificar valor/revogar viaAPI/chave antiga. Interpretação de prazo antigo explicitamente inferida, esclarecimento opcional pendente. Nova chave não lida/coletada/transferida.
+- UI SAFE: metadados/handle sem AX, somente botões; nenhum print/DOM geral/meta credential value. Console Google somente leitura no projetoexato lidacomzapcrm-staging, produto secretmanager.googleapis.com/Ativar; não acionado. Inventário secrets ainda não acessível.
+- GATE: GATE_STAGING_SECRET_MANAGER_ENABLE_REQUIRED: ativar novo serviço medido apenasstaging, depois inventário/criar ou reutilizar2secrets(meta-test-app-secret/meta-test-verify-token)/1versão cada/replicaçãoauto. Não operacional/billing/budget/cartão/IAMruntime/access token/outbound.
+- CUSTO/FONTES: docs oficiais Google pricing e creating-and-accessing-secrets lidas2026-10-07;6versões/10milacessos gratuitos compartilhados pela billing account, saldo não comprovado;2versões US$0,12/mês forafranquia, acessos adicionaisUS$0,03/10mil. Não hardcap; budgetR$10 existente intacto.
+- VALIDAÇÃO: JSON/diff/proteção piloto; suíte213/cinco stricts/21→21/quatro builds continuam referência CI anterior, sem repetir nuvem. Commit final identificável por Record reported secret rotation and staging Secret Manager gate; CI revalidada ao push/PRdraft. Nenhum segredo real no commit/PR, nenhuma cloudmutation/produção/envio.
+- NEXT: autorização específica de serviço/custo; seguir configuração server-side segura e receiver dedicado/worker privado antes de inbound. Não criar novo App/WABA/phone, não retomar canário operacional.
+
 ## META-01 — contenção após exposição automática de App Secret (2026-10-07)
 
 - CORREÇÃO DE CONTENÇÃO: Mostrar após reload não prova máscara. Booleans locais sem output do valor não comprovaram ocultação; página deixada para dashboard. Nenhum screenshot/arquivo de campo de chave criado; handoff no dashboard, usuário navega Básico para reset. Não assumir campo oculto pelo nome do botão.

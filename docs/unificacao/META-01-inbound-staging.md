@@ -1,5 +1,19 @@
 # META-01 — inbound TEST em staging
 
+## Estado vigente — rotação informada / ativação Secret Manager staging (2026-10-07)
+
+HEAD inicial9b6ee8da8911a2fffce6694a73e1172f318ea0a3. Usuário informou chave redefinida e opção0horas salva. GATE_META_APP_SECRET_ROTATION_REQUIRED resolvido por confirmação humana; não testar/reutilizar chave anterior. O intervalo é interpretado como prazo da chave antiga, mas texto exato e revogação não foram verificados independentemente. Pergunta curta opcional apresentada para distinguir expiração antiga/nova; nenhum segredo necessário no chat. Nova chave não lida/transmitida pelo agente.
+
+Aba Meta localizada por metadados e binding sem retorno AX; inspecionados somente nomes de botões, nunca valores de campos. Não usar cua.getTab/getAXState/domSnapshot geral nessa página após reautenticação. Preparar transferência direta entre campos de origem e destino autorizado sem imprimir material, screenshot do segredo, clipboard exportado, arquivo intermediário ou comandos com valores; interromper se a ferramenta exigir devolver conteúdo sensível.
+
+Secret Manager aberto no console oficial: URL/project picker **lidacomzapcrm-staging / LidacomZapCRM Staging**, redirecionado ao produto secretmanager.googleapis.com com botão Ativar. **API ainda não ativada**, inventário de secrets ainda indisponível, não presumir zero recursos em outros projetos. Nenhuma transferência/GCPmutation/API/IAM/billing/secret/access token executada.
+
+**GATE_STAGING_SECRET_MANAGER_ENABLE_REQUIRED**: novo serviço medido, escopo proposto exclusivamente ativar secretmanager.googleapis.com no staging e, após inventário, criar/reutilizar `meta-test-app-secret` (chave redefinida do app1480563193903800) e `meta-test-verify-token` (token forte), uma versão de cada, replicação automática. Sem habilitar no projeto operacional, alterar billing/budget/cartão, criar access token de envio ou conceder novo IAM runtime nesta etapa. Grants/public receiver devem ser concretamente revisados em etapa posterior.
+
+Custos oficiais consultados2026-10-07: [pricing](https://cloud.google.com/secret-manager/pricing) inclui6 versões ativas e10mil acessos/mês, cotas agregadas por billing account. Disponibilidade restante não comprovada. Fora da franquia,2 versões em replicação automática correspondem a US$0,12/mês de armazenamento, proporcional ao uso; acessos adicionais US$0,03/10mil. Não é preço total da infraestrutura nem hard cap; budgetR$10/alertas existentes não foram alterados/recriados. Criação/management operations gratuitas não tornam armazenamento/acessos ilimitados gratuitos. [Criação segura](https://docs.cloud.google.com/secret-manager/docs/creating-and-accessing-secrets) consultada, não executada.
+
+Após aprovação específica de serviço/custo: ativar apenas staging, auditar inventário antes de criar, preparar entrada segura dos dois secrets sem output, depois seguir receiver dedicado/worker privado com testes/guards/menor privilégio. Não declarar Meta inbound real validado. TEST assets existentes/appnãoPublicado/callbackvazio/outboundDISABLED/produção/default/main/pessoal preservados.
+
 ## Contenção vigente — App Secret no retorno automático da ferramenta (2026-10-07)
 
 Correção da contenção: retorno de Mostrar após reload não comprova mascaramento do valor. Verificações locais retornaram apenas booleans, nunca conteúdo; por precaução, navegador levado ao dashboard do app, fora da página de credenciais. Não capturar screenshot do campo nem rebindar Básico após rotação. Usuário abre Básico diretamente para concluir reset.

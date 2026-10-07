@@ -55,6 +55,8 @@ Fila autorizada de envio e execução por lote ainda dependem de provider/creden
 
 ## Meta — titularidade confirmada e revisão final do app
 
+**Estado mais recente:** usuário confirmou chave redefinida/opção0horas (prazo exato ainda não verificado). Nova chave não lida/transmitida; antiga não usada. Secret Manager no projeto staging está na etapa Ativar, sem execução. GATE_STAGING_SECRET_MANAGER_ENABLE_REQUIRED para novo serviço medido/2secrets exclusivosstaging, franquia compartilhada não comprovada. Nenhum IAM/secret/enable/custo operacional/outbound. Fluxo de entrada deve evitar AX/DOM/print de chave; detalhes META-01. Abaixo histórico.
+
 **Gate mais recente:** App Secret apareceu no retorno automático da ferramenta após reautenticação. Chave tratada como potencialmente exposta; não usar/persistir/reproduzir. Página voltou a ocultar; GATE_META_APP_SECRET_ROTATION_REQUIRED para rotação diretamente na Meta pelo usuário. Sem segredo no Git/cloud/PR e zero outbound. Entrada segura staging posterior deve evitar retorno sensível; detalhes/contensão META-01. Checkpoints abaixo históricos.
 
 **Gate vigente:** Mostrar App Secret em Básico abriu senha novamente. GATE_META_INTERACTIVE_LOGIN_REQUIRED; segredo permanece oculto, autenticar diretamente na Meta. Sem pedido de senha/secret pelo chat e sem repetir autorização genérica de continuidade. Configuração server-side segura permanece próxima etapa técnica; assets TEST provisionados/zero outbound, receiver ainda pendente. Detalhes e histórico na META-01.

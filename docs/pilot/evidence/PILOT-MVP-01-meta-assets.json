@@ -22,10 +22,11 @@
   "phoneScope": "META_PROVISIONED_OFFICIAL_TEST_ONLY",
   "secretsCollected": true,
   "secretCollectionScope": "ACCIDENTAL_AUTOMATIC_TOOL_RESPONSE_ONLY_NOT_REUSED_OR_PERSISTED_BY_AGENT",
-  "credentialContainment": {"appSecretPotentiallyExposed":true,"valueRecordedInEvidence":false,"cloudSecretStored":false,"usedForHmacOrSend":false,"pageReloadedAndShowButtonRestored":true,"credentialPageLeftForDashboard":true,"maskingNotProvenFromButtonAlone":true,"rotationCompleted":false,"safeContinuationRequiresRotation":true},
+  "credentialContainment": {"appSecretPotentiallyExposed":true,"valueRecordedInEvidence":false,"cloudSecretStored":false,"usedForHmacOrSend":false,"pageReloadedAndShowButtonRestored":true,"credentialPageLeftForDashboard":true,"maskingNotProvenFromButtonAlone":true,"rotationCompleted":true,"rotationEvidence":"USER_REPORTED_20261007","overlapHoursReported":0,"overlapMeaning":"OLD_SECRET_EXPIRY_INFERRED_NOT_INDEPENDENTLY_VERIFIED","oldSecretRevocationIndependentlyVerified":false,"safeContinuationRequiresRotation":false,"newSecretReadOrTransferredByAgent":false},
+  "secretManagerReadiness": {"projectId":"lidacomzapcrm-staging","api":"secretmanager.googleapis.com","state":"OFFICIAL_UI_ENABLE_REQUIRED","enableClicked":false,"proposedSecrets":["meta-test-app-secret","meta-test-verify-token"],"proposedActiveVersions":2,"freeTierSharedByBillingAccount":true,"freeTierAvailabilityVerified":false,"runtimeIamGranted":false},
   "authenticationGate": "RESOLVED_USER_REAUTH_AND_UI_ACCESS_CONFIRMED",
   "existingWhatsAppAssets": [{"assetId":"1589099725538820","name":"Lidacom Digital Agência","ownerPortfolio":"1694546150694544","type":"WHATSAPP_BUSINESS_APP","accountStatus":"APPROVED","businessVerification":"NOT_VERIFIED","testAsset":"NOT_PROVEN","usedForPratoMineiro":false}],
   "termsGate": "RESOLVED_USER_DIRECT_UI",
-  "gate": "GATE_META_APP_SECRET_ROTATION_REQUIRED",
-  "reason": "After human reauthentication, automatic tab binding returned a visible App Secret in tool output. Value not copied into docs/Git/cloud and not used. Page reloaded to conceal; user must rotate credential directly in Meta before secure staging configuration"
+  "gate": "GATE_STAGING_SECRET_MANAGER_ENABLE_REQUIRED",
+  "reason": "User reports key reset with zero-hour option; new key not read or transferred. Exact staging project UI requires enabling Secret Manager, a new metered service with shared free tier. Activation/two secrets not executed before scoped cost/service approval"
 }

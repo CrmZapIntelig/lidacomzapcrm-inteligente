@@ -1,5 +1,9 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## META-01 — rotação humana informada / Secret Manager ainda desativado (2026-10-07)
+
+Usuário informou redefinição da chave/opção0horas; gate de rotação resolvido por relato humano, revogação/prazo exato não comprovados independentemente. Chave anterior não utilizada e nova não lida/transmitida. Navegação Meta segura por controles/metadados, sem AX/DOM geral de segredo. Console confirmou projeto lidacomzapcrm-staging e Secret Manager com Ativar; nenhum enable/secret/IAM/cloudmutation. **GATE_STAGING_SECRET_MANAGER_ENABLE_REQUIRED** para novo serviço medido e2 secrets/1versão cada somente staging; franquia compartilhada na billing account não comprovada livre. BudgetR$10 preservado/não hardcap. Nenhum recurso operacional, sender ou outbound. Detalhes META-01; abaixo histórico.
+
 ## META-01 — contenção de credential material / rotação humana (2026-10-07)
 
 Reautenticação concluída; binding automático da aba retornou App Secret visível em tool output. Potencialmente exposto: não reproduzido no Git/docs/PR, não configurado no cloud/não usado. Página recarregada para ocultar. **GATE_META_APP_SECRET_ROTATION_REQUIRED** para redefinição diretamente na Meta pelo usuário; política de navegador requer handoff em alteração de credencial. Não reutilizar chave anterior. Após rotação, entrada segura server-side precisa mecanismo que não gere retorno de conteúdo sensível; não ler AX/DOM geral enquanto novo segredo visível. Nenhum token/access grant/Firestore/outbound/produção; app/assetsTEST existentes preservados. Abaixo histórico.
