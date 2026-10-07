@@ -22,7 +22,7 @@
   "phoneScope": "META_PROVISIONED_OFFICIAL_TEST_ONLY",
   "secretsCollected": true,
   "secretCollectionScope": "ACCIDENTAL_AUTOMATIC_TOOL_RESPONSE_ONLY_NOT_REUSED_OR_PERSISTED_BY_AGENT",
-  "credentialContainment": {"appSecretPotentiallyExposed":true,"valueRecordedInEvidence":false,"cloudSecretStored":false,"usedForHmacOrSend":false,"pageReloadedAndShowButtonRestored":true,"rotationCompleted":false,"safeContinuationRequiresRotation":true},
+  "credentialContainment": {"appSecretPotentiallyExposed":true,"valueRecordedInEvidence":false,"cloudSecretStored":false,"usedForHmacOrSend":false,"pageReloadedAndShowButtonRestored":true,"credentialPageLeftForDashboard":true,"maskingNotProvenFromButtonAlone":true,"rotationCompleted":false,"safeContinuationRequiresRotation":true},
   "authenticationGate": "RESOLVED_USER_REAUTH_AND_UI_ACCESS_CONFIRMED",
   "existingWhatsAppAssets": [{"assetId":"1589099725538820","name":"Lidacom Digital Agência","ownerPortfolio":"1694546150694544","type":"WHATSAPP_BUSINESS_APP","accountStatus":"APPROVED","businessVerification":"NOT_VERIFIED","testAsset":"NOT_PROVEN","usedForPratoMineiro":false}],
   "termsGate": "RESOLVED_USER_DIRECT_UI",

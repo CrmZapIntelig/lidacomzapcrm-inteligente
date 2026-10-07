@@ -2,6 +2,8 @@
 
 ## Contenção vigente — App Secret no retorno automático da ferramenta (2026-10-07)
 
+Correção da contenção: retorno de Mostrar após reload não comprova mascaramento do valor. Verificações locais retornaram apenas booleans, nunca conteúdo; por precaução, navegador levado ao dashboard do app, fora da página de credenciais. Não capturar screenshot do campo nem rebindar Básico após rotação. Usuário abre Básico diretamente para concluir reset.
+
 HEAD inicial2a5d0dc1c911e3db5a2e67f7a1bf6106dfd1b55e. Usuário concluiu reautenticação; binding automático da aba devolveu árvore de acessibilidade incluindo App Secret visível. **Potencial exposição em tool output**, contrariando a restrição de não registrar credential material. Valor não reproduzido neste documento/evidência/PR/Git, não salvo no cloud, não usado para HMAC/send. Não presumir que o histórico da ferramenta possa ser apagado; considerar a chave comprometida até rotação.
 
 Página recarregada para ocultar campo; controle Mostrar voltou, Redefinir não está exposto enquanto chave oculta. Nenhuma alteração de App Secret executada. **GATE_META_APP_SECRET_ROTATION_REQUIRED**: usuário realiza rotação diretamente em Configurações do app → Básico → Chave Secreta do Aplicativo → Mostrar → Redefinir, concluindo verificações da Meta. Não enviar chave/senha/2FA pelo chat. Política de navegador exige handoff para alteração de credencial de autenticação. Não usar a chave antiga em nenhuma etapa futura.

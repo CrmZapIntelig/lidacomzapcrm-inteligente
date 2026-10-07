@@ -2,6 +2,8 @@
 
 ## META-01 — contenção após exposição automática de App Secret (2026-10-07)
 
+- CORREÇÃO DE CONTENÇÃO: Mostrar após reload não prova máscara. Booleans locais sem output do valor não comprovaram ocultação; página deixada para dashboard. Nenhum screenshot/arquivo de campo de chave criado; handoff no dashboard, usuário navega Básico para reset. Não assumir campo oculto pelo nome do botão.
+
 - HEAD INICIAL:2a5d0dc1c911e3db5a2e67f7a1bf6106dfd1b55e; working tree pessoal preservado. Reautenticação humana concluída.
 - INCIDENTE: getTab retornou AX automaticamente com App Secret visível, contrariando restrição de credential material em output. Não reimprimir valor nem inseri-lo em relatório/JSON/PR/Git; não armazenado em Secret Manager/local files, não usado em HMAC/outbound. Não alegar limpeza do histórico de ferramentas; tratar chave potencialmente comprometida.
 - CONTENÇÃO: reload ocultou chave; Mostrar=1/Redefinir=0. Nenhum reset/cloud/IAM/API/Firestore/send. GATE_META_APP_SECRET_ROTATION_REQUIRED; usuário conclui alteração da credencial diretamente na Meta conforme handoff da política do navegador. Mesmos app/portfólio/WABA/phoneTEST, sem duplicação.
