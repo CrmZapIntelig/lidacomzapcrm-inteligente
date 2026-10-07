@@ -9,15 +9,15 @@
   ],
   "selectedSaasPortfolio": "1694546150694544",
   "ownershipGate": "RESOLVED_BY_EXPLICIT_USER_CONFIRMATION",
-  "appDraft": {"name":"LidacomZapCRM","useCase":"WHATSAPP","stage":"FINAL_REVIEW_NOT_SUBMITTED","portfolio":"1694546150694544","companyVerified":false,"publicationRequirementsShown":"NONE_IDENTIFIED_FOR_SELECTED_USE_CASE"},
+  "appDraft": {"name":"LidacomZapCRM","useCase":"WHATSAPP","stage":"CREATION_REQUEST_REAUTH_REQUIRED_NOT_COMPLETED","portfolio":"1694546150694544","companyVerified":false,"publicationRequirementsShown":"NONE_IDENTIFIED_FOR_SELECTED_USE_CASE","creationClickUserAuthorized":true,"reauthObservedDateLocal":"2026-10-07"},
   "clientAssetBoundary": {"pratoMineiroIsSaasOwner":false,"restaurantOwnPortfolioRequired":true,"restaurantOwnWabaRequired":true,"restaurantOwnPhoneRequired":true,"realOnboardingGate":"GATE_PRATO_MINEIRO_OWN_META_ASSETS_ONBOARDING_REQUIRED"},
   "businessVerificationPending": "REJECTED_NO_BYPASS_NO_ALTERNATE_PORTFOLIO",
   "appCreated": false,
   "wabaCreated": false,
   "phoneConfigured": false,
   "secretsCollected": false,
-  "authenticationGate": "RESOLVED_USER_CONFIRMED_AND_UI_VERIFIED",
+  "authenticationGate": "APP_CREATION_PASSWORD_REAUTH_REQUIRED",
   "existingWhatsAppAssets": [{"assetId":"1589099725538820","name":"Lidacom Digital Agência","ownerPortfolio":"1694546150694544","type":"WHATSAPP_BUSINESS_APP","accountStatus":"APPROVED","businessVerification":"NOT_VERIFIED","testAsset":"NOT_PROVEN","usedForPratoMineiro":false}],
-  "gate": "GATE_META_APP_CREATION_CONFIRMATION_REQUIRED",
-  "reason": "Final app creation review prepared; creation not submitted. Agency account not selected; only official TEST resources authorized after creation"
+  "gate": "GATE_META_INTERACTIVE_LOGIN_REQUIRED",
+  "reason": "Authorized creation clicked once; official Meta dialog requires user password reauthentication. Creation not confirmed; no repeated submission or credential collection"
 }

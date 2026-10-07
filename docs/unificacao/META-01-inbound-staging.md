@@ -1,4 +1,18 @@
-# META-01 — pausa por dispositivo não reconhecido
+# META-01 — inbound TEST em staging
+
+## Checkpoint atual — reautenticação na criação do app (2026-10-07)
+
+HEAD inicial8534e33dbc2552eac124675af9682fa911abece0, branch codex/unificacao-gestao-inteligente/PR4draft. Restrição trusted-device anterior resolvida pelo usuário; cadastro Developer e acesso ao painel comprovados nas etapas posteriores. Não criar outro cadastro/portfólio para contornar verificação.
+
+Proprietário SaaS confirmado: lidacomdigital/Business ID1694546150694544/LIDACOM BUSINESS EVOLUTION. Prato Mineiro é cliente piloto e deverá manter ativos próprios separados; onboarding real exige GATE_PRATO_MINEIRO_OWN_META_ASSETS_ONBOARDING_REQUIRED. Conta Lidacom Digital Agência não selecionada. Business Verification REJEITADA permanece pendência separada.
+
+Usuário autorizou especificamente a criação na revisão final. Botão Criar aplicativo acionado **uma vez** para LidacomZapCRM/caso de uso WhatsApp/empresa lidacomdigital. Meta abriu diálogo oficial **Digite sua senha novamente**, antes de comprovação de criação. **GATE_META_INTERACTIVE_LOGIN_REQUIRED**: usuário autentica diretamente na janela oficial; nenhuma senha/2FA/token pedida pelo chat, coletada ou registrada. Não repetir criação enquanto o desafio estiver aberto. App ID inexistente na evidência; criação ainda NÃO CONFIRMADA, nenhum WABA/test phone/subscription/secret criado.
+
+Após autenticação, verificar resultado e assets existentes antes de prosseguir somente com recursos TEST. Receiver público mínimo separado do worker privado; secrets server-side; outbound/canSend DISABLED. Não registrar número real do restaurante. Primeiro inbound requer mensagem TEST manual; primeiro outbound exige autorização própria. STG-03 privado/sintético não equivale a inbound Meta real. Preview permanece offline, produção/main/default preservados.
+
+Documentação técnica oficial de Cloud API/webhooks deve ser consultada antes da configuração. Tentativas web anteriores retornaram429/inacessível; não usadas como fonte técnica verificada.
+
+## Checkpoint histórico — trusted device (2026-10-03)
 
 2026-10-03. HEAD inicial: 29dd5e5f990b6f6ef6142312e9b248a63731fbae. PR #4 draft.
 

@@ -1,5 +1,9 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## META-01 — criação autorizada / reautenticação humana (2026-10-07)
+
+Autorização específica do botão final recebida; Criar aplicativo acionado uma vez para LidacomZapCRM/WhatsApp/lidacomdigital1694546150694544. Meta exige senha novamente na janela oficial: **GATE_META_INTERACTIVE_LOGIN_REQUIRED**. Criação NÃO CONFIRMADA, sem App ID, nenhum WABA/phone/subscription/secret; não repetir requisição enquanto aguarda autenticação humana. Nenhuma credencial coletada. Titularidade SaaS resolvida; verificação empresarial REJEITADA permanece pendência própria; ativos do restaurante e conta da agência não selecionados. Outbound/produção DISABLED. Próximo: usuário autentica diretamente no navegador, depois verificar resultado antes de continuar TEST. Checkpoints abaixo são históricos.
+
 ## META-01 — proprietário SaaS confirmado / criação em revisão final (2026-10-06)
 
 Usuário confirmou **lidacomdigital / Business ID1694546150694544 / LIDACOM BUSINESS EVOLUTION** como proprietário do app principal **LidacomZapCRM**. GATE_META_SAAS_BUSINESS_PORTFOLIO_REQUIRED RESOLVIDO. Prato Mineiro é cliente piloto, com portfólio/WABA/número próprios e separados; onboarding real exige **GATE_PRATO_MINEIRO_OWN_META_ASSETS_ONBOARDING_REQUIRED**. Conta Lidacom Digital Agência não selecionada.

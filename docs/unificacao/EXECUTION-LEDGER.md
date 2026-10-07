@@ -1,5 +1,13 @@
 # Execution ledger — Unificação
 
+## META-01 — criação especificamente autorizada / senha requerida (2026-10-07)
+
+- HEAD INICIAL:8534e33dbc2552eac124675af9682fa911abece0; working tree pessoal preservado; alteração documental somente.
+- EXECUÇÃO: usuário autorizou etapa final; UI revisão nome LidacomZapCRM/WhatsApp/lidacomdigital confirmada; Criar aplicativo clicado uma vez. Diálogo oficial Digite sua senha novamente exige reautenticação humana. Nenhuma senha/2FA/token coletada/pedida pelo chat; nenhum retry/criação duplicada.
+- STATUS: criação não confirmada, sem App ID conhecido; App/WABA/phone/subscription/secret não comprovados criados. GATE_META_INTERACTIVE_LOGIN_REQUIRED; titularidade SaaS resolvida, Business Verification REJEITADA separada. Conta da agência/ativos reais do Prato Mineiro não selecionados. Zero Firestore/IAM/API/billing/outbound/produção.
+- VALIDAÇÃO: JSON/diff/testes de proteção documental; suite213/cinco stricts/baseline21→21/quatro builds do checkpoint anterior preservada; CI8534e33 push37564473100/PR37564476645/análise37564473632 success. CI do commit de checkpoint revalida ao push, registrada na PR/relatório quando concluída.
+- NEXT: autenticar diretamente no diálogo oficial; verificar resultado da mesma criação e seguir TEST sem cadastrar número operacional. HEAD final identificável por Record Meta app creation reauthentication checkpoint; PR4draft/main/default preservados.
+
 ## META-01 — confirmação jurídica SaaS / revisão final do app (2026-10-06)
 
 - HEAD INICIAL: df088193885e95099ee9ca11c300dd3b065d9ef7; branch/main/remote conferidos, alterações pessoais preservadas. Sem mudança funcional.
