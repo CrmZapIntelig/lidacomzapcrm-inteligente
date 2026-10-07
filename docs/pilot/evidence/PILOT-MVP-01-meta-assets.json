@@ -21,9 +21,9 @@
   "phoneConfigured": true,
   "phoneScope": "META_PROVISIONED_OFFICIAL_TEST_ONLY",
   "secretsCollected": false,
-  "authenticationGate": "RESOLVED_USER_AND_CREATED_APP_UI_VERIFIED",
+  "authenticationGate": "APP_SECRET_PASSWORD_REAUTH_REQUIRED",
   "existingWhatsAppAssets": [{"assetId":"1589099725538820","name":"Lidacom Digital Agência","ownerPortfolio":"1694546150694544","type":"WHATSAPP_BUSINESS_APP","accountStatus":"APPROVED","businessVerification":"NOT_VERIFIED","testAsset":"NOT_PROVEN","usedForPratoMineiro":false}],
   "termsGate": "RESOLVED_USER_DIRECT_UI",
-  "gate": "GATE_META_SECRET_CONFIGURATION_REQUIRED",
-  "reason": "Official TEST assets confirmed; callback empty. Server-side App Secret and verify token needed before real HMAC verification. No token generated, credential retrieved, callback saved or outbound. Existing private journal remains SIMULATION-only, not Meta STAGING-wired"
+  "gate": "GATE_META_INTERACTIVE_LOGIN_REQUIRED",
+  "reason": "App Settings Basic Show App Secret opened official password reauthentication. Secret remains hidden; user must authenticate directly. TEST assets provisioned, callback empty, no token or outbound. Server-side secret configuration remains next prerequisite"
 }

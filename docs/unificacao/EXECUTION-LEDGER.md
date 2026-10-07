@@ -1,5 +1,12 @@
 # Execution ledger — Unificação
 
+## META-01 — App Secret exige reautenticação humana (2026-10-07)
+
+- HEAD INICIAL:94cb681 (checkpoint de assets desta continuidade); Configurações do app/Básico/Mostrar abriu Digite sua senha novamente. GATE_META_INTERACTIVE_LOGIN_REQUIRED, segredo não revelado/coletado. Usuário autentica na Meta; não solicitar valor pelo chat. Autorização de continuidade preservada.
+- UI: primeira ação Mostrar não despachada por deadline; estado visível/habilitado/sem diálogo conferido antes de nova ação. Desafio aberto, nenhuma credencial lida. Print do diálogo recortado privado fora do Git; nenhum endereço/email/dado de perfil adicionado à evidência.
+- CI94cb681: push37658122884/análise37658124178/PR37658130797 success, offline/staging-preview executados. Onze testes específicos desta continuidade passaram; suite213/baseline21→21/quatro builds revalidados pela CI. Alteração de fechamento documental somente, sem cloud/runtime/IAM/API/Firestore/envio.
+- NEXT: autenticação humana → configuração server-side segura staging → receiver dedicado/worker privado com testes/guards. Nenhum token de envio, publicação de app, número restaurante, outbound ou produção autorizados por essa autenticação. HEAD final identificável por Record App Secret reauthentication gate; PRdraft/main/pessoal preservados.
+
 ## META-01 — termos aceitos pelo usuário / WABA e phone TEST confirmados (2026-10-07)
 
 - HEAD INICIAL:85b3849422c6f24cb0243dbe2c3f571c5c77cdb6; working tree pessoal/main/remote preservados. Documentação/evidência somente.

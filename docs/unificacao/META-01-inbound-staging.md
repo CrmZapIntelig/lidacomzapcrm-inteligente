@@ -1,5 +1,11 @@
 # META-01 — inbound TEST em staging
 
+## Gate atual — reautenticação para App Secret (2026-10-07)
+
+Após inventário TEST/documentação, Configurações do app → Básico → Mostrar abriu diálogo oficial **Digite sua senha novamente**. **GATE_META_INTERACTIVE_LOGIN_REQUIRED**: autenticação humana diretamente na Meta. App Secret permanece oculto/não coletado, nenhum token criado. Não pedir segredo/senha/código pelo chat. A configuração server-side já autorizada deve continuar após esse desafio, sem pedir confirmação genérica para repetir a mesma ação. Credencial somente no destino seguro staging descrito abaixo; nova exposição pública/grant relevante ainda exige revisão concreta quando ocorrer.
+
+Um clique inicial Mostrar não foi despachado por interrupção do navegador; controle visível/habilitado e ausência de diálogo conferidos antes de uma nova ação, que abriu desafio. Sem repetição de criação de App/WABA/phone. Tela de autenticação preservada/recortada privada fora do Git. Callback/secrets/receiver cloud não configurados, worker privado mantido.
+
 ## Estado vigente — recursos TEST provisionados / secrets server-side (2026-10-07)
 
 HEAD inicial85b3849422c6f24cb0243dbe2c3f571c5c77cdb6. Usuário clicou Continuar na Meta e aceitou termos diretamente; GATE_META_TEST_TERMS_ACCEPTANCE_REQUIRED RESOLVIDO. UI Etapa1.Experimente mostra Reivindicar um número de teste concluído: **+1 555 640-2386 / Phone Number ID1406670279191899 / WABA1670383058144564**. Recursos oficiais TEST provisionados pela Meta, vinculados ao app1480563193903800/portfólio1694546150694544; não são ativos do Prato Mineiro nem conta da agência. Nenhum número real cadastrado, destinatário selecionado ou envio. Campo access token Not generated yet; não gerar token de envio para configurar inbound prematuramente.

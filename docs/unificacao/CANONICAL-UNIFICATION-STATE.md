@@ -1,5 +1,9 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## META-01 — desafio humano para acesso ao segredo (2026-10-07)
+
+Configurações Básico/Mostrar App Secret exige senha novamente: **GATE_META_INTERACTIVE_LOGIN_REQUIRED**. Segredo não revelado/coletado; continuar configuração segura server-side após autenticação humana. TEST assets permanecem provisionados, callback vazio, access token não gerado, zero outbound. Gate anterior de configuração de segredo é pré-requisito técnico, não pedido para repetir autorização genérica. Nenhuma mudança cloud/produção/IAM/API. Detalhes META-01-inbound-staging.md; abaixo histórico.
+
 ## META-01 — ativos oficiais TEST / configuração de segredo pendente (2026-10-07)
 
 Usuário aceitou termos e Meta provisionou **WABA TEST1670383058144564 / Phone Number ID1406670279191899 / +1 555 640-2386** no app1480563193903800, proprietário1694546150694544. Não é conta da agência nem ativos do Prato Mineiro. Nenhum token gerado/destinatário selecionado/envio. Callback/token vazios, secrets/subscription não configurados. **GATE_META_SECRET_CONFIGURATION_REQUIRED** para App Secret/verify token server-side exclusivo staging. Worker atual permanece privado **SIMULATION-only**, ainda não ligado inbound Meta; não promover nem remover guards. Receiver dedicado/adaptação STAGING TEST ainda pendentes. UI restringe webhooks de app não publicado a testes do painel; inbound humano ainda não comprovado/publicação não autorizada. Docs oficiais overview/endpoint lidas pelo navegador;11 testes específicos passaram (subconjunto213). Produção/main/default/RCS/outbound preservados. Detalhes META-01-inbound-staging.md; abaixo histórico.
