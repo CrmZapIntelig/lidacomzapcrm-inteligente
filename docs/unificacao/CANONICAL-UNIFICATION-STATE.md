@@ -1,5 +1,11 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## INFRA-02 — classificação corrigida / cloud interrompida (2026-10-07)
+
+Instrução humana mais recente substitui a declaração anterior de destino futuro: **lidacomzapcrm = UNVERIFIED / NÃO CLASSIFICADO**, não produção futura, não destino canônico, não staging, não autorizado para secrets. Produto único continua LidacomZapCRM no workspace/repositório atuais; operacional **project-1300957a-ea82-4645-845**, staging oficial **lidacomzapcrm-staging**, Gestão **fonte histórica/técnica**. Não migrar nem aposentar. Premissa anterior **SUPERSEDED / CORRIGIDA**; nenhum plano MIG ou documento de migração foi criado.
+
+Coleta read-only de metadados dos quatro IDs preservada fora do Git, sem dados reais/usuários/valores de secrets e sem mutação cloud. Até a correção, nenhum arquivo do repositório alterado pelo coletor. `.firebaserc`, pessoal/default/main preservados; docs INFRA-02/canônico/ledger agora registram o mapa correto. Sem commit/push nesta etapa para não disparar publicação automática CI. META app/WABA/phone TEST e rotação humana preservados, sem repetir operações. **GATE_STAGING_SECRET_MANAGER_ENABLE_REQUIRED** somente para lidacomzapcrm-staging, aguardar nova autorização; nada ativado/criado/IAM/billing/Firebase/deploy. Detalhes e limites em INFRA-02-google-project-map.md. Abaixo checkpoints históricos.
+
 ## META-01 — rotação humana informada / Secret Manager ainda desativado (2026-10-07)
 
 Usuário informou redefinição da chave/opção0horas; gate de rotação resolvido por relato humano, revogação/prazo exato não comprovados independentemente. Chave anterior não utilizada e nova não lida/transmitida. Navegação Meta segura por controles/metadados, sem AX/DOM geral de segredo. Console confirmou projeto lidacomzapcrm-staging e Secret Manager com Ativar; nenhum enable/secret/IAM/cloudmutation. **GATE_STAGING_SECRET_MANAGER_ENABLE_REQUIRED** para novo serviço medido e2 secrets/1versão cada somente staging; franquia compartilhada na billing account não comprovada livre. BudgetR$10 preservado/não hardcap. Nenhum recurso operacional, sender ou outbound. Detalhes META-01; abaixo histórico.

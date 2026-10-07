@@ -1,5 +1,15 @@
 # Execution ledger — Unificação
 
+## INFRA-02 — correção imediata da classificação (2026-10-07)
+
+- HEAD LOCAL/REMOTO: e464976d28ee011cf45908befeff7c6b990e1e8f; main remota60fb91fdf048a8e0d4f9adc29a532be8bf4356dd. Nenhum commit/push da correção; não disparar Hosting staging automático pelo workflow.
+- AUDITORIA: git status/diff contra checkpoint confirmou nenhum documento/arquivo de produto editado pelo coletor. Único diff textual anterior era .vscode/extensions.json pessoal; src/App.tsx/CommercialIntelligenceView.tsx continuam marcados no status sem diff textual retornado; untracked pessoais preservados.
+- ARQUIVOS LOCAIS DA COLETA: infra02-readonly.cjs e infra02-project-map-proof.json no diretório privado staging-auth-20261002, fora do repo; sessão nova/preload/no valores de credencial. Apenas GET metadados, zero enable/secrets/IAM/billing/Firebase/deploy/dados/usuários. Respostas úteis preservadas, inventários recusados/INVALID_ARGUMENT não tratados como ausência. Coletor encerrado; sem continuar auditoria cloud nesta correção.
+- CORREÇÃO: declaração anterior de lidacomzapcrm como destino futuro SUPERSEDED / CORRIGIDA. Papel atual UNVERIFIED / NÃO CLASSIFICADO. Operacional project-1300957a-ea82-4645-845, staging lidacomzapcrm-staging, fonte histórica lidacomzap-gestao-inteligente. Produto único/repo/workspace inalterados. Nenhum MIG/plano migração criado, nenhum projeto aposentado.
+- DOCS: INFRA-02-google-project-map.md novo, canônico/ledger atualizados; evidência de interpretação superada preservada sem valor de segredo. Nenhum documento anterior de destino futuro encontrado nesta execução.
+- VALIDAÇÃO: revisão diff/consistência documental; sem mudança funcional, sem builds/probes/deploy novos. Baseline/testes/builds anteriores permanecem evidência histórica, não rerun desta correção.
+- META/GATE: assets TEST existentes/rotação humana preservados, nova chave não lida/transferida. Retornar GATE_STAGING_SECRET_MANAGER_ENABLE_REQUIRED exclusivamente lidacomzapcrm-staging, sem ativar antes de nova autorização. Produção/outbound/RCS/rollout bloqueados. PARAR.
+
 ## META-01 — rotação informada / Secret Manager staging gate (2026-10-07)
 
 - HEAD INICIAL:9b6ee8da8911a2fffce6694a73e1172f318ea0a3; pessoal/main/branch preservados. Sem mudança funcional.
