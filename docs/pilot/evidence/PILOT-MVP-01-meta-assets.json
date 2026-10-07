@@ -4,7 +4,7 @@
   "appsList": "LIDACOMZAPCRM_CREATED_CONFIRMED_20261007",
   "appId": "1480563193903800",
   "appPublication": "NOT_PUBLISHED",
-  "testSetup": {"stage":"WHATSAPP_TEST_TERMS_NOT_ACCEPTED","ownerPortfolio":"1694546150694544","officialTestNumberOffered":true,"maxTestRecipientPhonesShown":5,"recipientSelected":false,"sendExecuted":false},
+  "testSetup": {"stage":"OFFICIAL_TEST_ASSETS_PROVISIONED","termsAcceptedBy":"USER_DIRECT_UI_20261007","ownerPortfolio":"1694546150694544","officialTestNumberOffered":true,"testPhoneDisplay":"+1 555 640-2386","testPhoneNumberId":"1406670279191899","testWabaId":"1670383058144564","maxTestRecipientPhonesShown":5,"recipientSelected":false,"accessTokenGenerated":false,"callbackConfigured":false,"sendExecuted":false,"realRestaurantPhoneConfigured":false},
   "portfolios": [
     {"businessId":"144789471002545","displayName":"Por Lidacom Digital","visibleApps":0,"legalName":"NOT_SET","verification":"NOT_VERIFIED","currentUserAccess":"FULL","createdYear":2021,"legalSaasOwnership":"NOT_PROVEN"},
     {"businessId":"1694546150694544","displayName":"lidacomdigital","visibleApps":0,"appsBusinessSettings":"NONE_ADDED","currentUserAccess":"FULL","legalNamePrefix":"LIDACOM BUSINESS EVOLUTION","personalIdentifiers":"OMITTED","website":"https://lidacom.com.br/","verification":"REJECTED","createdYear":2020,"legalSaasOwnership":"USER_CONFIRMED"},
@@ -16,11 +16,14 @@
   "clientAssetBoundary": {"pratoMineiroIsSaasOwner":false,"restaurantOwnPortfolioRequired":true,"restaurantOwnWabaRequired":true,"restaurantOwnPhoneRequired":true,"realOnboardingGate":"GATE_PRATO_MINEIRO_OWN_META_ASSETS_ONBOARDING_REQUIRED"},
   "businessVerificationPending": "REJECTED_NO_BYPASS_NO_ALTERNATE_PORTFOLIO",
   "appCreated": true,
-  "wabaCreated": false,
-  "phoneConfigured": false,
+  "wabaCreated": true,
+  "wabaCreationScope": "META_AUTOMATIC_OFFICIAL_TEST_ONLY",
+  "phoneConfigured": true,
+  "phoneScope": "META_PROVISIONED_OFFICIAL_TEST_ONLY",
   "secretsCollected": false,
   "authenticationGate": "RESOLVED_USER_AND_CREATED_APP_UI_VERIFIED",
   "existingWhatsAppAssets": [{"assetId":"1589099725538820","name":"Lidacom Digital Agência","ownerPortfolio":"1694546150694544","type":"WHATSAPP_BUSINESS_APP","accountStatus":"APPROVED","businessVerification":"NOT_VERIFIED","testAsset":"NOT_PROVEN","usedForPratoMineiro":false}],
-  "gate": "GATE_META_TEST_TERMS_ACCEPTANCE_REQUIRED",
-  "reason": "App creation confirmed after user reauthentication; WhatsApp TEST setup Continue accepts separate WhatsApp Business and Cloud API Hosting legal terms. Not clicked; no test phone configured or outbound"
+  "termsGate": "RESOLVED_USER_DIRECT_UI",
+  "gate": "GATE_META_SECRET_CONFIGURATION_REQUIRED",
+  "reason": "Official TEST assets confirmed; callback empty. Server-side App Secret and verify token needed before real HMAC verification. No token generated, credential retrieved, callback saved or outbound. Existing private journal remains SIMULATION-only, not Meta STAGING-wired"
 }

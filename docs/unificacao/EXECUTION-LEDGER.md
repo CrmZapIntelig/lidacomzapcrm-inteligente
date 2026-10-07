@@ -1,5 +1,15 @@
 # Execution ledger — Unificação
 
+## META-01 — termos aceitos pelo usuário / WABA e phone TEST confirmados (2026-10-07)
+
+- HEAD INICIAL:85b3849422c6f24cb0243dbe2c3f571c5c77cdb6; working tree pessoal/main/remote preservados. Documentação/evidência somente.
+- UI: usuário clicou Continuar; Etapa1.Experimente confirma númeroTEST+1 555640-2386/phoneId1406670279191899/WABA1670383058144564. Meta provisionou oficialmente, sem WABA restaurante/contaagência/número real/destinatário selecionado. Access token não gerado; nenhum send acionado. Gate termos resolvido.
+- CALLBACK: somente leitura Ferramentas/Webhooks; URL/token vazios. Seção rotulada produção não usada para registrar número/pagamento/envio. UI alerta apenas testes do painel enquanto app não publicado; inbound humano não prometido.
+- AUDITORIA: stagingIngress privado e journal/port estritamenteSIMULATION-only; Meta STAGING não wired. Não reclassificar real como synthetic, não tornar /worker público. Nova fronteira deve reutilizar ports/queue/lease/fencing com envelope/version/binding TEST antes de exposição. Nenhum deploy/IAM/API/Firestore alterado.
+- FONTES: docs oficiais overview2026-06-26/endpoint2026-06-17 lidas no navegador autenticado em2026-10-07; consultas web429 registradas como não lidas até fallback UI. Links/requisitos/limites na META-01.
+- TESTES:11/11 provider/ingress existentes passaram; subconjunto213, não total novo. Baseline21→21/cinco stricts/quatro builds anteriores preservados; CI revalida commit documental ao push. JSON/diff/check; HEAD final identificável por Record official Meta TEST assets and secure inbound prerequisites.
+- GATE/NEXT: GATE_META_SECRET_CONFIGURATION_REQUIRED: App Secret do app1480563193903800 e verify token forte, exclusivamente Secret Manager staging (meta-test-app-secret/meta-test-verify-token propostos), acesso mínimo sem chat/log/frontend/Git. Nada revelado/coletado/criado. Depois receiver dedicado/worker privado/tests TEST, gates próprios antes de sender/publicação/inboundhumano/outbound. PR4draft, produção/default/main/RCS preservados.
+
 ## META-01 — app criado comprovado / gate termos TEST (2026-10-07)
 
 - HEAD INICIAL:8c943dbcb384a70e2d0f0e873f5a952773788d25; pessoal preservado; documental somente.

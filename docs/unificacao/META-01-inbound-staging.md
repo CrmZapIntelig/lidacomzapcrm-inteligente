@@ -1,5 +1,24 @@
 # META-01 — inbound TEST em staging
 
+## Estado vigente — recursos TEST provisionados / secrets server-side (2026-10-07)
+
+HEAD inicial85b3849422c6f24cb0243dbe2c3f571c5c77cdb6. Usuário clicou Continuar na Meta e aceitou termos diretamente; GATE_META_TEST_TERMS_ACCEPTANCE_REQUIRED RESOLVIDO. UI Etapa1.Experimente mostra Reivindicar um número de teste concluído: **+1 555 640-2386 / Phone Number ID1406670279191899 / WABA1670383058144564**. Recursos oficiais TEST provisionados pela Meta, vinculados ao app1480563193903800/portfólio1694546150694544; não são ativos do Prato Mineiro nem conta da agência. Nenhum número real cadastrado, destinatário selecionado ou envio. Campo access token Not generated yet; não gerar token de envio para configurar inbound prematuramente.
+
+Ferramentas → Configurar webhooks abre seção de callback do painel denominada Etapa2.Configuração de produção, consultada **somente leitura do callback**. URL/token vazios, Verificar e salvar desabilitado. Registro de número, pagamento e envio não acionados. Alert da UI: app não publicado recebe apenas testes do painel; não prometer inbound humano pelo número TEST antes de provar suporte e avaliar requisitos de publicação. Publicação não autorizada por esta fase.
+
+**GATE_META_SECRET_CONFIGURATION_REQUIRED**: validação real HMAC necessita App Secret do app SaaS server-side; challenge necessita verify token forte server-side. Plano concreto: exclusivamente Secret Manager de **lidacomzapcrm-staging**, nomes propostos `meta-test-app-secret` e `meta-test-verify-token`; sem access token persistido, Git, frontend, chat, logs ou credencial operacional. App Secret não revelado/coletado e secrets não criados. Configuração real de credencial/acesso precisa confirmação específica conforme política do navegador; não pedir valor pelo chat. Confirmar inventário de secrets antes de criar, para evitar duplicação. Não acessar segredo de outra conta/app.
+
+Receiver público dedicado e worker privado seguem pendentes de implementação/deploy validados; não tornar stagingIngress público. Auditoria de staging-functions/index.ts/syntheticIngress.ts/localInboundJournal.ts confirmou contrato atual **SIMULATION-only**: IDs synthetic, endereços de fixture e conteúdo TEST fechado. Um payload real Meta não pode ser tratado como SIMULATION para vencer guards. Evolução deve reutilizar ports/fila/lease/fencing, versionar envelope STAGING TEST sem quebrar fixture local, binding exato App/WABA/phone e allowlist humana futura, persistir mínimo/sanitizar, canSend=false. A provisão de ativos TEST não torna o pipeline operacional.
+
+### Documentação oficial verificada no navegador
+
+Consulta web inicial retornou429, mas o navegador autenticado leu as páginas oficiais em2026-10-07:
+
+- [Webhooks overview](https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/overview/), atualização2026-06-26: campo messages cobre inbound/status; assinatura por campos e permissões; até3MB; retry/dedupe e alguns eventos limitados em Dev. Escopo local pretendido messages somente; não ampliar dados/permissões por conveniência.
+- [Criar endpoint](https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/create-webhook-endpoint/), atualização2026-06-17: TLS válido, challenge GET/token armazenado no servidor, POST application/json/X-Hub-Signature-256 HMAC com App Secret, batch e dedupe. Save do dashboard pode configurar callback sem gerar access token; assinatura em WABA pode ter etapa adicional ainda não provada. Limites TEST locais menores devem permanecer explícitos; não declarar cobertura total Meta.
+
+11/11 testes específicos Meta provider/synthetic ingress passaram nesta continuidade: assinatura/challenge/raw body, payload inválido, durable ACK/replay, no-send draft, retry/lease/crash/final failure. São subconjunto dos213 existentes, não somar ao total. Sem nova prova cloud/inbound real. Callback não salvo, subscription não configurada, worker privado/produção/default/main preservados; RCS/outbound DISABLED. Próximo: configurar secrets com mecanismo seguro, implementar/validar receiver dedicado antes de qualquer exposição, testar painel TEST; gates de publicação real/sender/inbound/outbound permanecem conforme necessidade.
+
 ## Checkpoint vigente — app criado / termos TEST (2026-10-07)
 
 HEAD inicial8c943dbcb384a70e2d0f0e873f5a952773788d25. Usuário concluiu reautenticação; painel oficial confirmou **LidacomZapCRM / App ID1480563193903800 / Business ID1694546150694544**, status **Não publicado**. GATE_META_INTERACTIVE_LOGIN_REQUIRED RESOLVIDO. Criação autorizada encerrada, não criar segundo app. Valores pessoais/credenciais omitidos.

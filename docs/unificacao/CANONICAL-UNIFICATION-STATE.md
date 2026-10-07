@@ -1,5 +1,9 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## META-01 — ativos oficiais TEST / configuração de segredo pendente (2026-10-07)
+
+Usuário aceitou termos e Meta provisionou **WABA TEST1670383058144564 / Phone Number ID1406670279191899 / +1 555 640-2386** no app1480563193903800, proprietário1694546150694544. Não é conta da agência nem ativos do Prato Mineiro. Nenhum token gerado/destinatário selecionado/envio. Callback/token vazios, secrets/subscription não configurados. **GATE_META_SECRET_CONFIGURATION_REQUIRED** para App Secret/verify token server-side exclusivo staging. Worker atual permanece privado **SIMULATION-only**, ainda não ligado inbound Meta; não promover nem remover guards. Receiver dedicado/adaptação STAGING TEST ainda pendentes. UI restringe webhooks de app não publicado a testes do painel; inbound humano ainda não comprovado/publicação não autorizada. Docs oficiais overview/endpoint lidas pelo navegador;11 testes específicos passaram (subconjunto213). Produção/main/default/RCS/outbound preservados. Detalhes META-01-inbound-staging.md; abaixo histórico.
+
 ## META-01 — App criado / recursos TEST aguardam novos termos (2026-10-07)
 
 Reautenticação concluída e criação comprovada pelo painel: **LidacomZapCRM / App ID1480563193903800 / proprietário lidacomdigital1694546150694544 / NÃO PUBLICADO**. Gate de login resolvido. Etapa WhatsApp Experimente oferece número oficial TEST para até5 telefones, ainda não configurado. **GATE_META_TEST_TERMS_ACCEPTANCE_REQUIRED**: botão Continuar aceita termos adicionais WhatsApp Business/Meta Cloud API Hosting; não acionado antes de confirmação específica. Sem WABA/phone/recipient/subscription/secret configurado, zero outbound/inbound real. Verificação empresarial REJEITADA pendente própria; conta agência e ativos do Prato Mineiro não selecionados. Produção/main/default/preview e worker privado intactos. Checkpoints abaixo históricos.
