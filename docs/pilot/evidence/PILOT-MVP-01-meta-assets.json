@@ -20,10 +20,12 @@
   "wabaCreationScope": "META_AUTOMATIC_OFFICIAL_TEST_ONLY",
   "phoneConfigured": true,
   "phoneScope": "META_PROVISIONED_OFFICIAL_TEST_ONLY",
-  "secretsCollected": false,
-  "authenticationGate": "APP_SECRET_PASSWORD_REAUTH_REQUIRED",
+  "secretsCollected": true,
+  "secretCollectionScope": "ACCIDENTAL_AUTOMATIC_TOOL_RESPONSE_ONLY_NOT_REUSED_OR_PERSISTED_BY_AGENT",
+  "credentialContainment": {"appSecretPotentiallyExposed":true,"valueRecordedInEvidence":false,"cloudSecretStored":false,"usedForHmacOrSend":false,"pageReloadedAndShowButtonRestored":true,"rotationCompleted":false,"safeContinuationRequiresRotation":true},
+  "authenticationGate": "RESOLVED_USER_REAUTH_AND_UI_ACCESS_CONFIRMED",
   "existingWhatsAppAssets": [{"assetId":"1589099725538820","name":"Lidacom Digital Agência","ownerPortfolio":"1694546150694544","type":"WHATSAPP_BUSINESS_APP","accountStatus":"APPROVED","businessVerification":"NOT_VERIFIED","testAsset":"NOT_PROVEN","usedForPratoMineiro":false}],
   "termsGate": "RESOLVED_USER_DIRECT_UI",
-  "gate": "GATE_META_INTERACTIVE_LOGIN_REQUIRED",
-  "reason": "App Settings Basic Show App Secret opened official password reauthentication. Secret remains hidden; user must authenticate directly. TEST assets provisioned, callback empty, no token or outbound. Server-side secret configuration remains next prerequisite"
+  "gate": "GATE_META_APP_SECRET_ROTATION_REQUIRED",
+  "reason": "After human reauthentication, automatic tab binding returned a visible App Secret in tool output. Value not copied into docs/Git/cloud and not used. Page reloaded to conceal; user must rotate credential directly in Meta before secure staging configuration"
 }

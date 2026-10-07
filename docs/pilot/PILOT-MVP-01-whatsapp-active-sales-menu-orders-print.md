@@ -55,6 +55,8 @@ Fila autorizada de envio e execução por lote ainda dependem de provider/creden
 
 ## Meta — titularidade confirmada e revisão final do app
 
+**Gate mais recente:** App Secret apareceu no retorno automático da ferramenta após reautenticação. Chave tratada como potencialmente exposta; não usar/persistir/reproduzir. Página voltou a ocultar; GATE_META_APP_SECRET_ROTATION_REQUIRED para rotação diretamente na Meta pelo usuário. Sem segredo no Git/cloud/PR e zero outbound. Entrada segura staging posterior deve evitar retorno sensível; detalhes/contensão META-01. Checkpoints abaixo históricos.
+
 **Gate vigente:** Mostrar App Secret em Básico abriu senha novamente. GATE_META_INTERACTIVE_LOGIN_REQUIRED; segredo permanece oculto, autenticar diretamente na Meta. Sem pedido de senha/secret pelo chat e sem repetir autorização genérica de continuidade. Configuração server-side segura permanece próxima etapa técnica; assets TEST provisionados/zero outbound, receiver ainda pendente. Detalhes e histórico na META-01.
 
 **Estado mais recente2026-10-07:** termos aceitos pelo usuário; Meta provisionou WABA TEST1670383058144564/Phone Number ID1406670279191899/número+1 555640-2386 no app1480563193903800. Sem destinatário/access token/envio. Callback e secrets vazios; GATE_META_SECRET_CONFIGURATION_REQUIRED. Worker privado atual continua SIMULATION-only, não integrado inbound Meta. UI exige avaliar publicação para dados além de testes do painel; não prometer inbound humano. Docs oficiais overview/endpoint agora verificadas no navegador;11 testes de boundary existentes passaram. App SaaS/conta agência/ativos restaurante separados. Checkpoints abaixo históricos.

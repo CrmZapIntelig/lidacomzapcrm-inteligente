@@ -1,5 +1,13 @@
 # META-01 — inbound TEST em staging
 
+## Contenção vigente — App Secret no retorno automático da ferramenta (2026-10-07)
+
+HEAD inicial2a5d0dc1c911e3db5a2e67f7a1bf6106dfd1b55e. Usuário concluiu reautenticação; binding automático da aba devolveu árvore de acessibilidade incluindo App Secret visível. **Potencial exposição em tool output**, contrariando a restrição de não registrar credential material. Valor não reproduzido neste documento/evidência/PR/Git, não salvo no cloud, não usado para HMAC/send. Não presumir que o histórico da ferramenta possa ser apagado; considerar a chave comprometida até rotação.
+
+Página recarregada para ocultar campo; controle Mostrar voltou, Redefinir não está exposto enquanto chave oculta. Nenhuma alteração de App Secret executada. **GATE_META_APP_SECRET_ROTATION_REQUIRED**: usuário realiza rotação diretamente em Configurações do app → Básico → Chave Secreta do Aplicativo → Mostrar → Redefinir, concluindo verificações da Meta. Não enviar chave/senha/2FA pelo chat. Política de navegador exige handoff para alteração de credencial de autenticação. Não usar a chave antiga em nenhuma etapa futura.
+
+Após usuário confirmar rotação, não bindar aba/requisitar AX/DOM geral da página com chave visível. Preparar primeiro fluxo de entrada direta no Secret Manager staging sem retornar conteúdo sensível em tool output, screenshot, clipboard exportado ou arquivo local. Não continuar sem mecanismo seguro comprovado. Invalidar a chave anterior sem criar novo app/portfólio/WABA; assets TEST/zero token/outbound/produção preservados. Callback ainda vazio, worker privado e SIMULATION-only. Se a Meta indicar impacto em ativos existentes, interromper e revisar antes da confirmação de reset.
+
 ## Gate atual — reautenticação para App Secret (2026-10-07)
 
 Após inventário TEST/documentação, Configurações do app → Básico → Mostrar abriu diálogo oficial **Digite sua senha novamente**. **GATE_META_INTERACTIVE_LOGIN_REQUIRED**: autenticação humana diretamente na Meta. App Secret permanece oculto/não coletado, nenhum token criado. Não pedir segredo/senha/código pelo chat. A configuração server-side já autorizada deve continuar após esse desafio, sem pedir confirmação genérica para repetir a mesma ação. Credencial somente no destino seguro staging descrito abaixo; nova exposição pública/grant relevante ainda exige revisão concreta quando ocorrer.

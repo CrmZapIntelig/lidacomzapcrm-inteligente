@@ -1,5 +1,13 @@
 # Execution ledger — Unificação
 
+## META-01 — contenção após exposição automática de App Secret (2026-10-07)
+
+- HEAD INICIAL:2a5d0dc1c911e3db5a2e67f7a1bf6106dfd1b55e; working tree pessoal preservado. Reautenticação humana concluída.
+- INCIDENTE: getTab retornou AX automaticamente com App Secret visível, contrariando restrição de credential material em output. Não reimprimir valor nem inseri-lo em relatório/JSON/PR/Git; não armazenado em Secret Manager/local files, não usado em HMAC/outbound. Não alegar limpeza do histórico de ferramentas; tratar chave potencialmente comprometida.
+- CONTENÇÃO: reload ocultou chave; Mostrar=1/Redefinir=0. Nenhum reset/cloud/IAM/API/Firestore/send. GATE_META_APP_SECRET_ROTATION_REQUIRED; usuário conclui alteração da credencial diretamente na Meta conforme handoff da política do navegador. Mesmos app/portfólio/WABA/phoneTEST, sem duplicação.
+- NEXT: confirmar rotação e preparar transferência direta server-side sem AX/DOM geral/print/clipboard exportado/log de chave nova. Não usar valor antigo. Se mecanismo seguro não estiver disponível, manter bloqueio em vez de expor novamente.
+- VALIDAÇÃO: documental/JSON/diff/proteção piloto; suite213/baseline21→21/quatro builds são referência CI anterior, nenhuma mudança funcional. HEAD final identificável por Record Meta credential containment and rotation handoff; PRdraft/main/default/pessoal preservados. Status CI do commit documental registrado na PR após push.
+
 ## META-01 — App Secret exige reautenticação humana (2026-10-07)
 
 - HEAD INICIAL:94cb681 (checkpoint de assets desta continuidade); Configurações do app/Básico/Mostrar abriu Digite sua senha novamente. GATE_META_INTERACTIVE_LOGIN_REQUIRED, segredo não revelado/coletado. Usuário autentica na Meta; não solicitar valor pelo chat. Autorização de continuidade preservada.

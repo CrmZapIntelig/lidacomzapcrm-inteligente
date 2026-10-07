@@ -1,5 +1,9 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## META-01 — contenção de credential material / rotação humana (2026-10-07)
+
+Reautenticação concluída; binding automático da aba retornou App Secret visível em tool output. Potencialmente exposto: não reproduzido no Git/docs/PR, não configurado no cloud/não usado. Página recarregada para ocultar. **GATE_META_APP_SECRET_ROTATION_REQUIRED** para redefinição diretamente na Meta pelo usuário; política de navegador requer handoff em alteração de credencial. Não reutilizar chave anterior. Após rotação, entrada segura server-side precisa mecanismo que não gere retorno de conteúdo sensível; não ler AX/DOM geral enquanto novo segredo visível. Nenhum token/access grant/Firestore/outbound/produção; app/assetsTEST existentes preservados. Abaixo histórico.
+
 ## META-01 — desafio humano para acesso ao segredo (2026-10-07)
 
 Configurações Básico/Mostrar App Secret exige senha novamente: **GATE_META_INTERACTIVE_LOGIN_REQUIRED**. Segredo não revelado/coletado; continuar configuração segura server-side após autenticação humana. TEST assets permanecem provisionados, callback vazio, access token não gerado, zero outbound. Gate anterior de configuração de segredo é pré-requisito técnico, não pedido para repetir autorização genérica. Nenhuma mudança cloud/produção/IAM/API. Detalhes META-01-inbound-staging.md; abaixo histórico.
