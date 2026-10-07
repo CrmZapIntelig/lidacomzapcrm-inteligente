@@ -1,5 +1,14 @@
 # Execution ledger — Unificação
 
+## META-01 — identidade confirmada / auditoria de portfólio concluída (2026-10-06)
+
+- HEAD INICIAL: a7e9d5a4a3c3bef84b387287c036fec6293ff80e; working tree pessoal preservado. Nenhuma mudança funcional neste bloco.
+- AUTH: usuário confirmou identidade; UI Business Suite mostrou acesso sem desafio. Gate interativo RESOLVIDO, sem repetir login/cadastro.
+- BUSINESS:1694546150694544/lidacomdigital, denominação corporativa LIDACOM BUSINESS EVOLUTION/site lidacom.com.br/acesso total atual/criado2020; verificação empresarial Rejeitada. Sufixo pessoal, documentos, endereço, telefone e emails não registrados no Git. Não editar dados nem iniciar reverificação automaticamente.
+- ASSETS: Apps nas configurações: nenhum adicionado. Conta WhatsApp existente Lidacom Digital Agência/1589099725538820, propriedade lidacomdigital, tipo Aplicativo WhatsApp Business/conta Aprovada/empresa Não verificada. Não comprovada TEST Cloud API e não é autorização para número Prato Mineiro. Zero App/WABA/phone/subscription/secrets/config criados ou alterados.
+- NEXT/GATE: GATE_META_SAAS_BUSINESS_PORTFOLIO_REQUIRED; confirmação humana da empresa proprietária do app principal, com Business ID/metadados seguros. Primeiro portfólio144789471002545 sem razão social/Não verificada permanece alternativa não escolhida. Após definição, mínimo TEST e gates próprios, sem outbound. PROD-ORDER-01 pausado; flagsprodução/piloto/NOTA/RCS/outbound DISABLED.
+- VALIDAÇÃO: JSON/diff/doc only;213 testes/cinco stricts/21→21/quatro builds/511 Rules são evidência funcional preservada de a7e9d5a, não nova execução cloud/checkout. CI existente revalida ao push; HEAD final identificável pelo commit Record confirmed Meta identity and SaaS portfolio ownership gate. PR4draft/main preservados; nenhum deploy operacional.
+
 ## PILOT-MVP-01 — preparação segura / gate Meta (2026-10-06)
 
 - HEAD INICIAL LOCAL: 8d40a0ec2eee25f2e3300d50fef36c4e38f29a6a; remoto inicial cf2e3eb15d51f487a50614ff52b8d04c9e2aa6ba. Main60fb91f/PR4draft/branch confirmados. Commits locais bbbefc1/8d40a0e preservados, publicação agora autorizada pelo controlador do piloto, sem deploy operacional.

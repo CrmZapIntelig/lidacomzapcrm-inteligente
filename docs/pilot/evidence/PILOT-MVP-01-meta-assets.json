@@ -4,7 +4,7 @@
   "appsList": "NONE_VISIBLE",
   "portfolios": [
     {"businessId":"144789471002545","displayName":"Por Lidacom Digital","visibleApps":0,"legalName":"NOT_SET","verification":"NOT_VERIFIED","currentUserAccess":"FULL","createdYear":2021,"legalSaasOwnership":"NOT_PROVEN"},
-    {"businessId":"1694546150694544","displayName":"lidacomdigital","visibleApps":0,"currentUserAccess":"FULL_VISIBLE","legalName":"NOT_AUDITED_AUTH_CHALLENGE","verification":"NOT_AUDITED_AUTH_CHALLENGE","legalSaasOwnership":"NOT_PROVEN"},
+    {"businessId":"1694546150694544","displayName":"lidacomdigital","visibleApps":0,"appsBusinessSettings":"NONE_ADDED","currentUserAccess":"FULL","legalNamePrefix":"LIDACOM BUSINESS EVOLUTION","personalIdentifiers":"OMITTED","website":"https://lidacom.com.br/","verification":"REJECTED","createdYear":2020,"legalSaasOwnership":"USER_CONFIRMATION_REQUIRED"},
     {"businessId":"108180028128224","displayName":"Curso vivendo de IPHONE","visibleApps":0,"legalSaasOwnership":"NOT_AUDITED"}
   ],
   "selectedSaasPortfolio": null,
@@ -12,7 +12,8 @@
   "wabaCreated": false,
   "phoneConfigured": false,
   "secretsCollected": false,
-  "gate": "GATE_META_INTERACTIVE_AUTHENTICATION_REQUIRED",
-  "reason": "Meta requested passkey identity confirmation while auditing second portfolio",
-  "nextConditionalGate": "GATE_META_SAAS_BUSINESS_PORTFOLIO_REQUIRED"
+  "authenticationGate": "RESOLVED_USER_CONFIRMED_AND_UI_VERIFIED",
+  "existingWhatsAppAssets": [{"assetId":"1589099725538820","name":"Lidacom Digital Agência","ownerPortfolio":"1694546150694544","type":"WHATSAPP_BUSINESS_APP","accountStatus":"APPROVED","businessVerification":"NOT_VERIFIED","testAsset":"NOT_PROVEN","usedForPratoMineiro":false}],
+  "gate": "GATE_META_SAAS_BUSINESS_PORTFOLIO_REQUIRED",
+  "reason": "Confirm legal SaaS owner before app creation; existing agency WhatsApp is separate from restaurant assets"
 }
