@@ -1,5 +1,17 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## Estado vigente — PILOT-MVP-01 / retomada do checkpoint (2026-10-06)
+
+**PROD-ORDER-01 PAUSED — PILOT PRIORITIZATION**, por nova instrução humana. Canário0/1, flagDISABLED, sem Rule deploy/IAM/identidade temporária/Order cloud. Inventário operacional pendente é histórico para futura retomada; não habilitar APIs nem usar esse canário como pré-requisito para META-01. Cloud Run AI/Agent Studio removido permanece removido. Seções anteriores abaixo são checkpoints históricos, inclusive o vínculo antigo Meta→canário, superado pelo controlador do piloto.
+
+**PILOT-MVP-01 PREPARATION ONLY / OFFLINE TEST IMPLEMENTED**: escopo pago mínimo WhatsApp/Clientes/Conversas/Venda Ativa/Cardápio/Pedidos de restaurante/central mínima/impressão pedido-comanda. Catálogo/DeliveryOrder legados reaproveitados, sem substituir por OrderModal genérico nem migrar inteiro ao Order canônico. Núcleo de checkout recalcula preços/opções, snapshot/sidecar e port transacional TEST injetado/isolado com retry/dedupe/concorrência; nenhuma factory/endpoint/probe cloud/SDK consumer real conectado. Impressão reutiliza renderer central, CSS térmico TEST, sem driver físico/status/financeiro. Eligibility/opt-out/limites/link canônico offline; queue/send real continuam proibidos. Não é PILOT READY nem paid-ready.
+
+SEC-PILOT-01: candidata de regras isolada compilou/passou511/511 requests oficiais sintéticos; zero issues/deploy/data lookups/operational writes. Não corrige a regra global atual nem comprova compatibilidade SDK da UI; publicação depende de claims/entrada pública/checkout server-side e regressão específica. SEC-01 continua prioridade.
+
+META-01 auditou Apps/portfólios existentes sem criar recursos. Nenhum app visível; três Business IDs registrados em docs/pilot/evidence, dois relacionados ao nome Lidacom sem escolha automática. Primeiro sem razão social/verificação; segundo interrompido por confirmação de autenticidade via chave de acesso. **GATE_META_INTERACTIVE_AUTHENTICATION_REQUIRED**: usuário confirma identidade na janela Meta, sem enviar credencial pelo chat; depois completar auditoria jurídica e, se ownership não comprovado, GATE_META_SAAS_BUSINESS_PORTFOLIO_REQUIRED. App SaaS e WABA/número do restaurante separados. Meta/RCS/outbound DISABLED; secrets não coletados; produção/default/main preservados.
+
+Defaults config/pilot-readiness.json: PILOT_WHATSAPP_ACTIVE_SALES/PILOT_ORDER_WRITES/PILOT_NOTA DISABLED; canSend=false; menu/origem aprovados null. Documentação vigente: docs/pilot/PILOT-MVP-01-whatsapp-active-sales-menu-orders-print.md e SEC-PILOT-01-firestore-readiness.md. Validação local213 testes/cinco stricts/isolamento/baseline21→21/zero novos, quatro builds; evidência de publicação/CI no ledger. ORDER-02 mantém sua prova STAGING READY — TEST ONLY, sem promoção pela preparação do piloto.
+
 ## Estado atual — retirada do teste AI/Agent Studio, 2026-10-06
 
 **RUNTIME DE TESTE DO AI/AGENT STUDIO — DESCOMISSIONADO:** somente Cloud Run operacional-projeto/us-west2/lidacomzapcrm-inteligente removido após preservação sanitizada, checagem de dependências conhecidas, trigger disabled e precondição etag/UID/revisão/applet. Operação concluída; service/revisão00002-wqh GET404. Applet/contas/build/buckets/Firebase/Firestore/APIs/IAM compartilhados preservados. Configuração e prova em INFRA-01-runtime-provenance.md/evidence INFRA-01. Nenhuma escrita de pedidos/caixa/delivery; Rules hash preservado e IDs TEST ausentes.

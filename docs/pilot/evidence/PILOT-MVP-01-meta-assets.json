@@ -1,0 +1,18 @@
+{
+  "observedDateLocal": "2026-10-06",
+  "method": "OFFICIAL_UI_READ_ONLY",
+  "appsList": "NONE_VISIBLE",
+  "portfolios": [
+    {"businessId":"144789471002545","displayName":"Por Lidacom Digital","visibleApps":0,"legalName":"NOT_SET","verification":"NOT_VERIFIED","currentUserAccess":"FULL","createdYear":2021,"legalSaasOwnership":"NOT_PROVEN"},
+    {"businessId":"1694546150694544","displayName":"lidacomdigital","visibleApps":0,"currentUserAccess":"FULL_VISIBLE","legalName":"NOT_AUDITED_AUTH_CHALLENGE","verification":"NOT_AUDITED_AUTH_CHALLENGE","legalSaasOwnership":"NOT_PROVEN"},
+    {"businessId":"108180028128224","displayName":"Curso vivendo de IPHONE","visibleApps":0,"legalSaasOwnership":"NOT_AUDITED"}
+  ],
+  "selectedSaasPortfolio": null,
+  "appCreated": false,
+  "wabaCreated": false,
+  "phoneConfigured": false,
+  "secretsCollected": false,
+  "gate": "GATE_META_INTERACTIVE_AUTHENTICATION_REQUIRED",
+  "reason": "Meta requested passkey identity confirmation while auditing second portfolio",
+  "nextConditionalGate": "GATE_META_SAAS_BUSINESS_PORTFOLIO_REQUIRED"
+}

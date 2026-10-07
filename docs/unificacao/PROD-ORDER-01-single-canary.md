@@ -1,5 +1,9 @@
 # PROD-ORDER-01 — canário único: pre-flight bloqueado
 
+## Estado vigente — PAUSED — PILOT PRIORITIZATION (2026-10-06)
+
+Novo controlador humano prioriza PILOT-MVP-01: não executar canário, não habilitar APIs para resolver inventários, não ampliar rollout. Quota0/1/flagDISABLED; nenhum Order/audit cloud/identidade temporária ou contenção publicada. Autorizações históricas preservadas, não executadas durante a pausa. Runtime AI/Agent Studio removido não será recriado. **META-01 não depende mais deste canário**; pode avançar autonomamente em TEST até seus próprios gates. O piloto reutiliza catálogo e fluxo DeliveryOrder legado de restaurante com fronteira server-side, não o Order canônico deste canário. Estado/roadmap atual em docs/pilot/PILOT-MVP-01-whatsapp-active-sales-menu-orders-print.md. Seções abaixo são históricas e não autorizam retomada do canário agora.
+
 ## Checkpoint atual — runtime de teste removido (2026-10-06)
 
 Após autorização humana, somente Cloud Run lidacomzapcrm-inteligente/us-west2 no projeto operacional foi descomissionado; evidência/configuração sanitizada preservada, sem dependência operacional direta conhecida, trigger disabled/etag inalterado, operação done e service/revisão404. INFRA-01 registra limites e prova. Proveniência não bloqueia mais esse recurso. Canário0/1, flagDISABLED, Rules hash inalterado e paths TEST ausentes. Nenhuma contenção publicada, identidade temporária criada ou auditoria cloud gravada. **GATE_OPERATIONAL_INVENTORY_VERIFICATION_REQUIRED** permanece antes de qualquer create: Functions/Eventarc/Extensions não tiveram inventário direto comprovado porque APIs estão desabilitadas; índice complementar não foi tomado como inventário completo. Não habilitar APIs sem exceção humana à proibição existente. Autorizações anteriores preservadas. Meta aguarda fechamento do canário; sem rollout/outbound. Seções anteriores são checkpoints históricos.
