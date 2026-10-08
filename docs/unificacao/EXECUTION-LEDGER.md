@@ -1,5 +1,14 @@
 # Execution ledger — Unificação
 
+## META-01 — ativação autorizada / TEST secrets / gate entrada (2026-10-07)
+
+- HEAD INICIAL:e464976d28ee011cf45908befeff7c6b990e1e8f. Correção INFRA-02 commit97c77ce5ff64c2e25c9a0c15d82e241ae088ded5 antes de mutação; push somente branch autorizada. Três documentos apenas, pessoal/CONTINUIDADE-CANONICA-USUARIO.md fora dos commits, main/default intactos.
+- VALIDAÇÃO: quatro testes proteção/diff check PASS; CI correção push37705319476/PR37705323127/análise37705319887 success. Suíte213/baseline21→21/cinco stricts/quatro builds via workflow, não somar quatro testes como novos. CI do fechamento de evidência será consultada após publicação.
+- CLOUD: ResourceManagerID/númeroACTIVE staging confirmado antes de enable; SecretManagerEnabled. Poll inicial interrompido por regex local restritiva do nome operação; mesma operação retomada read-only sem segundo enable. GET exatos/names antes de create; somente2secrets automatic/test. Verifytoken1versãoENABLED/crypto48bytes/envioTLS direto sem output/arquivo/secretaccess. Appsecret0versões/nenhum valor lido ou transmitido.
+- IAM/BILLING: nenhum grant runtime até consumidor dedicado necessário; nenhuma chaveJSON/frontend; nenhum billing/budget/default/operacional/Firestore alterado. Não habilitar secretos no operacional/lidacomzapcrm/Gestão.
+- EVIDÊNCIA: JSON sanitizado META-01-secret-manager-test; tool helper privado foraGit não possui chaveMeta/verifytoken literal. Browserform vazio aberto e marcadohandoff; nenhum screenshot/DOM de chave nova. SourceMeta preservada sem leitura. Reautenticação/reset/assets não repetidos.
+- GATE:GATE_META_SECRET_SECURE_INPUT_REQUIRED, regra explícita do usuário de entrada sem captura. Usuário copia chave nova do app1480563193903800 diretamente ao diálogo Addversion staging/meta-test-app-secret e salva1versão; não pelochat/arquivo. Depois verificar metadados semlerpayload, retomar receiverdedicado/IAMmínimo/tests/workerprivado/draftonly. ZEROoutbound/rollout/produção.
+
 ## INFRA-02 — correção imediata da classificação (2026-10-07)
 
 - HEAD LOCAL/REMOTO: e464976d28ee011cf45908befeff7c6b990e1e8f; main remota60fb91fdf048a8e0d4f9adc29a532be8bf4356dd. Nenhum commit/push da correção; não disparar Hosting staging automático pelo workflow.

@@ -1,5 +1,9 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## META-01 — Secret Manager somente staging / entrada segura pendente (2026-10-07)
+
+Nova autorização humana depois da correção INFRA-02: commit documental97c77ce publicado/CIpush37705319476 ePR37705323127 success. **lidacomzapcrm permanece UNVERIFIED**, operacional/default preservados. Project ID lidacomzapcrm-staging/número854899277909 confirmado; Secret Manager ENABLED nesse projeto somente. Dois secrets TEST criados após checagem de existência: meta-test-verify-token com1versão ENABLED gerada server-side sem exposição, meta-test-app-secret com0versões. Não capturar/reutilizar chave antiga/nova; **GATE_META_SECRET_SECURE_INPUT_REQUIRED** para usuário inserir diretamente a chave nova no formulário oficial aberto, conforme restrição explícita de não captura. Sem IAMruntime/publicreceiver/callback/subscription/outbound/produção/billing/budget/rollout. Assets Meta existentes preservados. Prova sanitizada evidence/META-01-secret-manager-test.json e META-01-inbound-staging.md. Abaixo histórico.
+
 ## INFRA-02 — classificação corrigida / cloud interrompida (2026-10-07)
 
 Instrução humana mais recente substitui a declaração anterior de destino futuro: **lidacomzapcrm = UNVERIFIED / NÃO CLASSIFICADO**, não produção futura, não destino canônico, não staging, não autorizado para secrets. Produto único continua LidacomZapCRM no workspace/repositório atuais; operacional **project-1300957a-ea82-4645-845**, staging oficial **lidacomzapcrm-staging**, Gestão **fonte histórica/técnica**. Não migrar nem aposentar. Premissa anterior **SUPERSEDED / CORRIGIDA**; nenhum plano MIG ou documento de migração foi criado.

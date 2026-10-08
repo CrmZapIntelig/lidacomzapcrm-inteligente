@@ -1,5 +1,24 @@
 # META-01 — inbound TEST em staging
 
+## Estado vigente — Secret Manager TEST habilitado / entrada humana segura (2026-10-07)
+
+Correção INFRA-02 publicada primeiro no commit **97c77ce5ff64c2e25c9a0c15d82e241ae088ded5**, somente três documentos; quatro testes de proteção/diff check PASS. CI push37705319476/PR37705323127/análise37705319887 success. Usuário depois autorizou especificamente ativação/secret TEST/runtime mínimo no anexo de continuidade; operacional e lidacomzapcrm não classificados continuam fora do escopo.
+
+Project ID e Project Number confirmados via Resource Manager antes de qualquer mutação: **lidacomzapcrm-staging / 854899277909 / ACTIVE**. `secretmanager.googleapis.com` ENABLED somente nesse projeto. A ativação inicial retornou operação com ponto no nome; verificador local restritivo interrompeu polling. Retomada consultou a mesma operação já existente, sem segundo enable, e comprovou conclusão/estado ENABLED.
+
+Inventário exato dos dois nomes confirmou ausência antes da criação. Criados com replicação automática/labels staging/test/meta-01, sem versões de produção:
+
+- `meta-test-verify-token`: **uma versão ENABLED**, gerada no processo server-side por crypto.randomBytes(48), transmitida diretamente à API oficial TLS/addVersion. Não impressa, salva localmente, registrada no Git/artifact/frontend nem lida de volta; prova contém somente metadados.
+- `meta-test-app-secret`: recurso criado, **zero versões**. Nenhum valor antigo ou novo capturado/utilizado/transmitido pelo agente.
+
+**GATE_META_SECRET_SECURE_INPUT_REQUIRED**: o usuário exige inserção sem captura do valor pela ferramenta. Não foi comprovado mecanismo automático que atenda essa condição; ler DOM/clipboard e reenviar capturaria a chave mesmo sem imprimir. Portanto ação humana mínima: na aba Meta do app1480563193903800, copiar a chave **nova já redefinida** diretamente para o campo Valor do secret, no diálogo aberto Adicionar nova versão do Secret Manager staging/meta-test-app-secret, e salvar uma única versão. Não enviar valor no chat/arquivo. Formulário observado e screenshot somente enquanto vazio; não fazer AX/DOM/screenshot do campo depois da entrada humana. Após salvar, conferir apenas metadados/estado/quantidade via API, sem :access por operador.
+
+Nenhum IAM runtime concedido ainda: configuração do receiver dedicado que realmente precisa dos secrets permanece pendente. Menor privilégio por secret/runtime, sem acesso frontend/chave JSON; não confundir criação com autorização efetiva ao worker existente. Receiver/worker continuam sintéticos/privados existentes, callback/subscription não configurados, canSend=false, zero outbound/cliente real. Billing/budget/default/projeto operacional/main não alterados. Budget alerta não é hard cap; custo compartilhado previamente explicado mantém-se aplicável.
+
+Prova sanitizada: docs/unificacao/evidence/META-01-secret-manager-test.json. Fonte REST oficial consultada 2026-10-07: [create cria recurso sem versões](https://docs.cloud.google.com/secret-manager/docs/reference/rest/v1/projects.secrets/create), [addVersion](https://docs.cloud.google.com/secret-manager/docs/reference/rest/v1/projects.secrets/addVersion). Só entrada humana falta neste bloco; não declarar META-01 concluída.
+
+Abaixo checkpoints históricos; suas frases de API desativada/gates anteriores não descrevem o estado vigente.
+
 ## Estado vigente — rotação informada / ativação Secret Manager staging (2026-10-07)
 
 HEAD inicial9b6ee8da8911a2fffce6694a73e1172f318ea0a3. Usuário informou chave redefinida e opção0horas salva. GATE_META_APP_SECRET_ROTATION_REQUIRED resolvido por confirmação humana; não testar/reutilizar chave anterior. O intervalo é interpretado como prazo da chave antiga, mas texto exato e revogação não foram verificados independentemente. Pergunta curta opcional apresentada para distinguir expiração antiga/nova; nenhum segredo necessário no chat. Nova chave não lida/transmitida pelo agente.
