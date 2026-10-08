@@ -8,7 +8,7 @@ import { prepareAutoReplyDraft } from '../../src/application/messagingReadiness'
 import { businessKey, timestamp } from '../../src/domain/offlinePrimitives';
 
 interface Work { key: string; event: NormalizedProviderEvent; state: 'QUEUED' | 'RESERVED' | 'COMPLETED' | 'FAILED_FINAL'; attempt: number; token?: string; owner?: string; leaseUntil?: string; retryAt?: string }
-export interface Journal { version: 1; tenantId: string; accountId: string; mode: 'SIMULATION'; work: Work[]; projection: InboundState; drafts: AutoReplyDraft[]; audit: MessagingAudit[] }
+export interface Journal { version: 1; tenantId: string; accountId: string; mode: 'SIMULATION' | 'STAGING'; work: Work[]; projection: InboundState; drafts: AutoReplyDraft[]; audit: MessagingAudit[] }
 export interface AutoReplyConfiguration { content: string; humanEscalation: string; blocked: boolean; optedOut: boolean; consent: 'ALLOWED' | 'DENIED' | 'UNKNOWN' }
 
 /** Local synthetic durable reference, NOT a staging/production database adapter. */
@@ -18,7 +18,8 @@ export class LocalInboundJournal {
     if (!/^demo(?:-|$)/.test(tenantId) || !/^\d+$/.test(accountId)) throw new Error('SYNTHETIC_CONTEXT_REQUIRED');
     this.root = resolve(root);
   }
-  protected fresh(): Journal { return { version: 1, tenantId: this.tenantId, accountId: this.accountId, mode: 'SIMULATION', work: [], projection: createInboundState(this.tenantId, this.accountId, 'SIMULATION'), drafts: [], audit: [] }; }
+  protected get executionMode(): 'SIMULATION' | 'STAGING' { return 'SIMULATION'; }
+  protected fresh(): Journal { return { version: 1, tenantId: this.tenantId, accountId: this.accountId, mode: this.executionMode, work: [], projection: createInboundState(this.tenantId, this.accountId, this.executionMode), drafts: [], audit: [] }; }
   protected validateEvent(e: NormalizedProviderEvent) {
     if (!['INBOUND', 'STATUS'].includes(e.kind) || !((e.channel === 'WHATSAPP' && e.provider === 'WHATSAPP_META_OFFICIAL') || (e.channel === 'RCS' && e.provider === 'RCS_GOOGLE')) || (e.kind === 'STATUS' && !['SENT', 'DELIVERED', 'READ', 'FAILED'].includes(e.status ?? ''))) throw new Error('SYNTHETIC_EVENT_INVALID');
     if (e.mode !== 'SIMULATION' || e.tenantId !== this.tenantId || e.accountId !== this.accountId || !/^synthetic-[A-Za-z0-9:_-]{1,200}$/.test(e.messageId) || !/^synthetic-[A-Za-z0-9:_-]{1,250}$/.test(e.eventId) || (e.kind === 'INBOUND' && !/^\+1202555010[0-6]$/.test(e.address ?? ''))) throw new Error('SYNTHETIC_EVENT_REQUIRED');
@@ -32,7 +33,7 @@ export class LocalInboundJournal {
     } catch (e) { if ((e as NodeJS.ErrnoException).code === 'ENOENT') return this.fresh(); throw e; }
   }
   protected restore(j: Journal): Journal {
-      if (j.version !== 1 || j.tenantId !== this.tenantId || j.accountId !== this.accountId || j.mode !== 'SIMULATION' || !Array.isArray(j.work) || !Array.isArray(j.drafts) || !Array.isArray(j.audit) || j.projection.tenantId !== this.tenantId || j.projection.mode !== 'SIMULATION' || j.projection.accountId !== this.accountId) throw new Error('JOURNAL_CONTEXT_MISMATCH');
+      if (j.version !== 1 || j.tenantId !== this.tenantId || j.accountId !== this.accountId || j.mode !== this.executionMode || !Array.isArray(j.work) || !Array.isArray(j.drafts) || !Array.isArray(j.audit) || j.projection.tenantId !== this.tenantId || j.projection.mode !== this.executionMode || j.projection.accountId !== this.accountId) throw new Error('JOURNAL_CONTEXT_MISMATCH');
       if (j.work.length > 10000 || new Set(j.work.map(w => w.key)).size !== j.work.length) throw new Error('JOURNAL_INVALID');
       for (const w of j.work) {
         this.validateEvent(w.event);
@@ -69,7 +70,7 @@ export class LocalInboundJournal {
         if (j.work.some(w => w.key === key)) { duplicates++; continue; }
         if (j.work.length >= 10000) throw new Error('JOURNAL_CAPACITY');
         j.work.push({ key, event: structuredClone(event), state: 'QUEUED', attempt: 0 }); admitted++;
-        j.audit.push({ tenantId: this.tenantId, entryId: key, action: 'ADMISSION', mode: 'SIMULATION', occurredAt: at, reason: 'DURABLE_LOCAL_ADMISSION' });
+        j.audit.push({ tenantId: this.tenantId, entryId: key, action: 'ADMISSION', mode: this.executionMode, occurredAt: at, reason: 'DURABLE_LOCAL_ADMISSION' });
       }
       return { admitted, duplicates };
     });
@@ -95,12 +96,12 @@ export class LocalInboundJournal {
       if (w.event.kind === 'INBOUND') {
         const result = projectInbound(j.projection, w.event, randomUUID); j.projection = result.state;
         if (!result.duplicate && autoReply && result.contactId && result.conversationId) {
-          const draft = prepareAutoReplyDraft({ contactId: result.contactId, conversationId: result.conversationId, source: w.event, content: autoReply.content, humanEscalation: autoReply.humanEscalation, policy: { ...autoReply, tenantId: this.tenantId, contactId: result.contactId, mode: 'SIMULATION', channel: w.event.channel, provider: w.event.provider, purpose: 'SERVICE_REPLY', messageType: 'TEXT', now: at, lastInboundAt: w.event.occurredAt, inboundEvidence: 'SIMULATION' } });
-          if (draft) { j.drafts.push(draft); j.audit.push({ tenantId: this.tenantId, entryId: w.key, mode: 'SIMULATION', action: 'DRAFT', occurredAt: at, reason: 'AUTO_REPLY_DRAFT_ONLY' }); }
+          const draft = prepareAutoReplyDraft({ contactId: result.contactId, conversationId: result.conversationId, source: w.event, content: autoReply.content, humanEscalation: autoReply.humanEscalation, policy: { ...autoReply, tenantId: this.tenantId, contactId: result.contactId, mode: this.executionMode, channel: w.event.channel, provider: w.event.provider, purpose: 'SERVICE_REPLY', messageType: 'TEXT', now: at, lastInboundAt: w.event.occurredAt, inboundEvidence: this.executionMode === 'SIMULATION' ? 'SIMULATION' : 'PROVIDER' } });
+          if (draft) { j.drafts.push(draft); j.audit.push({ tenantId: this.tenantId, entryId: w.key, mode: this.executionMode, action: 'DRAFT', occurredAt: at, reason: 'AUTO_REPLY_DRAFT_ONLY' }); }
         }
       } else {
         // No outbound exists locally. Keep receipt evidence without manufacturing a correlated send.
-        j.audit.push({ tenantId: this.tenantId, entryId: w.key, mode: 'SIMULATION', action: 'PROVIDER_RESULT', occurredAt: at, reason: 'UNBOUND_RECEIPT_NOT_APPLIED' });
+        j.audit.push({ tenantId: this.tenantId, entryId: w.key, mode: this.executionMode, action: 'PROVIDER_RESULT', occurredAt: at, reason: 'UNBOUND_RECEIPT_NOT_APPLIED' });
       }
       w.state = 'COMPLETED'; w.token = undefined; w.owner = undefined; w.leaseUntil = undefined;
       return { state: 'COMPLETED' as const, canSend: false as const };

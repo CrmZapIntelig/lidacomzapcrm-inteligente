@@ -5,6 +5,7 @@ import { StagingDurableInboundJournal } from '../services/staging/durableInbound
 import { FirestoreAtomicJsonPort } from '../services/staging/firestoreAtomicPort';
 import { StagingFirestoreHttp } from '../services/staging/firestoreHttp';
 import { createSyntheticStagingIngress } from '../services/staging/syntheticIngress';
+export { metaTestReceiver, metaTestWorker } from './metaTest';
 
 const projectId = 'lidacomzapcrm-staging';
 const tenantId = 'demo-staging-TEST-managed';

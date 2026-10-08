@@ -15,3 +15,16 @@ test('managed runtime stays private, bounded, synthetic and separate from Hostin
   assert.deepEqual(Object.keys(JSON.parse(read('firebase.functions.staging.json'))),['functions']);
   const hosting=JSON.parse(read('firebase.staging.json')); assert.ok(!hosting.hosting.rewrites);
 });
+test('dedicated Meta TEST receiver cannot expose worker, sender or frontend secrets',()=>{
+  const entry=read('staging-functions/metaTest.ts');
+  assert.match(entry,/invoker: 'public', serviceAccount: receiverIdentity, secrets: \[appSecret, verifyToken\]/);
+  assert.match(entry,/invoker: \[workerIdentity\], serviceAccount: workerIdentity/);
+  assert.match(entry,/crm-meta-test-receiver@lidacomzapcrm-staging\.iam\.gserviceaccount\.com/);
+  assert.match(entry,/process\.env\.GCLOUD_PROJECT !== binding\.projectId/);
+  assert.ok(!/console\.|\.sendText\(|\.sendTemplate\(|fetch\(|axios|src\/App|src\/lib\/firebase/.test(entry));
+  assert.match(entry,/new StagingMetaTestJournal\([^\n]*metaMode: 'TEST' \}\)/);
+  const worker=entry.slice(entry.indexOf('export const metaTestWorker'));
+  assert.ok(!/secrets:|appSecret\.value|verifyToken\.value/.test(worker));
+  assert.match(worker,/req\.path !== '\/worker'/);
+  assert.match(read('services/staging/metaTestIngress.ts'),/request\.path !== '\/webhooks\/meta'/);
+});
