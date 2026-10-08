@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
 import { MetaWhatsAppCloudProvider } from '../messaging/metaWhatsAppCloudProvider';
 import { LocalInboundJournal } from '../messaging/localInboundJournal';
-import { StagingMetaTestJournal, createMetaTestReceiver, runMetaTestWorker, metaTestBinding as b } from './metaTestIngress';
+import { StagingMetaTestJournal, createMetaTestReceiver, runMetaTestWorker, metaVerificationAudit, metaTestBinding as b } from './metaTestIngress';
 import type { AtomicJsonPort } from './durableInboundJournal';
 const at = '2026-10-07T20:00:00.000Z';
 const publicFixtureSecret = 'TEST-public-fixture-HMAC';
@@ -35,6 +35,20 @@ test('verification challenge never admits work; wrong token rejected and worker 
   assert.deepEqual(await receiver(request), { status: 200, body: '1234' });
   request.query['hub.verify_token'] = 'TEST-wrong'; assert.equal((await receiver(request)).status, 403);
   assert.equal((await receiver({ ...request, path: '/worker' })).status, 404); assert.equal(port.calls, 0);
+});
+test('verification diagnostics cannot include request values, secret material, challenge, URLs or injected fields', () => {
+  const request = { method: 'GET', path: '/webhooks/meta', raw: new Uint8Array(), query: { 'hub.mode': 'subscribe', 'hub.challenge': '987654321', 'hub.verify_token': 'TEST-sensitive-placeholder', 'injected-secret-key': 'TEST-sensitive-placeholder' } };
+  const audit = metaVerificationAudit(request, 400, true, false);
+  assert.equal(audit.reason, 'QUERY_REJECTED');
+  assert.deepEqual(Object.keys(audit).sort(), ['httpStatus', 'reason', 'pathAllowed', 'queryAllowed', 'modeValid', 'challengeValid', 'tokenPresent', 'tokenAvailable', 'tokenMatches'].sort());
+  for (const value of ['987654321', 'TEST-sensitive-placeholder', 'injected-secret-key', '/webhooks/meta']) assert.ok(!JSON.stringify(audit).includes(value));
+});
+test('verification diagnostics distinguish unavailable binding, mismatch and successful verification without changing admission', () => {
+  const request = { method: 'GET', path: '/webhooks/meta', raw: new Uint8Array(), query: { 'hub.mode': 'subscribe', 'hub.challenge': '1', 'hub.verify_token': 'TEST-placeholder' } };
+  assert.equal(metaVerificationAudit(request, 403, false, false).reason, 'TOKEN_UNAVAILABLE');
+  assert.equal(metaVerificationAudit(request, 403, true, false).reason, 'TOKEN_MISMATCH');
+  assert.equal(metaVerificationAudit(request, 200, true, true).reason, 'VERIFIED');
+  assert.equal(metaVerificationAudit({ ...request, query: { ...request.query, 'hub.challenge': 'invalid' } }, 403, true, true).reason, 'CHALLENGE_REJECTED');
 });
 for (const variant of ['missing-signature', 'wrong-signature', 'malformed', 'oversized', 'wrong-waba', 'wrong-phone', 'unsupported-event', 'unlisted-sender', 'wrong-text', 'mixed-batch', 'too-many', 'wrong-content-type'] as const) {
   test(`Meta TEST rejects ${variant} without partial persistence`, async () => {

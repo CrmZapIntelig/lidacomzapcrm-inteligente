@@ -29,6 +29,18 @@ export class StagingMetaTestJournal extends StagingDurableInboundJournal {
 type Validation = Pick<MetaWhatsAppCloudProvider, 'verifyChallenge' | 'verifyWebhook' | 'parseWebhook'>;
 type Admission = Pick<StagingMetaTestJournal, 'tenantId' | 'accountId' | 'admitBatch'>;
 
+/** Whitelist-only verification telemetry. No URL, query value, token or hash. */
+export function metaVerificationAudit(request: SyntheticRequest, status: number, tokenAvailable: boolean, tokenMatches: boolean) {
+  const q = request.query ?? {};
+  const pathAllowed = request.path === '/webhooks/meta';
+  const queryAllowed = Object.keys(q).every(k => ['hub.mode', 'hub.verify_token', 'hub.challenge'].includes(k));
+  const modeValid = q['hub.mode'] === 'subscribe';
+  const challengeValid = /^\d{1,256}$/.test(q['hub.challenge'] ?? '');
+  const tokenPresent = !!q['hub.verify_token'];
+  const reason = !pathAllowed ? 'PATH_REJECTED' : !queryAllowed ? 'QUERY_REJECTED' : !modeValid ? 'MODE_REJECTED' : !challengeValid ? 'CHALLENGE_REJECTED' : !tokenPresent ? 'TOKEN_MISSING' : !tokenAvailable ? 'TOKEN_UNAVAILABLE' : !tokenMatches ? 'TOKEN_MISMATCH' : status === 200 ? 'VERIFIED' : 'RECEIVER_REJECTED';
+  return { httpStatus: status, reason, pathAllowed, queryAllowed, modeValid, challengeValid, tokenPresent, tokenAvailable, tokenMatches };
+}
+
 /** Public receiver only. No worker path, credentials, sender or second queue. */
 export function createMetaTestReceiver(validation: Validation, journal: Admission, now = () => new Date().toISOString()) {
   if (journal.tenantId !== metaTestBinding.tenantId || journal.accountId !== metaTestBinding.wabaId) throw new Error('META_TEST_BINDING_REQUIRED');

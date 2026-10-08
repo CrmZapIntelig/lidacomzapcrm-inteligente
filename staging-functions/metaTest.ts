@@ -1,10 +1,11 @@
 import { onRequest } from 'firebase-functions/v2/https';
 import { defineSecret } from 'firebase-functions/params';
+import { info } from 'firebase-functions/logger';
 import { GoogleAuth } from 'google-auth-library';
 import { MetaWhatsAppCloudProvider } from '../services/messaging/metaWhatsAppCloudProvider';
 import { FirestoreAtomicJsonPort } from '../services/staging/firestoreAtomicPort';
 import { StagingFirestoreHttp } from '../services/staging/firestoreHttp';
-import { StagingMetaTestJournal, createMetaTestReceiver, runMetaTestWorker, metaTestBinding as binding } from '../services/staging/metaTestIngress';
+import { StagingMetaTestJournal, createMetaTestReceiver, runMetaTestWorker, metaVerificationAudit, metaTestBinding as binding } from '../services/staging/metaTestIngress';
 
 const appSecret = defineSecret('meta-test-app-secret'), verifyToken = defineSecret('meta-test-verify-token');
 const receiverIdentity = 'crm-meta-test-receiver@lidacomzapcrm-staging.iam.gserviceaccount.com';
@@ -23,10 +24,16 @@ const receiver = createMetaTestReceiver(validation, journal);
 const limits = { region: 'southamerica-east1', minInstances: 0, maxInstances: 1, concurrency: 1, timeoutSeconds: 60, memory: '256MiB' as const, cpu: 1, cors: false };
 
 export const metaTestReceiver = onRequest({ ...limits, invoker: 'public', serviceAccount: receiverIdentity, secrets: [appSecret, verifyToken] }, async (req, res) => {
-  if (process.env.GCLOUD_PROJECT !== binding.projectId) { res.status(503).end(); return; }
+  if (process.env.GCLOUD_PROJECT !== binding.projectId) { if (req.method === 'GET') info('META_TEST_VERIFICATION', { httpStatus: 503, reason: 'ENVIRONMENT_REJECTED' }); res.status(503).end(); return; }
   const query: Record<string, string> = {};
-  for (const [key, value] of Object.entries(req.query)) { if (typeof value !== 'string') { res.status(400).end(); return; } query[key] = value; }
+  for (const [key, value] of Object.entries(req.query)) { if (typeof value !== 'string') { if (req.method === 'GET') info('META_TEST_VERIFICATION', { httpStatus: 400, reason: 'QUERY_NOT_SCALAR' }); res.status(400).end(); return; } query[key] = value; }
   const result = await receiver({ method: req.method, path: req.path, query, contentType: req.get('content-type'), signature: req.get('x-hub-signature-256'), raw: req.rawBody ?? new Uint8Array() });
+  if (req.method === 'GET') {
+    const tokenAvailable = !!verifyToken.value();
+    // Compare only inside the receiver using the existing verifier; never export a credential.
+    const tokenMatches = !!await validation.verifyChallenge({ 'hub.mode': 'subscribe', 'hub.challenge': '1', 'hub.verify_token': query['hub.verify_token'] ?? '' }, binding.tenantId);
+    info('META_TEST_VERIFICATION', metaVerificationAudit({ method: 'GET', path: req.path, query, raw: new Uint8Array() }, result.status, tokenAvailable, tokenMatches));
+  }
   res.set('Cache-Control', 'no-store').set('X-Content-Type-Options', 'nosniff').status(result.status).type('text/plain').send(result.body);
 });
 
