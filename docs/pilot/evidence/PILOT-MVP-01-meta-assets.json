@@ -80,7 +80,7 @@
   "credentialContainment": {
     "appSecretPotentiallyExposed": true,
     "valueRecordedInEvidence": false,
-    "cloudSecretStored": false,
+    "cloudSecretStored": true,
     "usedForHmacOrSend": false,
     "pageReloadedAndShowButtonRestored": true,
     "credentialPageLeftForDashboard": true,
@@ -91,12 +91,13 @@
     "overlapMeaning": "OLD_SECRET_EXPIRY_INFERRED_NOT_INDEPENDENTLY_VERIFIED",
     "oldSecretRevocationIndependentlyVerified": false,
     "safeContinuationRequiresRotation": false,
-    "newSecretReadOrTransferredByAgent": false
+    "newSecretReadOrTransferredByAgent": false,
+    "cloudSecretStorageEvidence": "USER_DIRECT_INPUT_METADATA_VERSION1_ENABLED_NO_AGENT_PAYLOAD_ACCESS"
   },
   "secretManagerReadiness": {
     "projectId": "lidacomzapcrm-staging",
     "api": "secretmanager.googleapis.com",
-    "state": "ENABLED_TEST_SECRETS_PARTIAL",
+    "state": "ENABLED_TEST_SECRETS_READY_RECEIVER_DEPLOYED",
     "enableClicked": false,
     "proposedSecrets": [
       "meta-test-app-secret",
@@ -105,12 +106,13 @@
     "proposedActiveVersions": 2,
     "freeTierSharedByBillingAccount": true,
     "freeTierAvailabilityVerified": false,
-    "runtimeIamGranted": false,
+    "runtimeIamGranted": true,
     "apiEnabled": true,
     "activeVersions": {
       "meta-test-verify-token": 1,
-      "meta-test-app-secret": 0
-    }
+      "meta-test-app-secret": 1
+    },
+    "runtimeGrantScope": "RECEIVER_ONLY_TWO_TEST_SECRETS"
   },
   "authenticationGate": "RESOLVED_USER_REAUTH_AND_UI_ACCESS_CONFIRMED",
   "existingWhatsAppAssets": [
@@ -126,6 +128,6 @@
     }
   ],
   "termsGate": "RESOLVED_USER_DIRECT_UI",
-  "gate": "GATE_META_SECRET_SECURE_INPUT_REQUIRED",
-  "reason": "API enabled only on confirmed staging; verify token generated server-side, one enabled version. App secret resource empty. User must input newly rotated key directly to official staging console because automatic transfer would capture the value. No runtime IAM or outbound."
+  "gate": "GATE_META_VERIFY_TOKEN_SECURE_INPUT_REQUIRED",
+  "reason": "Dedicated staging TEST receiver deployed and worker private. Callback URL prepared but verify token requires direct human transfer without tool capture. No subscription or positive cloud HMAC/inbound proved; outbound disabled."
 }

@@ -1,0 +1,212 @@
+{
+  "sourceHead": "4e85b538515a6d830412f2a90f3bc4736156a589",
+  "secrets": {
+    "at": "2026-10-08T00:17:02.523Z",
+    "projectId": "lidacomzapcrm-staging",
+    "projectNumber": "854899277909",
+    "api": "secretmanager.googleapis.com",
+    "projectConfirmed": true,
+    "apiEnabled": true,
+    "secrets": {
+      "meta-test-app-secret": {
+        "created": false,
+        "replication": "automatic",
+        "activeVersions": 1,
+        "versions": [
+          {
+            "name": "projects/854899277909/secrets/meta-test-app-secret/versions/1",
+            "state": "ENABLED"
+          }
+        ]
+      },
+      "meta-test-verify-token": {
+        "created": false,
+        "replication": "automatic",
+        "activeVersions": 1,
+        "versions": [
+          {
+            "name": "projects/854899277909/secrets/meta-test-verify-token/versions/1",
+            "state": "ENABLED"
+          }
+        ]
+      }
+    },
+    "appSecretRead": false,
+    "appSecretStoredByAgent": false,
+    "secretVersionAccessCalls": 0,
+    "runtimeIamChanges": 0,
+    "operationalChanges": 0,
+    "outbound": false,
+    "enableOperation": "operations/acat.p2-854899277909-b1dacae6-c078-41f0-9cd1-1aaa8dd31f3b",
+    "apiStateBefore": "ENABLED",
+    "gate": "APP_SECRET_PRESENT_RUNTIME_PENDING"
+  },
+  "provision": {
+    "at": "2026-10-08T00:24:34.106Z",
+    "projectId": "lidacomzapcrm-staging",
+    "runtime": "crm-meta-test-receiver@lidacomzapcrm-staging.iam.gserviceaccount.com",
+    "changes": [
+      "RECEIVER_IDENTITY_CREATED",
+      "EXISTING_MINIMUM_JOURNAL_ROLE_BOUND_RECEIVER",
+      "SECRET_ACCESSOR_RECEIVER_ONLY_meta-test-app-secret",
+      "SECRET_ACCESSOR_RECEIVER_ONLY_meta-test-verify-token",
+      "RECEIVER_REQUEST_URL_EXCLUSION_CREATED"
+    ],
+    "operationalChanges": 0,
+    "secretPayloadReads": 0,
+    "ready": true
+  },
+  "cloud": {
+    "at": "2026-10-08T00:29:02.639Z",
+    "projectId": "lidacomzapcrm-staging",
+    "functions": [
+      {
+        "name": "metaTestReceiver",
+        "state": "ACTIVE",
+        "uri": "https://metatestreceiver-frefvtfoya-rj.a.run.app",
+        "service": "projects/lidacomzapcrm-staging/locations/southamerica-east1/services/metatestreceiver",
+        "runtime": "nodejs22",
+        "serviceAccount": "crm-meta-test-receiver@lidacomzapcrm-staging.iam.gserviceaccount.com",
+        "minInstances": 0,
+        "maxInstances": 1,
+        "concurrency": 1,
+        "timeoutSeconds": 60,
+        "secretNames": [
+          "meta-test-app-secret",
+          "meta-test-verify-token"
+        ],
+        "publicInvoker": true
+      },
+      {
+        "name": "metaTestWorker",
+        "state": "ACTIVE",
+        "uri": "https://metatestworker-frefvtfoya-rj.a.run.app",
+        "service": "projects/lidacomzapcrm-staging/locations/southamerica-east1/services/metatestworker",
+        "runtime": "nodejs22",
+        "serviceAccount": "crm-staging-runtime@lidacomzapcrm-staging.iam.gserviceaccount.com",
+        "minInstances": 0,
+        "maxInstances": 1,
+        "concurrency": 1,
+        "timeoutSeconds": 60,
+        "secretNames": [],
+        "publicInvoker": false
+      },
+      {
+        "name": "stagingIngress",
+        "state": "ACTIVE",
+        "uri": "https://stagingingress-frefvtfoya-rj.a.run.app",
+        "service": "projects/lidacomzapcrm-staging/locations/southamerica-east1/services/stagingingress",
+        "runtime": "nodejs22",
+        "serviceAccount": "crm-staging-runtime@lidacomzapcrm-staging.iam.gserviceaccount.com",
+        "minInstances": 0,
+        "maxInstances": 1,
+        "concurrency": 1,
+        "timeoutSeconds": 60,
+        "secretNames": [],
+        "publicInvoker": false
+      }
+    ],
+    "http": [
+      {
+        "test": "PUBLIC_RECEIVER_WRONG_TOKEN",
+        "status": 403,
+        "expected": 403
+      },
+      {
+        "test": "PUBLIC_WORKER_ABSENT",
+        "status": 404,
+        "expected": 404
+      },
+      {
+        "test": "MISSING_SIGNATURE",
+        "status": 403,
+        "expected": 403
+      },
+      {
+        "test": "INVALID_SIGNATURE",
+        "status": 403,
+        "expected": 403
+      },
+      {
+        "test": "BODY_LIMIT",
+        "status": 413,
+        "expected": 413
+      },
+      {
+        "test": "PRIVATE_WORKER_ANONYMOUS",
+        "status": 403,
+        "expected": 403
+      }
+    ],
+    "outbound": false,
+    "secretPayloadReads": 0,
+    "ready": true
+  },
+  "security": {
+    "at": "2026-10-08T00:30:35.358Z",
+    "projectId": "lidacomzapcrm-staging",
+    "secretPayloadReads": 0,
+    "secrets": [
+      {
+        "name": "meta-test-app-secret",
+        "accessorOnlyReceiver": true,
+        "workerSecretAccess": false
+      },
+      {
+        "name": "meta-test-verify-token",
+        "accessorOnlyReceiver": true,
+        "workerSecretAccess": false
+      }
+    ],
+    "requestUrlLoggingProtected": true,
+    "platformMalformedStatus": 400,
+    "ready": true
+  },
+  "validation": {
+    "tests": 230,
+    "failed": 0,
+    "skipped": 0,
+    "typechecks": 5,
+    "baselineBefore": 21,
+    "baselineAfter": 21,
+    "newErrors": 0,
+    "builds": [
+      "operational",
+      "UNI-08",
+      "integrated-preview",
+      "Functions"
+    ],
+    "ci": {
+      "push": {
+        "run": 37708073030,
+        "conclusion": "success"
+      },
+      "analysis": {
+        "run": 37708073665,
+        "conclusion": "success"
+      },
+      "pullRequest": {
+        "run": 37708078712,
+        "conclusion": "IN_PROGRESS_HOSTING"
+      }
+    },
+    "functionsAudit": {
+      "moderate": 2,
+      "high": 0,
+      "critical": 0,
+      "dependencyChanges": 0
+    }
+  },
+  "limitations": {
+    "callbackVerified": false,
+    "subscriptionConfigured": false,
+    "positiveCloudHmacAdmission": false,
+    "cloudWorkerProjection": false,
+    "humanSendersAllowed": 0,
+    "appPublished": false,
+    "autoWorkerScheduler": false,
+    "outboundEnabled": false,
+    "productionChanged": false
+  },
+  "gate": "GATE_META_VERIFY_TOKEN_SECURE_INPUT_REQUIRED"
+}

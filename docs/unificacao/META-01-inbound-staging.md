@@ -1,5 +1,23 @@
 # META-01 — inbound TEST em staging
 
+## Estado vigente — secrets confirmados / receiver TEST dedicado (2026-10-07)
+
+Usuário confirmou salvamento direto da chave rotacionada. Metadados verificados sem :access: **uma versão ENABLED de cada secret TEST**, nenhum valor capturado pelo agente. Projeto exato **lidacomzapcrm-staging / 854899277909**; demais projetos/default/billing/budget preservados.
+
+Implementação publicada no commit **4e85b538515a6d830412f2a90f3bc4736156a589**: receiver dedicado **metaTestReceiver** público somente /webhooks/meta; **metaTestWorker** e stagingIngress privados. Node22, southamerica-east1, min0/max1, concurrency1, timeout60s, body64KiB. Receiver runtime separado crm-meta-test-receiver; role existente stagingSyntheticJournal com quatro permissões get/create/update/database-get, sem Owner/Editor/chave JSON. SecretAccessor somente nesse runtime e nos dois secrets; worker sem secret binding/grant. IAM Firestore é no escopo do projeto staging; isolamento de namespace é adicional no port, não garantia documental por IAM.
+
+Envelope **STAGING TEST explícito**, nunca converter real para SIMULATION. Reutiliza journal/port/fila/transações/lease/fencing/retry/projection/draft existentes, namespace stg_inbound_synthetic e tenant demo-meta-TEST. App/WABA/phone vinculados aos IDs TEST já inventariados. Conteúdo permitido TEST inbound staging, allowlist humana vazia; somente fixtures reservadas passam a validação atual. Local/SIMULATION preservado. Worker é invocado privadamente de forma explícita: **sem scheduler/trigger automático**. Nenhum sender, token outbound ou chamada /messages.
+
+Cloud comprovou7 verificações negativas: token errado403, /worker no receiver404, assinatura ausente403/inválida403, JSON válido acima do limite413, worker anônimo403, JSON malformado400 pelo framework. Primeiro probe de tamanho usou JSON inválido e atingiu parser do framework; corrigido para JSON válido grande, então413. Verificação inicial durante deploy recusou IAM ainda não público; reexecutada após deploy success, fronteiras comprovadas. Receiver URLs automáticas excluídas apenas do log run.googleapis.com/requests desse serviço para impedir registro de hub.verify_token; application/audit logs permanecem. Não consultar logs brutos nem valores.
+
+**Limites honestos:** HMAC válido/challenge/admission/dedupe/restart/worker/draft/retry/fencing têm provas locais; **positivo com chave cloud, challenge Meta real, subscription e projeção cloud ainda NÃO comprovados**. Callback URL preparada https://metatestreceiver-frefvtfoya-rj.a.run.app/webhooks/meta, não salva. App NÃO PUBLICADO recebe apenas testes de painel conforme alerta Meta; inbound humano pelo número TEST não prometido.
+
+**GATE_META_VERIFY_TOKEN_SECURE_INPUT_REQUIRED**: token já gerado/armazenado server-side; para não capturar credencial em ferramenta/clipboard/output, usuário copia diretamente valor da versão1 de meta-test-verify-token no console staging para Verificar token no formulário Meta aberto e clica Verificar e salvar. Não tocar App Secret, criar versão, registrar número ou publicar app. Depois verificar apenas estado não sensível, assinar messages TEST mínimo e testar painel até próximo gate. Sem pedir segredo no chat.
+
+Validação:230 testes distintos (225 consolidado +4 pilot +1 novo guard runtime; afetados rerun), cinco typechecks, AST/isolation, baseline21→21/zero novos, quatro builds PASS. CI funcional push37708073030 e análise37708073665 success; PR37708078712 com Hosting em acompanhamento; evidências sanitizadas META-01-runtime-test.json e META-01-secret-manager-test.json. Audit Functions refeito após exposição:2 MODERATE transitivas existentes,0 HIGH/CRITICAL, nenhuma dependência alterada; backlog preservado, sem upgrade major automático.
+
+META-01 **PARCIAL / RECEIVER STAGING DEPLOYED — TEST ONLY**, não inbound completo/produção/live. Abaixo checkpoints históricos.
+
 ## Estado vigente — Secret Manager TEST habilitado / entrada humana segura (2026-10-07)
 
 Correção INFRA-02 publicada primeiro no commit **97c77ce5ff64c2e25c9a0c15d82e241ae088ded5**, somente três documentos; quatro testes de proteção/diff check PASS. CI push37705319476/PR37705323127/análise37705319887 success. Usuário depois autorizou especificamente ativação/secret TEST/runtime mínimo no anexo de continuidade; operacional e lidacomzapcrm não classificados continuam fora do escopo.

@@ -1,5 +1,13 @@
 # Execution ledger — Unificação
 
+## META-01 — secret salvo / receiver e worker isolados (2026-10-07)
+
+- HEAD INICIAL:64f92d686831224f34d7acaa322c73e4601de5dc; funcional **4e85b538515a6d830412f2a90f3bc4736156a589**. Push somente branch canônica, PR4 draft; main60fb91fdf048a8e0d4f9adc29a532be8bf4356dd intacta/pessoal fora de commits.
+- SECRETS:usuário salvou nova chave diretamente, metadata1+1 ENABLED, zero access por agente; não recriar versões/ler chave antiga.
+- CLOUD:staging exclusivo854899277909, receiverpublic/workerprivate/SIMULATIONprivate confirmados; Node22/southamerica-east1/min0/max1/concurrency1/timeout60; IAMreceiverseparado/customroleexistente/SecretAccessor2secrets/workersemsecrets. RequestURL exclusion só receiver, sem mudar billing/budget/R$10 alertas nãohardcap.
+- TESTS:230 distintos, zero fail/skip, cinco stricts/AST/isolation/baseline21→21/zero novos/quatrobuilds PASS. CI funcional push37708073030/análise37708073665 success; PR37708078712/Hosting em acompanhamento. Cloud7 negativas PASS; válido HMAC/persist/projection apenas local.
+- GATE/NEXT:GATE_META_VERIFY_TOKEN_SECURE_INPUT_REQUIRED:transmissãohumana direta versão1→Meta/token/clicar Verificar e salvar. URL preenchida e páginas handoff, semsalvar. Depois callback/subscription/testespainel, nunca outbound/publicação/restaurantassets. META-01 parcial, zero produção/cliente/mensagens reais.
+
 ## META-01 — ativação autorizada / TEST secrets / gate entrada (2026-10-07)
 
 - HEAD INICIAL:e464976d28ee011cf45908befeff7c6b990e1e8f. Correção INFRA-02 commit97c77ce5ff64c2e25c9a0c15d82e241ae088ded5 antes de mutação; push somente branch autorizada. Três documentos apenas, pessoal/CONTINUIDADE-CANONICA-USUARIO.md fora dos commits, main/default intactos.
