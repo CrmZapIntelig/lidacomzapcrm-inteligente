@@ -5,7 +5,7 @@ import { GoogleAuth } from 'google-auth-library';
 import { MetaWhatsAppCloudProvider } from '../services/messaging/metaWhatsAppCloudProvider';
 import { FirestoreAtomicJsonPort } from '../services/staging/firestoreAtomicPort';
 import { StagingFirestoreHttp } from '../services/staging/firestoreHttp';
-import { StagingMetaTestJournal, createMetaTestReceiver, runMetaTestWorker, metaVerificationAudit, metaTestBinding as binding } from '../services/staging/metaTestIngress';
+import { StagingMetaTestJournal, createMetaTestReceiver, runMetaTestWorker, metaVerificationAudit, metaVerificationQuery, metaTestBinding as binding } from '../services/staging/metaTestIngress';
 
 const appSecret = defineSecret('meta-test-app-secret'), verifyToken = defineSecret('meta-test-verify-token');
 const receiverIdentity = 'crm-meta-test-receiver@lidacomzapcrm-staging.iam.gserviceaccount.com';
@@ -26,7 +26,13 @@ const limits = { region: 'southamerica-east1', minInstances: 0, maxInstances: 1,
 export const metaTestReceiver = onRequest({ ...limits, invoker: 'public', serviceAccount: receiverIdentity, secrets: [appSecret, verifyToken] }, async (req, res) => {
   if (process.env.GCLOUD_PROJECT !== binding.projectId) { if (req.method === 'GET') info('META_TEST_VERIFICATION', { httpStatus: 503, reason: 'ENVIRONMENT_REJECTED' }); res.status(503).end(); return; }
   const query: Record<string, string> = {};
-  for (const [key, value] of Object.entries(req.query)) { if (typeof value !== 'string') { if (req.method === 'GET') info('META_TEST_VERIFICATION', { httpStatus: 400, reason: 'QUERY_NOT_SCALAR' }); res.status(400).end(); return; } query[key] = value; }
+  if (req.method === 'GET') {
+    const verification = metaVerificationQuery(req.query);
+    if (!verification) { info('META_TEST_VERIFICATION', { httpStatus: 400, reason: 'QUERY_NOT_SCALAR' }); res.status(400).end(); return; }
+    Object.assign(query, verification);
+  } else {
+    for (const [key, value] of Object.entries(req.query)) { if (typeof value !== 'string') { res.status(400).end(); return; } query[key] = value; }
+  }
   const result = await receiver({ method: req.method, path: req.path, query, contentType: req.get('content-type'), signature: req.get('x-hub-signature-256'), raw: req.rawBody ?? new Uint8Array() });
   if (req.method === 'GET') {
     const tokenAvailable = !!verifyToken.value();

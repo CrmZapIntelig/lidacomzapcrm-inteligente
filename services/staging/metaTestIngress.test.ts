@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
 import { MetaWhatsAppCloudProvider } from '../messaging/metaWhatsAppCloudProvider';
 import { LocalInboundJournal } from '../messaging/localInboundJournal';
-import { StagingMetaTestJournal, createMetaTestReceiver, runMetaTestWorker, metaVerificationAudit, metaTestBinding as b } from './metaTestIngress';
+import { StagingMetaTestJournal, createMetaTestReceiver, runMetaTestWorker, metaVerificationAudit, metaVerificationQuery, metaTestBinding as b } from './metaTestIngress';
 import type { AtomicJsonPort } from './durableInboundJournal';
 const at = '2026-10-07T20:00:00.000Z';
 const publicFixtureSecret = 'TEST-public-fixture-HMAC';
@@ -35,6 +35,24 @@ test('verification challenge never admits work; wrong token rejected and worker 
   assert.deepEqual(await receiver(request), { status: 200, body: '1234' });
   request.query['hub.verify_token'] = 'TEST-wrong'; assert.equal((await receiver(request)).status, 403);
   assert.equal((await receiver({ ...request, path: '/worker' })).status, 404); assert.equal(port.calls, 0);
+});
+test('HTTP verification ignores unrelated query fields while preserving the exact challenge and token checks', async () => {
+  const { receiver, port } = setup();
+  const input = { 'hub.mode': 'subscribe', 'hub.challenge': '0001234', 'hub.verify_token': 'TEST-public-fixture-challenge', unrelated: ['TEST-ignored'], another: { secret: 'TEST-ignored' } };
+  const query = metaVerificationQuery(input); assert.ok(query);
+  assert.deepEqual(Object.keys(query), ['hub.mode', 'hub.verify_token', 'hub.challenge']);
+  assert.deepEqual(await receiver({ method: 'GET', path: '/webhooks/meta', raw: new Uint8Array(), query }), { status: 200, body: '0001234' });
+  query['hub.verify_token'] = 'TEST-wrong';
+  assert.equal((await receiver({ method: 'GET', path: '/webhooks/meta', raw: new Uint8Array(), query })).status, 403);
+  assert.equal(port.calls, 0);
+});
+test('HTTP verification rejects ambiguous contract fields and never invents missing verification inputs', async () => {
+  for (const key of ['hub.mode', 'hub.verify_token', 'hub.challenge']) {
+    for (const value of [['TEST-duplicate', 'TEST-duplicate'], { nested: 'TEST' }, null]) assert.equal(metaVerificationQuery({ [key]: value }), undefined);
+  }
+  const { receiver, port } = setup();
+  assert.equal((await receiver({ method: 'GET', path: '/webhooks/meta', raw: new Uint8Array(), query: metaVerificationQuery({ unrelated: 'TEST' }) })).status, 403);
+  assert.equal(port.calls, 0);
 });
 test('verification diagnostics cannot include request values, secret material, challenge, URLs or injected fields', () => {
   const request = { method: 'GET', path: '/webhooks/meta', raw: new Uint8Array(), query: { 'hub.mode': 'subscribe', 'hub.challenge': '987654321', 'hub.verify_token': 'TEST-sensitive-placeholder', 'injected-secret-key': 'TEST-sensitive-placeholder' } };

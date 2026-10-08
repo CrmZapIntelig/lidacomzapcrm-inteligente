@@ -29,6 +29,18 @@ export class StagingMetaTestJournal extends StagingDurableInboundJournal {
 type Validation = Pick<MetaWhatsAppCloudProvider, 'verifyChallenge' | 'verifyWebhook' | 'parseWebhook'>;
 type Admission = Pick<StagingMetaTestJournal, 'tenantId' | 'accountId' | 'admitBatch'>;
 
+/** Read only the verification contract; unrelated Meta query fields have no authority. */
+export function metaVerificationQuery(input: Record<string, unknown>): Record<string, string> | undefined {
+  const query: Record<string, string> = {};
+  for (const key of ['hub.mode', 'hub.verify_token', 'hub.challenge']) {
+    const value = input[key];
+    if (value === undefined) continue;
+    if (typeof value !== 'string') return undefined;
+    query[key] = value;
+  }
+  return query;
+}
+
 /** Whitelist-only verification telemetry. No URL, query value, token or hash. */
 export function metaVerificationAudit(request: SyntheticRequest, status: number, tokenAvailable: boolean, tokenMatches: boolean) {
   const q = request.query ?? {};
