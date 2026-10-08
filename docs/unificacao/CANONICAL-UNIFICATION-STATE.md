@@ -1,5 +1,9 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## META-01 — callback recusado / diagnóstico seguro publicado (2026-10-08)
+
+Callback permanece NÃO VALIDADO. Commit **577051493890b67431ba165a514e78b10e29f74c** adiciona audit GET somente enum/status/booleans, zero token/URL parametrizada/header/body/hash. Receiver ACTIVE após redeploy seletivo, verifyv2/AppSecretv1 intactos e worker não redeployado. Probe fictício inválido403 e diagnóstico TOKEN_MISMATCH/tokenAvailabletrue provados, não atribuir causa à Meta sem correlação.232 testes/five stricts/21→21/quatro builds e CI funcional success. **GATE_META_CALLBACK_RETRY_REQUIRED** para usuário clicar uma vez Verificar e salvar no formulário pronto; não trocar token/URL, não enviar valor. Somente depois aceitação subscription messages TEST/painel, sem publicação/outbound/realphone. Prova META-01-verification-diagnostics.json; detalhes META-01-inbound-staging.md. Abaixo histórico.
+
 ## META-01 — rotação verify token TEST / callback humano pendente (2026-10-08)
 
 Rotação autorizada após exposição em screenshot: verify token **v2 ENABLED**, v1 exposta DISABLED após receiver ACTIVE/bindingv2; App Secretv1 intacto, worker updateTime inalterado. Somente redeploy receiver staging854899277909, zero acesso payload/produção/outbound/IAM/billing. Build Functions PASS;230 testes/baseline21→21/CIverdes do código anterior preservados, não rerun local nesta rotação. **GATE_META_VERIFY_TOKEN_SECURE_INPUT_REQUIRED** para copiar diretamente NOVAv2→Meta e Verificar e salvar; callback https://metatestreceiver-frefvtfoya-rj.a.run.app/webhooks/meta. Callback/subscription/positivo cloud ainda não comprovados. Prova META-01-verify-token-rotation.json; detalhes META-01-inbound-staging.md. Abaixo histórico.

@@ -1,5 +1,19 @@
 # META-01 — inbound TEST em staging
 
+## Diagnóstico sanitizado do callback / nova tentativa humana (2026-10-08)
+
+Usuário enviou captura da recusa Meta depois da rotação, sem novo valor de secret visível. **Callback ainda NÃO VALIDADO**. URL mostrada coincide com receiver; não atribuir erro ao nome do recurso Secret Manager, à chave, ao copy/paste ou à Meta sem correlação. Nenhuma nova rotação/versão3, nenhum :access.
+
+Commit funcional **577051493890b67431ba165a514e78b10e29f74c** acrescenta somente diagnóstico de GET via SDK logger oficial: httpStatus, reason ENUM e booleans pathAllowed/queryAllowed/modeValid/challengeValid/tokenPresent/tokenAvailable/tokenMatches. Lista fechada: não inclui token/valor/hash/query/URL parametrizada/headers/body/telefone/profile/erro bruto. Comparação permanece exclusivamente server-side pelo verificador existente; telemetry não muda autorização/ACK/persistência/guard. Sem novo endpoint/debug/admin, worker privado, nenhum sender. Testes adversariais provam ausência de valores/keys injetadas/challenge/path no registro. Fonte consultada2026-10-08: [Firebase structured logger SDK](https://firebase.google.com/docs/functions/writing-and-viewing-logs).
+
+Redeploy **somente metaTestReceiver**, ACTIVE, verify tokenv2/App Secretv1; worker updateTime idêntico. Probe HTTPS com token fictício inválido403; entrada controlada recente registra TOKEN_MISMATCH/tokenAvailable=true e formato/path válidos, sem material secreto. Isso comprova diagnóstico/runtime disponível, **não é prova da causa da tentativa Meta anterior**. Nenhum teste com token real pelo operador. Prova META-01-verification-diagnostics.json.
+
+Consulta de logging seleciona apenas timestamp/jsonPayload do evento fixo META_TEST_VERIFICATION no receiver staging, valida keys/types fechados e retorna só enums/booleans; não lê request logs/textPayload/URLs/valores. Seletor parcial por subcampos dinâmicos retornou400, corrigido para jsonPayload do evento sanitizado com validação. Consulta transitória429 tratada com janela curta/paging limitado/intervalo; sem habilitar API/alterar quota/IAM/billing. RequestURL exclusion existente preservada; logs de aplicação novos contêm apenas classificação segura.
+
+**232 testes distintos PASS** (228 consolidado +4 pilot), cinco typechecks/AST/isolation/baseline21→21/zero novos/quatro builds PASS. CI funcional push37725572509/PR37725576176/análise37725573290 success. Pessoal/operacional/default/main preservados, RCS/outboundDISABLED, zero mensagens reais.
+
+**GATE_META_CALLBACK_RETRY_REQUIRED**: diagnóstico agora publicado; botão Verificar e salvar do formulário existente confirmado visível/habilitado sem ler seus valores. Ação humana mínima: clicar uma vez novamente, sem trocar URL/token nem enviar screenshot de valor. Depois correlacionar somente resultado/metadata segura; se aceito, confirmar callback e configurar messages TEST mínimo/teste de painel, sem publicar app/número real/outbound. Meta request ainda não correlacionada; não declarar inbound completo. Abaixo histórico.
+
 ## Verify token exposto rotacionado — nova versão2 (2026-10-08)
 
 Usuário informou exposição do verify token em screenshot e autorizou rotação exclusivamente desse secret. Project ID/número **lidacomzapcrm-staging / 854899277909** confirmados antes da mutação. Crypto gerou novo valor somente em memória e addVersion via TLS criou **versão2 ENABLED**; nenhum :access, payload impresso/arquivo/log/retorno, zero alteração de meta-test-app-secret.

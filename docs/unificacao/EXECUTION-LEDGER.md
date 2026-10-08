@@ -1,5 +1,13 @@
 # Execution ledger — Unificação
 
+## META-01 — diagnóstico callback, sem nova rotação (2026-10-08)
+
+- HEAD INICIAL:72350836c487520a9251abb184832b6cf84382ad; commit funcional **577051493890b67431ba165a514e78b10e29f74c**, branch autorizada/PR4 draft/main/pessoal preservados.
+- LOCAL:diagnóstico GET fechado ENUM/booleans via logger,2 novos testes de privacidade; não altera protocolo/guards nem cria debug endpoint.232 testes/cinco stricts/AST/isolation/21→21/quatro builds PASS. CIpush37725572509/PR37725576176/análise37725573290 success.
+- CLOUD:receiver redeploy somente ACTIVE, verifyv2/AppSecretv1 preservados, worker updateTime inalterado. Negativo fictício403/logsanitizado TOKEN_MISMATCH/tokenAvailabletrue; segredo não acessado/alterado, dados/produção/outboundzero.
+- LOGS:requestURL exclusion preservada. Eventofixo+janela/paginglimitado+keys/types whitelist sem request/textlogs.400 selector dinâmico corrigido/429 transitória tratada sem novos recursos/quota/IAM/API/billing.
+- GATE/NEXT:GATE_META_CALLBACK_RETRY_REQUIRED, clique humano único Verificar e salvar; formulário pronto sem ler valores. Causa Meta ainda não correlacionada; depois de aceitar messages TEST mínimo/painel, nunca publicar/outbound.
+
 ## META-01 — rotação verify token TEST (2026-10-08)
 
 - HEAD INICIAL:92e5b348deedd1b9d5aefb9c4b12256c7c8d3093; código funcional/pessoal/main preservados.
