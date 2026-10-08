@@ -1,6 +1,10 @@
 node_modules/
 build/
 dist/
+dist-offline/
+.local-messaging/
+dist-integrated/
+staging-functions/lib/
 coverage/
 .DS_Store
 *.log
@@ -8,6 +12,8 @@ coverage/
 !.env.example
 # Firebase local cache
 .firebase/
+gha-creds-*.json
+.firebase-staging-local/
 
 # Local backups
 *.zip

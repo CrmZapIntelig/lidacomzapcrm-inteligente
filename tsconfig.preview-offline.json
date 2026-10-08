@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.offline.json",
+  "exclude": ["node_modules", "dist", "dist-offline"],
+  "include": ["src/domain/**/*.ts", "src/application/**/*.ts", "offline-preview/**/*.ts", "offline-preview/**/*.tsx", "vite.offline.config.ts"]
+}

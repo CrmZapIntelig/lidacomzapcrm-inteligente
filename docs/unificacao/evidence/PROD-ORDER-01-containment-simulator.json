@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-04T23:37:46.361Z",
+  "simulatorProject": "lidacomzapcrm-staging",
+  "operationalWrites": 0,
+  "rulesPublished": false,
+  "firestoreDataLookups": 0,
+  "source": "INLINE_SOURCE_ONLY",
+  "scope": "EXACT_TWO_DOCUMENT_PATHS",
+  "results": [
+    {
+      "label": "original",
+      "count": 110,
+      "states": {
+        "SUCCESS": 110
+      },
+      "issues": [],
+      "digest": "90ccca747fb4ca20baeae0c6b301af2d1147c8db57698cc6f576475cdab5fa4a"
+    },
+    {
+      "label": "candidate",
+      "count": 110,
+      "states": {
+        "SUCCESS": 110
+      },
+      "issues": [],
+      "digest": "8f63f9bee1a59b68a362c61613aa7506dad33bf880a7cd25c26d945da542aaf4"
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "observedDateLocal": "2026-10-06",
+  "method": "OFFICIAL_UI_READ_ONLY",
+  "appsList": "LIDACOMZAPCRM_CREATED_CONFIRMED_20261007",
+  "appId": "1480563193903800",
+  "appPublication": "NOT_PUBLISHED",
+  "testSetup": {
+    "stage": "OFFICIAL_TEST_ASSETS_PROVISIONED",
+    "termsAcceptedBy": "USER_DIRECT_UI_20261007",
+    "ownerPortfolio": "1694546150694544",
+    "officialTestNumberOffered": true,
+    "testPhoneDisplay": "+1 555 640-2386",
+    "testPhoneNumberId": "1406670279191899",
+    "testWabaId": "1670383058144564",
+    "maxTestRecipientPhonesShown": 5,
+    "recipientSelected": false,
+    "accessTokenGenerated": false,
+    "callbackConfigured": false,
+    "sendExecuted": false,
+    "realRestaurantPhoneConfigured": false
+  },
+  "portfolios": [
+    {
+      "businessId": "144789471002545",
+      "displayName": "Por Lidacom Digital",
+      "visibleApps": 0,
+      "legalName": "NOT_SET",
+      "verification": "NOT_VERIFIED",
+      "currentUserAccess": "FULL",
+      "createdYear": 2021,
+      "legalSaasOwnership": "NOT_PROVEN"
+    },
+    {
+      "businessId": "1694546150694544",
+      "displayName": "lidacomdigital",
+      "visibleApps": 0,
+      "appsBusinessSettings": "NONE_ADDED",
+      "currentUserAccess": "FULL",
+      "legalNamePrefix": "LIDACOM BUSINESS EVOLUTION",
+      "personalIdentifiers": "OMITTED",
+      "website": "https://lidacom.com.br/",
+      "verification": "REJECTED",
+      "createdYear": 2020,
+      "legalSaasOwnership": "USER_CONFIRMED"
+    },
+    {
+      "businessId": "108180028128224",
+      "displayName": "Curso vivendo de IPHONE",
+      "visibleApps": 0,
+      "legalSaasOwnership": "NOT_AUDITED"
+    }
+  ],
+  "selectedSaasPortfolio": "1694546150694544",
+  "ownershipGate": "RESOLVED_BY_EXPLICIT_USER_CONFIRMATION",
+  "appDraft": {
+    "name": "LidacomZapCRM",
+    "useCase": "WHATSAPP",
+    "stage": "CREATED_CONFIRMED",
+    "portfolio": "1694546150694544",
+    "companyVerified": false,
+    "publicationRequirementsShown": "NONE_IDENTIFIED_FOR_SELECTED_USE_CASE",
+    "creationClickUserAuthorized": true,
+    "reauthObservedDateLocal": "2026-10-07"
+  },
+  "clientAssetBoundary": {
+    "pratoMineiroIsSaasOwner": false,
+    "restaurantOwnPortfolioRequired": true,
+    "restaurantOwnWabaRequired": true,
+    "restaurantOwnPhoneRequired": true,
+    "realOnboardingGate": "GATE_PRATO_MINEIRO_OWN_META_ASSETS_ONBOARDING_REQUIRED"
+  },
+  "businessVerificationPending": "REJECTED_NO_BYPASS_NO_ALTERNATE_PORTFOLIO",
+  "appCreated": true,
+  "wabaCreated": true,
+  "wabaCreationScope": "META_AUTOMATIC_OFFICIAL_TEST_ONLY",
+  "phoneConfigured": true,
+  "phoneScope": "META_PROVISIONED_OFFICIAL_TEST_ONLY",
+  "secretsCollected": true,
+  "secretCollectionScope": "ACCIDENTAL_AUTOMATIC_TOOL_RESPONSE_ONLY_NOT_REUSED_OR_PERSISTED_BY_AGENT",
+  "credentialContainment": {
+    "appSecretPotentiallyExposed": true,
+    "valueRecordedInEvidence": false,
+    "cloudSecretStored": true,
+    "usedForHmacOrSend": false,
+    "pageReloadedAndShowButtonRestored": true,
+    "credentialPageLeftForDashboard": true,
+    "maskingNotProvenFromButtonAlone": true,
+    "rotationCompleted": true,
+    "rotationEvidence": "USER_REPORTED_20261007",
+    "overlapHoursReported": 0,
+    "overlapMeaning": "OLD_SECRET_EXPIRY_INFERRED_NOT_INDEPENDENTLY_VERIFIED",
+    "oldSecretRevocationIndependentlyVerified": false,
+    "safeContinuationRequiresRotation": false,
+    "newSecretReadOrTransferredByAgent": false,
+    "cloudSecretStorageEvidence": "USER_DIRECT_INPUT_METADATA_VERSION1_ENABLED_NO_AGENT_PAYLOAD_ACCESS"
+  },
+  "secretManagerReadiness": {
+    "projectId": "lidacomzapcrm-staging",
+    "api": "secretmanager.googleapis.com",
+    "state": "ENABLED_TEST_SECRETS_READY_RECEIVER_DEPLOYED",
+    "enableClicked": false,
+    "proposedSecrets": [
+      "meta-test-app-secret",
+      "meta-test-verify-token"
+    ],
+    "proposedActiveVersions": 2,
+    "freeTierSharedByBillingAccount": true,
+    "freeTierAvailabilityVerified": false,
+    "runtimeIamGranted": true,
+    "apiEnabled": true,
+    "activeVersions": {
+      "meta-test-verify-token": 1,
+      "meta-test-app-secret": 1
+    },
+    "runtimeGrantScope": "RECEIVER_ONLY_TWO_TEST_SECRETS"
+  },
+  "authenticationGate": "RESOLVED_USER_REAUTH_AND_UI_ACCESS_CONFIRMED",
+  "existingWhatsAppAssets": [
+    {
+      "assetId": "1589099725538820",
+      "name": "Lidacom Digital Agência",
+      "ownerPortfolio": "1694546150694544",
+      "type": "WHATSAPP_BUSINESS_APP",
+      "accountStatus": "APPROVED",
+      "businessVerification": "NOT_VERIFIED",
+      "testAsset": "NOT_PROVEN",
+      "usedForPratoMineiro": false
+    }
+  ],
+  "termsGate": "RESOLVED_USER_DIRECT_UI",
+  "gate": "GATE_META_VERIFY_TOKEN_SECURE_INPUT_REQUIRED",
+  "reason": "Dedicated staging TEST receiver deployed and worker private. Callback URL prepared but verify token requires direct human transfer without tool capture. No subscription or positive cloud HMAC/inbound proved; outbound disabled."
+}

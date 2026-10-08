@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "appEnv": "staging",
+  "projectId": "lidacomzapcrm-staging",
+  "databaseId": "(default)",
+  "locationId": "southamerica-east1",
+  "freeTier": true,
+  "collection": "stg_inbound_synthetic",
+  "fixturesOnly": true,
+  "workerEnabled": false,
+  "webhookProvisioned": false,
+  "metaProvider": "DISABLED",
+  "rcsProvider": "DISABLED",
+  "canSend": false
+}

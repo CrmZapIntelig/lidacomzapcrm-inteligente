@@ -1,0 +1,22 @@
+{
+  "phase": "PILOT-MVP-01",
+  "status": "PREPARATION_ONLY",
+  "initialHead": "8d40a0ec2eee25f2e3300d50fef36c4e38f29a6a",
+  "functionalHead": "d7c64487018f93f64728f7ed31f843d8bc7cd301",
+  "nodeTests": {"total":213,"passed":213,"failed":0,"skipped":0},
+  "affectedBatchTestsAfterPreviewAdjustment": {"total":9,"passed":9},
+  "stricts": ["offline","messaging","UNI-08","integrated-preview","Functions"],
+  "isolation": "PASS",
+  "baseline": {"expected":21,"actual":21,"newErrors":0,"sha256":"3e5f06e5c2366fb6878ca67c85f70ccdd87d3475579bf98ffa7ce9bf1409b362"},
+  "builds": {"operational":"PASS","UNI-08":"PASS","integrated-preview":"PASS","Functions":"PASS"},
+  "officialRulesSimulator": {"total":511,"success":511,"issues":0,"deployed":false},
+  "newPilotFirestoreProbe": false,
+  "productionWrites": 0,
+  "productionDeploys": 0,
+  "outboundMessages": 0,
+  "canonicalOrderCanary": "PAUSED_PILOT_PRIORITIZATION",
+  "metaGate": "GATE_META_INTERACTIVE_AUTHENTICATION_REQUIRED",
+  "rootDependencyAudit": {"total":17,"critical":2,"high":9,"moderate":5,"low":1,"lockfileChanged":false,"resolved":false},
+  "publishedPreparationHead": "6d2b4a0ba59dcb9ebfc10b3f7be277a3d0d8b2f8",
+  "ci": {"verifiedHead":"6d2b4a0ba59dcb9ebfc10b3f7be277a3d0d8b2f8","pushRun":37561373123,"pushResult":"success","codeAnalysisRun":37561373241,"codeAnalysisResult":"success","prRun":37561377544,"prResult":"success","prTechnicalJob":"success","stagingPreview":"success"}
+}

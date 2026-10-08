@@ -1,0 +1,21 @@
+{
+  "phase": "PILOT-MVP-01",
+  "status": "PREPARATION_ONLY",
+  "tenantKey": "prato-mineiro",
+  "PILOT_WHATSAPP_ACTIVE_SALES": "DISABLED",
+  "canSend": false,
+  "metaProvider": "DISABLED",
+  "rcsProvider": "DISABLED",
+  "menuMode": "LEGACY_CATALOG_SERVER_CHECKOUT_PLANNED",
+  "PILOT_ORDER_WRITES": "DISABLED",
+  "PILOT_NOTA": "DISABLED",
+  "checkoutStatus": "OFFLINE_TEST_IMPLEMENTED_NOT_WIRED",
+  "printStatus": "PURE_RENDERER_TEST_ONLY",
+  "approvedMenuOrigin": null,
+  "approvedMenuId": null,
+  "batchSelectionOptions": [10, 25, 50, 100],
+  "productionRulesDeployed": false,
+  "realInboundTested": false,
+  "realTestOutboundTested": false,
+  "realRestaurantNumberConnected": false
+}

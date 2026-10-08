@@ -1,0 +1,19 @@
+{
+  "projectId": "lidacomzapcrm-staging",
+  "collection": "stg_operational_orders",
+  "fixturesOnly": true,
+  "createRead": "PASS",
+  "restartRetry": "PASS",
+  "concurrentConfirm": "PASS",
+  "concurrentUpdate": "PASS",
+  "notaSaleCreditReceipt": "PASS",
+  "roundTrip": "PASS",
+  "kdsDelivery": "PASS",
+  "cashClosing": "PASS",
+  "rollbackRecreate": "PASS",
+  "remainingOrders": 0,
+  "outbound": false,
+  "productionWrite": false,
+  "tenantId": "demo-TEST-order02-cloud-1791056556863",
+  "at": "2026-10-03T19:48:41.499Z"
+}

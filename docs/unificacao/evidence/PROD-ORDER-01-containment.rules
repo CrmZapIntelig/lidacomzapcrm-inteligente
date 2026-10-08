@@ -1,0 +1,12 @@
+// Candidate only. Not referenced by firebase.json and not deployed.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read: if true;
+      allow write: if
+        request.path != /databases/$(database)/documents/orders/TEST-canary-20261004-41cd5c4 &&
+        request.path != /databases/$(database)/documents/operationalCanaryAudit/TEST-canary-20261004-41cd5c4;
+    }
+  }
+}

@@ -7,6 +7,12 @@
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
+    "build:offline": "vite build --config vite.offline.config.ts",
+    "preview:offline": "node tools/unification/serve-offline.mjs",
+    "build:integrated-preview": "vite build --config vite.integrated.config.ts",
+    "preview:integrated": "node tools/unification/serve-integrated.mjs",
+    "check:staging": "node tools/unification/staging-environment.mjs",
+    "deploy:staging-preview": "node tools/unification/deploy-staging-preview.mjs",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"
   },

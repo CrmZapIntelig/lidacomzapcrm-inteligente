@@ -1,0 +1,46 @@
+{
+  "at": "2026-10-08T03:43:54.616Z",
+  "projectId": "lidacomzapcrm-staging",
+  "projectNumber": "854899277909",
+  "newVersion": "projects/854899277909/secrets/meta-test-verify-token/versions/2",
+  "newVersionState": "ENABLED",
+  "exposedVersion": "projects/854899277909/secrets/meta-test-verify-token/versions/1",
+  "appSecretBindingBefore": {
+    "key": "meta-test-app-secret",
+    "projectId": "lidacomzapcrm-staging",
+    "secret": "meta-test-app-secret",
+    "version": "1"
+  },
+  "workerUpdateTimeBefore": "2026-10-08T00:28:15.220484880Z",
+  "secretPayloadReads": 0,
+  "generatedByCrypto": true,
+  "secretValuePrinted": false,
+  "secretValueSaved": false,
+  "appSecretMutations": 0,
+  "outbound": false,
+  "receiverRedeployed": true,
+  "validatedAt": "2026-10-08T03:47:25.902Z",
+  "receiverState": "ACTIVE",
+  "receiverUpdateTime": "2026-10-08T03:46:56.466281838Z",
+  "verifyTokenBinding": {
+    "key": "meta-test-verify-token",
+    "projectId": "lidacomzapcrm-staging",
+    "secret": "meta-test-verify-token",
+    "version": "2"
+  },
+  "appSecretBindingUnchanged": true,
+  "workerUnchanged": true,
+  "versions": [
+    {
+      "name": "projects/854899277909/secrets/meta-test-verify-token/versions/2",
+      "state": "ENABLED"
+    },
+    {
+      "name": "projects/854899277909/secrets/meta-test-verify-token/versions/1",
+      "state": "DISABLED"
+    }
+  ],
+  "exposedVersionDisabled": true,
+  "callbackUrl": "https://metatestreceiver-frefvtfoya-rj.a.run.app/webhooks/meta",
+  "gate": "GATE_META_VERIFY_TOKEN_SECURE_INPUT_REQUIRED"
+}

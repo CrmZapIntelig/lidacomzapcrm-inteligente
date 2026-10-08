@@ -1,0 +1,85 @@
+{
+  "phase": "PROD-ORDER-01",
+  "at": "2026-10-04T23:35:27.861Z",
+  "projectId": "project-1300957a-ea82-4645-845",
+  "target": "TEST-canary-20261004-41cd5c4",
+  "actorFingerprint": "3f71283f49e1c3164129d139be7ee46afce20e6bef2757f1104d81a49cfc416e",
+  "writes": 0,
+  "flag": "DISABLED",
+  "checks": {
+    "project": {
+      "projectId": "project-1300957a-ea82-4645-845",
+      "state": "ACTIVE",
+      "number": "projects/483558069545"
+    },
+    "iam": {
+      "actorRoles": [
+        {
+          "role": "roles/owner",
+          "conditional": false
+        }
+      ],
+      "publicBinding": false
+    },
+    "permissions": {
+      "permissions": [
+        "cloudfunctions.functions.list",
+        "datastore.databases.get",
+        "datastore.entities.create",
+        "datastore.entities.delete",
+        "datastore.entities.get",
+        "datastore.entities.update",
+        "eventarc.triggers.list",
+        "firebaseextensions.instances.list",
+        "firebaserules.releases.get"
+      ]
+    },
+    "functions-v1": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ]
+    },
+    "functions-v2": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ]
+    },
+    "eventarc": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ]
+    },
+    "extensions": {
+      "http": 403,
+      "status": "PERMISSION_DENIED",
+      "reasons": [
+        "SERVICE_DISABLED"
+      ]
+    },
+    "rules-release": {
+      "name": "projects/project-1300957a-ea82-4645-845/releases/cloud.firestore",
+      "ruleset": "projects/project-1300957a-ea82-4645-845/rulesets/6263358b-4db4-4ff9-ae0b-2f68726581a6",
+      "updateTime": "2026-06-01T03:40:23.150786Z"
+    },
+    "ruleset": {
+      "fileCount": 1,
+      "digest": "35e8844823ce67e8e9fbbce7cd89591001a97fccfb5462288fd0d0d3794e99a1",
+      "unconditionalAllow": true
+    },
+    "target": {
+      "exists": false
+    },
+    "testContact": {
+      "exists": false
+    },
+    "audit": {
+      "exists": false
+    }
+  }
+}

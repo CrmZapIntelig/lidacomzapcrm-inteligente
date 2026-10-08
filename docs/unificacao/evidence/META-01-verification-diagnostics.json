@@ -1,0 +1,60 @@
+{
+  "sourceHead": "577051493890b67431ba165a514e78b10e29f74c",
+  "probe": {
+    "at": "2026-10-08T04:04:51.294Z",
+    "projectId": "lidacomzapcrm-staging",
+    "receiverState": "ACTIVE",
+    "receiverUpdateTime": "2026-10-08T04:02:53.107449256Z",
+    "verifyTokenVersion": "2",
+    "appSecretVersion": "1",
+    "workerUnchanged": true,
+    "invalidSyntheticTokenStatus": 403,
+    "secretPayloadReads": 0,
+    "outbound": false,
+    "metaAttemptDiagnosed": false
+  },
+  "controlledDiagnosticLog": {
+    "at": "2026-10-08T04:07:00.153Z",
+    "projectId": "lidacomzapcrm-staging",
+    "logFieldsWhitelisted": true,
+    "secretPayloadReads": 0,
+    "entries": [
+      {
+        "at": "2026-10-08T04:04:36.522692Z",
+        "challengeValid": true,
+        "modeValid": true,
+        "queryAllowed": true,
+        "tokenPresent": true,
+        "tokenMatches": false,
+        "tokenAvailable": true,
+        "pathAllowed": true,
+        "httpStatus": 403,
+        "reason": "TOKEN_MISMATCH"
+      }
+    ],
+    "hasMore": false
+  },
+  "metaAttemptCorrelated": false,
+  "validation": {
+    "tests": 232,
+    "failed": 0,
+    "skipped": 0,
+    "typechecks": 5,
+    "baselineBefore": 21,
+    "baselineAfter": 21,
+    "newErrors": 0,
+    "builds": [
+      "operational",
+      "UNI-08",
+      "integrated-preview",
+      "Functions"
+    ],
+    "functionalCi": {
+      "push": 37725572509,
+      "pullRequest": 37725576176,
+      "analysis": 37725573290,
+      "conclusion": "success"
+    }
+  },
+  "gate": "GATE_META_CALLBACK_RETRY_REQUIRED"
+}

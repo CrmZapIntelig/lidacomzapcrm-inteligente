@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-06T23:10:04.696Z",
+  "projectId": "project-1300957a-ea82-4645-845",
+  "service": "projects/project-1300957a-ea82-4645-845/locations/us-west2/services/lidacomzapcrm-inteligente",
+  "mode": "EXECUTE",
+  "apiEnableCalls": 0,
+  "iamChanges": 0,
+  "firestoreCalls": 0,
+  "otherResourceDeletes": 0,
+  "checks": {
+    "trigger": {
+      "http": 200,
+      "id": "368a078f-c3f0-4690-a2a3-5d88921a2dd2",
+      "disabled": true
+    },
+    "identity": {
+      "projectExact": true,
+      "serviceExact": true,
+      "uidUnchanged": true,
+      "etagUnchanged": true,
+      "revisionUnchanged": true,
+      "appletExact": true
+    },
+    "delete": {
+      "http": 200,
+      "validateOnly": false,
+      "operationName": "projects/project-1300957a-ea82-4645-845/locations/us-west2/operations/9f0f1084-742f-4dfb-be0c-c2be445d5a60",
+      "done": false
+    },
+    "operation": {
+      "name": "projects/project-1300957a-ea82-4645-845/locations/us-west2/operations/9f0f1084-742f-4dfb-be0c-c2be445d5a60",
+      "done": true
+    },
+    "after": {
+      "serviceHttp": 404,
+      "serviceStatus": "NOT_FOUND",
+      "revisionHttp": 404,
+      "revisionStatus": "NOT_FOUND"
+    }
+  },
+  "result": "DECOMMISSIONED_CONFIRMED"
+}
