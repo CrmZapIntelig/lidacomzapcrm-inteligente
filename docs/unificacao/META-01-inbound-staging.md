@@ -1,5 +1,17 @@
 # META-01 — inbound TEST em staging
 
+## Correção do GET com parâmetros adicionais (2026-10-08)
+
+Após nova recusa informada pelo usuário, consulta restrita ao evento sanitizado META_TEST_VERIFICATION encontrou GET em 2026-10-08T22:35:04.632061Z: HTTP400/QUERY_REJECTED, tokenMatches=true, tokenAvailable=true e path/mode/challenge válidos. A rejeição por campos adicionais explica esse GET recente; nenhum nome/valor extra, token ou payload foi consultado. Uma consulta transitória429 foi seguida por consulta reduzida e limitada a eventos seguros. Não atribuir TOKEN_MISMATCH do probe negativo histórico à tentativa humana.
+
+Commit funcional **9229ef3152b623003d4779ea6f807b3087baed86**: a fronteira HTTP de GET seleciona exclusivamente hub.mode/hub.verify_token/hub.challenge, ignorando campos adicionais sem lhes dar autoridade. Campos contratuais duplicados/arrays/objetos são rejeitados; ausência/modo/challenge/token incorretos continuam fail-closed. Challenge preservado literalmente, inclusive zeros iniciais. Núcleo interno mantém whitelist; POST/HMAC/raw body/admission/ACK após persistência, worker privado, secrets e zero outbound não mudam.
+
+A resposta externa enviada pelo usuário é referência, não código autorizado: não incorporar token hardcoded, log integral de mensagem nem ACK de POST antes de persistência. A referência oficial histórica do SDK Meta confirma challenge/HTTP200 e HMAC de POST: https://whatsapp.github.io/WhatsApp-Nodejs-SDK/api-reference/webhooks/start/ (consultada2026-10-08; SDK arquivado, não adotado como dependência).
+
+Validação local: **234 testes distintos PASS** (230 consolidado +4 pilot), cinco typechecks, AST/isolation, baseline21→21/zero novos e quatro builds PASS. CI funcional push37855733778/PR37855741380/análise37855734300 success. Deploy somente receiver staging PASS; ACTIVE/updateTime2026-10-08T22:51:32.195660018Z, verifyv2/AppSecretv1 intactos, worker updateTime inalterado. Probe HTTPS com parâmetro extra e token fictício inválido retornou403 (não400), comprovando encaminhamento à validação do token. Nenhum probe com token real ou novo registro em fila. Callback Meta ainda não aceito/comprovado. Não rotacionar novamente nem acessar conteúdo de secrets. Prova sanitizada evidence/META-01-verification-query-fix.json.
+
+**GATE_META_CALLBACK_RETRY_REQUIRED** após confirmação do deploy: repetir Verificar e salvar com a mesma URL e token já preenchidos. A falha anterior agora tem diagnóstico; a aceitação do callback ainda depende da nova verificação da Meta. Subscription messages TEST somente após aceitação, sem publicação/outbound/telefone real. Abaixo histórico.
+
 ## Diagnóstico sanitizado do callback / nova tentativa humana (2026-10-08)
 
 Usuário enviou captura da recusa Meta depois da rotação, sem novo valor de secret visível. **Callback ainda NÃO VALIDADO**. URL mostrada coincide com receiver; não atribuir erro ao nome do recurso Secret Manager, à chave, ao copy/paste ou à Meta sem correlação. Nenhuma nova rotação/versão3, nenhum :access.

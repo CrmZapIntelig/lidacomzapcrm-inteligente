@@ -1,5 +1,14 @@
 # Execution ledger — Unificação
 
+## META-01 — corrigir query adicional no GET (2026-10-08)
+
+- HEAD INICIAL:52c7bbce6585f26dc52834bf28b13894ebfb5a5e; COMMIT FUNCIONAL:9229ef3152b623003d4779ea6f807b3087baed86.
+- DIAGNÓSTICO:GET22:35:04Z HTTP400/QUERY_REJECTED; tokenMatches=true, path/mode/challenge válidos. Consulta só evento de aplicação sanitizado, sem valores/headers/request URLs/payloads.
+- MUDANÇA:GET seleciona três campos contratuais, ignora extras; campos ambíguos/ausentes/token errado permanecem bloqueados. POST/HMAC/ACK/admission/worker/secrets preservados.
+- VALIDAÇÃO:234 testes (230+4), cinco typechecks, AST/isolation, baseline21→21/zero novos, quatro builds PASS. CI funcional push37855733778/PR37855741380/análise37855734300 success. Deploy receiver-only ACTIVE/updateTime22:51:32Z; verifyv2/AppSecretv1/worker intactos; probe com extra e token fictício inválido403. Prova META-01-verification-query-fix.json.
+- LIMITES:staging somente; nenhum acesso secret/rotação/worker deploy/produção/outbound/main; pessoal fora de commits.
+- GATE/NEXT:GATE_META_CALLBACK_RETRY_REQUIRED após deploy validado; aceitação Meta ainda pendente; subscription mínima messages TEST só depois.
+
 ## META-01 — diagnóstico callback, sem nova rotação (2026-10-08)
 
 - HEAD INICIAL:72350836c487520a9251abb184832b6cf84382ad; commit funcional **577051493890b67431ba165a514e78b10e29f74c**, branch autorizada/PR4 draft/main/pessoal preservados.

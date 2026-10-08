@@ -1,5 +1,9 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## META-01 — causa da recusa GET identificada e corrigida (2026-10-08)
+
+GET recente22:35:04Z rejeitado400/QUERY_REJECTED apesar de tokenMatches=true e demais campos válidos. Commit9229ef3152b623003d4779ea6f807b3087baed86 seleciona os três campos contratuais na fronteira GET e ignora extras; valores ambíguos e token inválido continuam rejeitados. POST e worker intactos, secrets verifyv2/AppSecretv1 sem rotação/acesso, outboundDISABLED.234 testes/five stricts/baseline21→21/quatro builds PASS. Deploy seletivo receiver ACTIVE e CI funcional push/PR/análise success; probe HTTPS com extra/token inválido403. Callback ainda NÃO VALIDADO; próxima ação GATE_META_CALLBACK_RETRY_REQUIRED. Não promover META-01 a concluída. Prova META-01-verification-query-fix.json; detalhes META-01-inbound-staging.md; abaixo histórico.
+
 ## META-01 — callback recusado / diagnóstico seguro publicado (2026-10-08)
 
 Callback permanece NÃO VALIDADO. Commit **577051493890b67431ba165a514e78b10e29f74c** adiciona audit GET somente enum/status/booleans, zero token/URL parametrizada/header/body/hash. Receiver ACTIVE após redeploy seletivo, verifyv2/AppSecretv1 intactos e worker não redeployado. Probe fictício inválido403 e diagnóstico TOKEN_MISMATCH/tokenAvailabletrue provados, não atribuir causa à Meta sem correlação.232 testes/five stricts/21→21/quatro builds e CI funcional success. **GATE_META_CALLBACK_RETRY_REQUIRED** para usuário clicar uma vez Verificar e salvar no formulário pronto; não trocar token/URL, não enviar valor. Somente depois aceitação subscription messages TEST/painel, sem publicação/outbound/realphone. Prova META-01-verification-diagnostics.json; detalhes META-01-inbound-staging.md. Abaixo histórico.
