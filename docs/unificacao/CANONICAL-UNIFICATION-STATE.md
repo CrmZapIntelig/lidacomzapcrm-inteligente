@@ -1,5 +1,9 @@
 # Estado canônico da unificação — LidacomZapCRM
 
+## META-01 — rotação verify token TEST / callback humano pendente (2026-10-08)
+
+Rotação autorizada após exposição em screenshot: verify token **v2 ENABLED**, v1 exposta DISABLED após receiver ACTIVE/bindingv2; App Secretv1 intacto, worker updateTime inalterado. Somente redeploy receiver staging854899277909, zero acesso payload/produção/outbound/IAM/billing. Build Functions PASS;230 testes/baseline21→21/CIverdes do código anterior preservados, não rerun local nesta rotação. **GATE_META_VERIFY_TOKEN_SECURE_INPUT_REQUIRED** para copiar diretamente NOVAv2→Meta e Verificar e salvar; callback https://metatestreceiver-frefvtfoya-rj.a.run.app/webhooks/meta. Callback/subscription/positivo cloud ainda não comprovados. Prova META-01-verify-token-rotation.json; detalhes META-01-inbound-staging.md. Abaixo histórico.
+
 ## META-01 — receiver staging dedicado / callback seguro pendente (2026-10-07)
 
 Secrets TEST1+1 ENABLED após entrada humana, sem payload read pelo agente. Commit funcional **4e85b538515a6d830412f2a90f3bc4736156a589**; receiver público dedicado /webhooks/meta, worker e stagingIngress privados, runtime separado/grants mínimos somente staging. Shared journal STAGING TEST conserva SIMULATION local, allowlist humana vazia, draft-only/canSend=false, zero outbound.7 probes cloud negativos PASS; positivo/challenge real/subscription/projection cloud ainda pendentes, worker sem scheduler.230 testes/five stricts/baseline21→21/four builds PASS; CI funcional push37708073030/análise37708073665 success; PR37708078712/Hosting em acompanhamento. **GATE_META_VERIFY_TOKEN_SECURE_INPUT_REQUIRED** para transferência humana direta da versão1 verify token ao formulário Meta já preparado, sem captura pelo agente. META-01 PARCIAL — TEST ONLY. Operacional/default/main/pessoal/budget intactos, lidacomzapcrm continua UNVERIFIED. Detalhes/evidências META-01-inbound-staging.md. Abaixo histórico.

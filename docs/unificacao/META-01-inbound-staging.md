@@ -1,5 +1,17 @@
 # META-01 — inbound TEST em staging
 
+## Verify token exposto rotacionado — nova versão2 (2026-10-08)
+
+Usuário informou exposição do verify token em screenshot e autorizou rotação exclusivamente desse secret. Project ID/número **lidacomzapcrm-staging / 854899277909** confirmados antes da mutação. Crypto gerou novo valor somente em memória e addVersion via TLS criou **versão2 ENABLED**; nenhum :access, payload impresso/arquivo/log/retorno, zero alteração de meta-test-app-secret.
+
+Redeploy seletivo **somente metaTestReceiver**, Node22/southamerica-east1, ACTIVE com binding meta-test-verify-token versão2. Binding App Secret continua versão1; worker updateTime idêntico ao pre-flight, portanto não redeployado. Após comprovar novo binding, versão1 exposta do verify token **DISABLED**, não destruída. Uma versão ativa; nenhum novo recurso/billing/API/IAM/produção/outbound. Prova sanitizada evidence/META-01-verify-token-rotation.json.
+
+Build Functions PASS; código funcional intacto, último conjunto230 testes/cinco typechecks/baseline21→21/quatro builds e CI do HEAD92e5b34 verdes são evidência anterior, não afirmar rerun local nesta rotação. Deploy/metadata verificados nesta fase. Working tree pessoal preservado.
+
+**GATE_META_VERIFY_TOKEN_SECURE_INPUT_REQUIRED**: usuário abre meta-test-verify-token → NOVA versão2 → Ver valor do secret, copia diretamente ao campo Meta Verificar token e clica Verificar e salvar. Não enviar valor/screenshot do campo no chat. URL callback mantida **https://metatestreceiver-frefvtfoya-rj.a.run.app/webhooks/meta**. Nome projects/854899277909/secrets/meta-test-verify-token é endereço do recurso, não callback nem token. Campo Meta antigo limpo sem ler valor; novas páginas handoff. Callback ainda NÃO ACEITO/NÃO COMPROVADO; falha anterior não atribuída sem prova ao endereço do recurso.
+
+Depois de Meta aceitar, confirmar somente estado não sensível, configurar subscription mínima messages TEST e teste de painel. Não publicar app/número real/outbound. HMAC/challenge positivo cloud/inbound continuam pendentes; META-01 parcial, worker privado/allowlist humana vazia/draft only. Abaixo histórico.
+
 ## Estado vigente — secrets confirmados / receiver TEST dedicado (2026-10-07)
 
 Usuário confirmou salvamento direto da chave rotacionada. Metadados verificados sem :access: **uma versão ENABLED de cada secret TEST**, nenhum valor capturado pelo agente. Projeto exato **lidacomzapcrm-staging / 854899277909**; demais projetos/default/billing/budget preservados.

@@ -1,5 +1,13 @@
 # Execution ledger — Unificação
 
+## META-01 — rotação verify token TEST (2026-10-08)
+
+- HEAD INICIAL:92e5b348deedd1b9d5aefb9c4b12256c7c8d3093; código funcional/pessoal/main preservados.
+- CLOUD:staging854899277909 confirmado, crypto/addVersion2 somente verifytoken, receiver redeploy seletivo ACTIVE/binding2, appSecretbinding1 inalterado, worker updateTime inalterado. V1 exposta DISABLED após comprovar binding2; sem destruir/novo billing/API/IAM/recurso/produção.
+- SEGURANÇA:zero :access/valor em output/log/arquivo/Git; metadados somente.
+- VALIDAÇÃO:Functions build/deploy/metadata PASS;230 testes/five stricts/baseline21→21/quatrobuilds/CI do HEAD anterior são evidência preservada, não repetição local; CI documental acompanhar após push.
+- GATE/NEXT:GATE_META_VERIFY_TOKEN_SECURE_INPUT_REQUIRED; usuário copia NOVAv2 diretamente→Meta/Verificar token/salvar; callback mantido, campo antigo limpo sem leitura. Somente após aceitação subscription messages TEST/teste painel, nunca publicar/outbound/realphone.
+
 ## META-01 — secret salvo / receiver e worker isolados (2026-10-07)
 
 - HEAD INICIAL:64f92d686831224f34d7acaa322c73e4601de5dc; funcional **4e85b538515a6d830412f2a90f3bc4736156a589**. Push somente branch canônica, PR4 draft; main60fb91fdf048a8e0d4f9adc29a532be8bf4356dd intacta/pessoal fora de commits.
