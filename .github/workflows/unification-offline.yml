@@ -1,7 +1,7 @@
 name: Unification offline gates
 on:
   push:
-    branches: [codex/unificacao-gestao-inteligente]
+    branches: [codex/unificacao-gestao-inteligente, codex/platform-completion-review-20261105]
   pull_request:
     branches: [main]
 permissions:
