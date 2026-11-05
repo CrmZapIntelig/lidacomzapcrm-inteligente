@@ -188,7 +188,8 @@ test('adapta pedido delivery para Order canonico preservando fluxo operacional',
   assert.equal(projection.order.entryPoint, 'DIGITAL_MENU');
   assert.equal(projection.order.channel, 'NONE');
   assert.equal(projection.order.creationMode, 'CUSTOMER');
-  assert.equal(projection.order.status, 'PAID');
+  assert.equal(projection.order.status, 'CREATED');
+  assert.equal(projection.source.status, 'FECHADO');
   assert.equal(projection.items[0].productId, 'prod-1');
 });
 
@@ -261,4 +262,20 @@ test('adapters sem imports de runtime nem chamadas de I/O', () => {
  const ast = ts.createSourceFile('compatAdapters.ts', code, ts.ScriptTarget.Latest, true);
  for (const statement of ast.statements) if (ts.isImportDeclaration(statement)) assert.equal(statement.importClause?.isTypeOnly, true);
  assert.doesNotMatch(code, /\b(fetch|setDoc|addDoc|deleteDoc|onSnapshot|XMLHttpRequest|require|Date\.now)\s*\(/);
+});
+
+test('order identity survives channel projections without merging different orders for one customer', () => {
+  const original: Order = { id: 'order-one', clientId: 'customer-one', clientName: 'Demo Customer', items: [{ id: 'item-one', productName: 'Demo Meal', price: 20, quantity: 1 }], total: 20, paymentMethod: 'Pix', status: 'Pendente', createdAt: observedAt };
+  for (const channel of ['whatsapp', 'rcs', 'delivery', 'balcao', 'mesa_qr'] as const) {
+    const source = { ...original, channel };
+    const result = adaptCrmOrderToDomainOrder(source, { ...tenantContext, creationMode: 'HUMAN_OPERATOR', dispatchCampaignId: 'dispatch-one', queueEntryId: 'queue-one' });
+    assert.equal(result.order.id, original.id);
+    assert.equal(result.items[0].orderId, original.id);
+    assert.equal(result.order.dispatchCampaignId, 'dispatch-one');
+    assert.equal(result.order.queueEntryId, 'queue-one');
+    assert.equal(result.source, source);
+    const other = adaptCrmOrderToDomainOrder({ ...source, id: 'order-two' }, { ...tenantContext, creationMode: 'HUMAN_OPERATOR' });
+    assert.equal(other.order.contactId, result.order.contactId);
+    assert.notEqual(other.order.id, result.order.id);
+  }
 });

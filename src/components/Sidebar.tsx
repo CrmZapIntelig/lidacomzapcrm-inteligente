@@ -31,6 +31,7 @@ import {
   DollarSign,
 } from 'lucide-react';
 import { AppSettings } from '../types';
+import { isCloneEnvironment } from '../lib/firebase';
 
 interface SidebarProps {
   currentTab: string;
@@ -49,18 +50,23 @@ export default function Sidebar({
   isOpenMobile = false,
   onCloseMobile,
 }: SidebarProps) {
-  const menuItems = [
+  const menuItems: {id:string;label:string;icon:React.ElementType;color:string;badge?:string}[] = [
+    ...(isCloneEnvironment ? [
+      { id: 'historico_copiado', label: 'Histórico importado', icon: GitMerge, color: 'text-slate-500' },
+      { id: 'venda_ativa', label: 'Venda Ativa', icon: Users2, color: 'text-emerald-500' },
+      { id: 'canais_unificados', label: 'Canais e conexões', icon: PhoneCall, color: 'text-emerald-500' },
+    ] : []),
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, color: 'text-sky-500' },
     { id: 'caixa', label: 'Caixa e PDV', icon: DollarSign, color: 'text-emerald-500' },
-    { id: 'whatsapp', label: 'Módulo Chat', icon: MessageSquare, color: 'text-emerald-500', badge: '3' },
+    { id: 'whatsapp', label: 'Central de Atendimento', icon: MessageSquare, color: 'text-emerald-500' },
     { id: 'crm', label: 'Funil Kanban', icon: GitBranch, color: 'text-violet-500' },
     { id: 'campanhas', label: 'Campanhas', icon: Megaphone, color: 'text-indigo-400' },
-    { id: 'inteligencia_comercial', label: 'InteligÃªncia Comercial', icon: LineChart, color: 'text-cyan-500' },
+    { id: 'inteligencia_comercial', label: 'Inteligência Comercial', icon: LineChart, color: 'text-cyan-500' },
     { id: 'disparador', label: 'Disparador Inteligente', icon: Send, color: 'text-blue-500' },
     { id: 'cardapio', label: 'Cardápio Digital', icon: Utensils, color: 'text-emerald-450' },
-    { id: 'pedidos', label: 'Pedidos', icon: ShoppingBag, color: 'text-amber-500' },
-    { id: 'cozinha', label: 'Cozinha', icon: ChefHat, color: 'text-rose-500' },
-    { id: 'producao', label: 'Produção', icon: ClipboardCheck, color: 'text-purple-500' },
+    { id: 'pedidos', label: 'Central de Pedidos', icon: ShoppingBag, color: 'text-amber-500' },
+    { id: 'cozinha', label: 'Cozinha / KDS', icon: ChefHat, color: 'text-rose-500' },
+    { id: 'producao', label: 'Produção / Despacho', icon: ClipboardCheck, color: 'text-purple-500' },
     { id: 'gestao_entregas', label: 'Gestão de Entregas', icon: Truck, color: 'text-emerald-500' },
     { id: 'clientes', label: 'Clientes', icon: Users2, color: 'text-pink-500' },
     { id: 'automations', label: 'Automações SE/ENTÃO', icon: GitMerge, color: 'text-fuchsia-500' },
@@ -69,8 +75,12 @@ export default function Sidebar({
     { id: 'configuracoes', label: 'Configurações', icon: Sliders, color: 'text-slate-400' },
   ];
 
+  const legacySectionOf=(id:string)=>['dashboard','inteligencia_comercial','relatorios','historico_copiado'].includes(id)?'GESTÃO':['whatsapp','crm','campanhas','venda_ativa','clientes','disparador'].includes(id)?'ATENDIMENTO':['caixa','cardapio','pedidos','cozinha','producao','gestao_entregas'].includes(id)?'OPERAÇÃO':'SISTEMA';
+  const groups=[['VISÃO GERAL',['dashboard']],['CRM & RELACIONAMENTO',['clientes','whatsapp']],['COMERCIAL & VENDAS',['campanhas','venda_ativa','disparador','crm']],['OPERAÇÃO RESTAURANTE',['pedidos','cardapio','caixa','cozinha','producao','gestao_entregas']],['INTELIGÊNCIA & AUDITORIA',['inteligencia_comercial','historico_copiado','automations','relatorios']],['CANAIS & SISTEMA',['canais_unificados','central','configuracoes']]] as const;
+  const sectionOf=(id:string)=>groups.find(([,ids])=>(ids as readonly string[]).includes(id))?.[0]??legacySectionOf(id);
+  const orderedItems=isCloneEnvironment?groups.flatMap(([,ids])=>ids.flatMap(id=>menuItems.filter(item=>item.id===id))):menuItems;
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200">
+    <div className={(isCloneEnvironment?'approved-sidebar ':'')+'flex flex-col h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200'}>
       {/* Brand Logo Header */}
       <div className="p-6 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-3">
@@ -79,7 +89,7 @@ export default function Sidebar({
           </div>
           <div>
             <h1 className="font-sans font-bold text-sm tracking-tight text-slate-900 dark:text-white leading-none">
-              LidacomZapCRM Inteligente
+              LidacomZapCRM
             </h1>
             <span className="text-[10px] font-mono font-medium text-emerald-500 flex items-center gap-1 mt-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
@@ -111,13 +121,16 @@ export default function Sidebar({
 
       {/* Navigation List */}
       <div className="flex-1 overflow-y-auto px-4 py-2 space-y-1 scrollbar-thin">
-        {menuItems.map((item) => {
+        {orderedItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = currentTab === item.id;
           return (
+            <React.Fragment key={item.id}>
+            {isCloneEnvironment && (index===0||sectionOf(orderedItems[index-1].id)!==sectionOf(item.id)) && <p className="px-3 pt-5 pb-2 text-[10px] font-bold text-slate-400 tracking-widest">{sectionOf(item.id)}</p>}
             <button
               key={item.id}
               id={`sidebar-item-${item.id}`}
+              aria-current={isActive?'page':undefined}
               onClick={() => {
                 onChangeTab(item.id);
                 if (onCloseMobile) onCloseMobile();
@@ -137,7 +150,7 @@ export default function Sidebar({
                   {item.badge}
                 </span>
               )}
-            </button>
+            </button></React.Fragment>
           );
         })}
       </div>
@@ -149,7 +162,7 @@ export default function Sidebar({
             <PhoneCall className="w-3.5 h-3.5 text-slate-400" />
             <span>Sessão API:</span>
           </div>
-          {settings.waSessionStatus === 'connected' ? (
+          {isCloneEnvironment ? <span className="text-xs text-amber-600">NÃO HOMOLOGADA</span> : settings.waSessionStatus === 'connected' ? (
             <span className="text-[10px] font-semibold text-emerald-500 bg-emerald-100/60 dark:bg-emerald-950/30 px-2 py-0.5 rounded-full flex items-center gap-1 font-mono">
               CONECTADO
             </span>

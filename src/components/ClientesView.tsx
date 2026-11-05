@@ -1,3 +1,6 @@
+import {isCloneEnvironment} from '../lib/firebase';
+import ProductionDialog from './ProductionDialog';
+import ProductionContactProfile from './ProductionContactProfile';
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -23,7 +26,9 @@ import { FUNNEL_STAGES } from '../utils/mockData';
 
 interface ClientesViewProps {
   clients: Client[];
-  onUpdateClient: (updated: Client) => void;
+  onUpdateClient: (updated: Client) => void | boolean | Promise<void | boolean>;
+  onOpenConversation?: (client:Client)=>void;
+  onOpenOrder?: (client:Client)=>void;
   onAddHistoryEvent: (clientId: string, type: string, title: string, description: string) => void;
 }
 
@@ -31,7 +36,10 @@ export default function ClientesView({
   clients,
   onUpdateClient,
   onAddHistoryEvent,
+  onOpenConversation, onOpenOrder,
 }: ClientesViewProps) {
+  const [profile,setProfile]=useState<Client|null>(null);
+  const [saving,setSaving]=useState(false),[saveError,setSaveError]=useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStageFilter, setSelectedStageFilter] = useState<string>('todos');
   
@@ -69,22 +77,23 @@ export default function ClientesView({
     document.body.removeChild(link);
   };
 
-  const handleAddNoteSubmit = (e: React.FormEvent) => {
+  const handleAddNoteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedClientForNote || !newNoteText.trim()) return;
+    if (saving || !selectedClientForNote || !newNoteText.trim()) return;
 
     const updated = {
       ...selectedClientForNote,
       notes: [...selectedClientForNote.notes, newNoteText.trim()],
     };
-    onUpdateClient(updated);
+    setSaving(true);setSaveError('');
+    try{if(await onUpdateClient(updated)===false)throw Error('save');}catch{setSaveError('Não foi possível salvar. Seus dados continuam aqui; tente novamente.');return;}finally{setSaving(false);}
     onAddHistoryEvent(selectedClientForNote.id, 'note_added', 'Observação de Vendas', `Nota registrada: "${newNoteText.trim()}"`);
     setNewNoteText('');
     setSelectedClientForNote(null);
   };
 
   const handleStartEdit = (client: Client) => {
-    setEditingClient(client);
+    setSaveError('');setEditingClient(client);
     setEditName(client.name);
     setEditPhone(client.phone);
     setEditGlobalStatus(client.contactPreferences?.globalStatus ?? 'unknown');
@@ -95,9 +104,9 @@ export default function ClientesView({
     setEditPreferenceReason(client.contactPreferences?.reason ?? '');
   };
 
-  const handleSaveEditSubmit = (e: React.FormEvent) => {
+  const handleSaveEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingClient || !editName.trim() || !editPhone.trim()) return;
+    if (saving || !editingClient || !editName.trim() || !editPhone.trim()) return;
 
     const previousPreferences = editingClient.contactPreferences;
     const nextRecordedAt = previousPreferences?.recordedAt || new Date().toISOString();
@@ -126,7 +135,8 @@ export default function ClientesView({
       contactPreferences: nextContactPreferences,
     };
 
-    onUpdateClient(updated);
+    setSaving(true);setSaveError('');
+    try{if(await onUpdateClient(updated)===false)throw Error('save');}catch{setSaveError('Não foi possível salvar. Seus dados continuam aqui; tente novamente.');return;}finally{setSaving(false);}
     setEditingClient(null);
   };
 
@@ -138,14 +148,14 @@ export default function ClientesView({
   });
 
   return (
-    <div className="space-y-6 font-sans p-1 pb-12">
+    <div className={(isCloneEnvironment?'production-contacts ':'')+'space-y-6 font-sans p-1 pb-12'}>
       
       {/* View header actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">Diretório de Clientes</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">CRM · Visão 360 do Cliente</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            Acompanhe a ficha cadastral de cada lead, histórico de compras consolidadas, etiquetas e crie anotações rápidas de pós-venda.
+            Contatos, preferências e observações em um só lugar. Abra a ficha para acessar o atendimento e criar um pedido.
           </p>
         </div>
         
@@ -200,7 +210,7 @@ export default function ClientesView({
                 <th className="py-3 px-4">Canal</th>
                 <th className="py-3 px-4">Tags Associadas</th>
                 <th className="py-3 px-4">Fase Funil</th>
-                <th className="py-3 px-4">Consumido Total</th>
+                <th className="py-3 px-4">Histórico cadastrado</th>
                 <th className="py-3 px-4">Histórico / Notas</th>
                 <th className="py-3 px-4 text-right">Ação</th>
               </tr>
@@ -226,7 +236,7 @@ export default function ClientesView({
                           <div className={`w-7.5 h-7.5 rounded-full ${client.avatarColor || 'bg-slate-400'} text-white flex items-center justify-center font-bold text-xs select-none shrink-0`}>
                             {client.name.substring(0, 2)}
                           </div>
-                          <span className="truncate max-w-[160px]">{client.name}</span>
+                          {isCloneEnvironment?<button className="contact-profile-trigger" onClick={()=>setProfile(client)}>{client.name}</button>:<span className="truncate max-w-[160px]">{client.name}</span>}
                         </div>
                       </td>
 
@@ -267,7 +277,7 @@ export default function ClientesView({
                       {/* Funnel current stage tracker */}
                       <td className="py-3.5 px-4">
                         <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${stageConfig?.bgColor} ${stageConfig?.color} ${stageConfig?.borderColor}`}>
-                          {stageConfig?.label}
+                          {stageConfig?.label ?? 'Não classificado'}
                         </span>
                       </td>
 
@@ -324,12 +334,13 @@ export default function ClientesView({
         </div>
       </div>
 
+      {profile&&<ProductionDialog title="Ficha do cliente" onClose={()=>setProfile(null)}><ProductionContactProfile client={clients.find(c=>c.id===profile.id)??profile} onChat={onOpenConversation?c=>{setProfile(null);onOpenConversation(c);}:undefined} onOrder={onOpenOrder?c=>{setProfile(null);onOpenOrder(c);}:undefined}/></ProductionDialog>}
       {/* MODAL 1: ADD NEW COMMENT NOTE ATTACHED DIALOG */}
       {selectedClientForNote && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-40">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl w-full max-w-md shadow-xl relative animate-in zoom-in-95 duration-100">
             <button
-              onClick={() => setSelectedClientForNote(null)}
+              onClick={() => {if(!saving)setSelectedClientForNote(null);}}
               className="absolute top-4 right-4 p-1 text-slate-400 hover:text-slate-600"
             >
               <X className="w-4 h-4" />
@@ -351,7 +362,7 @@ export default function ClientesView({
               )}
             </div>
 
-            <form onSubmit={handleAddNoteSubmit} className="space-y-3">
+            <form onSubmit={handleAddNoteSubmit} className="space-y-3">{saveError&&<p role="alert" className="contact-save-error">{saveError}</p>}
               <label className="block text-slate-500 text-xs font-bold uppercase tracking-wider text-[9px]">Nova Anotação de Atendimento</label>
               <textarea
                 required
@@ -364,13 +375,13 @@ export default function ClientesView({
               <div className="flex justify-end gap-2 text-xs font-bold">
                 <button
                   type="button"
-                  onClick={() => setSelectedClientForNote(null)}
+                  onClick={() => {if(!saving)setSelectedClientForNote(null);}}
                   className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 px-3.5 py-1.5 rounded-xl"
                 >
                   Fechar
                 </button>
                 <button
-                  type="submit"
+                  type="submit" disabled={saving}
                   className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-1.5 rounded-xl transition"
                 >
                   Registrar Nota
@@ -386,7 +397,7 @@ export default function ClientesView({
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-40">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl w-full max-w-sm shadow-xl relative animate-in zoom-in-95 duration-100">
             <button
-              onClick={() => setEditingClient(null)}
+              onClick={() => {if(!saving)setEditingClient(null);}}
               className="absolute top-4 right-4 p-1 text-slate-400 hover:text-slate-600"
             >
               <X className="w-4 h-4" />
@@ -394,7 +405,7 @@ export default function ClientesView({
 
             <h3 className="font-bold text-slate-950 dark:text-white text-sm mb-3.5 uppercase tracking-wide">Editar Contato Cadastral</h3>
 
-            <form onSubmit={handleSaveEditSubmit} className="space-y-3 text-xs">
+            <form onSubmit={handleSaveEditSubmit} className="space-y-3 text-xs">{saveError&&<p role="alert" className="contact-save-error">{saveError}</p>}
               <div>
                 <label className="block text-slate-400 font-bold mb-1">Nome Completo</label>
                 <input
@@ -510,13 +521,13 @@ export default function ClientesView({
               <div className="flex justify-end gap-2.5 pt-2 text-xs font-bold">
                 <button
                   type="button"
-                  onClick={() => setEditingClient(null)}
+                  onClick={() => {if(!saving)setEditingClient(null);}}
                   className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 px-4 py-2 rounded-xl"
                 >
                   Voltar
                 </button>
                 <button
-                  type="submit"
+                  type="submit" disabled={saving}
                   className="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2 rounded-xl transition"
                 >
                   Salvar

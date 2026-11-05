@@ -1,3 +1,6 @@
+import ProductionInbox from './components/ProductionInbox';
+import ProductionTopbar from './components/ProductionTopbar';
+import './approvedOperations.css';
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -26,7 +29,7 @@ import {
   INITIAL_CAMPAIGN_SCHEDULES,
   INITIAL_CAMPAIGN_RESULTS,
   INITIAL_CAMPAIGN_REACHES,
-} from './utils/mockData';
+} from './utils/appInitialData';
 import { generateAutomaticAudienceOptions, generateCustomerCommercialProfiles, DEFAULT_COMMERCIAL_RULES } from './utils/commercialSegmentation';
 import {
   Client,
@@ -72,6 +75,10 @@ import CommercialIntelligenceView from './components/CommercialIntelligenceView'
 import RelatoriosView from './components/RelatoriosView';
 import ConfiguracoesView from './components/ConfiguracoesView';
 import OrderModal from './components/OrderModal';
+import OrdersView from './components/OrdersView';
+import UnifiedWorkspace from './components/UnifiedWorkspace';
+import ProductionOperations from './components/ProductionOperations';
+import { isCloneEnvironment } from './lib/firebase';
 import LoginView from './components/LoginView';
 import CaixaView from './components/CaixaView';
 import { ShoppingBag, Star, TrendingUp } from 'lucide-react';
@@ -243,27 +250,27 @@ export default function App() {
       collection(db, 'messages'),
       (snapshot) => {
         const firestoreMessages: Record<string, Message[]> = {};
-  
+
         snapshot.forEach((docSnap) => {
           const data = docSnap.data() as {
             clientId?: string;
             items?: Message[];
           };
-  
+
           const clientId = data.clientId || docSnap.id;
-  
+
           firestoreMessages[clientId] = Array.isArray(data.items)
             ? data.items
             : [];
         });
-  
+
         const loadedMessages =
           Object.keys(firestoreMessages).length > 0
             ? firestoreMessages
             : INITIAL_MESSAGES;
-  
+
         setMessages(loadedMessages);
-  
+
         console.log(
           `FIRESTORE MESSAGES SINCRONIZADAS: ${Object.keys(loadedMessages).length}`
         );
@@ -273,14 +280,14 @@ export default function App() {
           'ERRO AO CARREGAR MESSAGES FIRESTORE:',
           error
         );
-  
+
         setMessages(INITIAL_MESSAGES);
       }
     );
-  
+
     return unsubscribe;
   }, []);
-  
+
   const [history, setHistory] = useState<HistoryEvent[]>([]);
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -290,9 +297,9 @@ export default function App() {
         const loadedHistory = firestoreHistory.length
           ? firestoreHistory
           : INITIAL_HISTORY;
-  
+
         setHistory(loadedHistory);
-  
+
         console.log(`FIRESTORE HISTORY SINCRONIZADO: ${loadedHistory.length}`);
       },
       (error) => {
@@ -300,7 +307,7 @@ export default function App() {
         setHistory(INITIAL_HISTORY);
       }
     );
-  
+
     return unsubscribe;
   }, []);
 
@@ -315,9 +322,9 @@ export default function App() {
           firestoreCampaigns.length > 0
             ? firestoreCampaigns
             : INITIAL_CAMPAIGNS;
-  
+
         setCampaigns(loadedCampaigns);
-  
+
         console.log(
           `FIRESTORE CAMPAIGNS SINCRONIZADAS: ${loadedCampaigns.length}`
         );
@@ -327,11 +334,11 @@ export default function App() {
           'ERRO AO CARREGAR CAMPAIGNS FIRESTORE:',
           error
         );
-  
+
         setCampaigns(INITIAL_CAMPAIGNS);
       }
     );
-  
+
     return unsubscribe;
   }, []);
 
@@ -501,9 +508,9 @@ export default function App() {
           firestoreOrders.length > 0
             ? firestoreOrders
             : INITIAL_ORDERS;
-  
+
         setOrders(loadedOrders);
-  
+
         console.log(
           `FIRESTORE ORDERS SINCRONIZADOS: ${loadedOrders.length}`
         );
@@ -513,11 +520,11 @@ export default function App() {
           'ERRO AO CARREGAR ORDERS FIRESTORE:',
           error
         );
-  
+
         setOrders(INITIAL_ORDERS);
       }
     );
-  
+
     return unsubscribe;
   }, []);
 
@@ -532,9 +539,9 @@ export default function App() {
           firestoreAutomations.length > 0
             ? firestoreAutomations
             : INITIAL_AUTOMATIONS;
-  
+
         setAutomations(loadedAutomations);
-  
+
         console.log(
           `FIRESTORE AUTOMATIONS SINCRONIZADAS: ${loadedAutomations.length}`
         );
@@ -544,14 +551,14 @@ export default function App() {
           'ERRO AO CARREGAR AUTOMATIONS FIRESTORE:',
           error
         );
-  
+
         setAutomations(INITIAL_AUTOMATIONS);
       }
     );
-  
+
     return unsubscribe;
   }, []);
-  
+
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
 
   useEffect(() => {
@@ -570,11 +577,11 @@ export default function App() {
           'ERRO AO CARREGAR SETTINGS FIRESTORE:',
           error
         );
-  
+
         setSettings(normalizeSettings(DEFAULT_SETTINGS));
       }
     );
-  
+
     return unsubscribe;
   }, []);
 
@@ -590,9 +597,9 @@ export default function App() {
           firestoreProducts.length > 0
             ? firestoreProducts
             : INITIAL_PRODUCTS_DIGITAL_MENU;
-  
+
         setProductsDigitalMenu(loadedProducts);
-  
+
         console.log(
           `FIRESTORE PRODUCTS SINCRONIZADOS: ${loadedProducts.length}`
         );
@@ -602,11 +609,11 @@ export default function App() {
           'ERRO AO CARREGAR PRODUCTS FIRESTORE:',
           error
         );
-  
+
         setProductsDigitalMenu(INITIAL_PRODUCTS_DIGITAL_MENU);
       }
     );
-  
+
     return unsubscribe;
   }, []);
 
@@ -621,9 +628,9 @@ export default function App() {
           firestoreCardapios.length > 0
             ? firestoreCardapios
             : INITIAL_CARDAPIOS;
-  
+
         setCardapios(loadedCardapios);
-  
+
         console.log(
           `FIRESTORE CARDAPIOS SINCRONIZADOS: ${loadedCardapios.length}`
         );
@@ -633,11 +640,11 @@ export default function App() {
           'ERRO AO CARREGAR CARDAPIOS FIRESTORE:',
           error
         );
-  
+
         setCardapios(INITIAL_CARDAPIOS);
       }
     );
-  
+
     return unsubscribe;
   }, []);
 
@@ -652,9 +659,9 @@ export default function App() {
           firestoreDeliveryOrders.length > 0
             ? firestoreDeliveryOrders
             : INITIAL_DELIVERY_ORDERS;
-  
+
         setDeliveryOrders(loadedDeliveryOrders);
-  
+
         console.log(
           `FIRESTORE DELIVERY ORDERS SINCRONIZADOS: ${loadedDeliveryOrders.length}`
         );
@@ -664,7 +671,7 @@ export default function App() {
         setDeliveryOrders(INITIAL_DELIVERY_ORDERS);
       }
     );
-  
+
     return unsubscribe;
   }, []);
 
@@ -679,9 +686,9 @@ export default function App() {
           firestoreCouriers.length > 0
             ? firestoreCouriers
             : INITIAL_COURIERS;
-  
+
         setCouriers(loadedCouriers);
-  
+
         console.log(`FIRESTORE COURIERS SINCRONIZADOS: ${loadedCouriers.length}`);
       },
       (error) => {
@@ -689,7 +696,7 @@ export default function App() {
         setCouriers(INITIAL_COURIERS);
       }
     );
-  
+
     return unsubscribe;
   }, []);
 
@@ -704,9 +711,9 @@ export default function App() {
           firestoreRoutes.length > 0
             ? firestoreRoutes
             : INITIAL_ROUTES;
-  
+
         setRoutes(loadedRoutes);
-  
+
         console.log(`FIRESTORE ROUTES SINCRONIZADAS: ${loadedRoutes.length}`);
       },
       (error) => {
@@ -714,7 +721,7 @@ export default function App() {
         setRoutes(INITIAL_ROUTES);
       }
     );
-  
+
     return unsubscribe;
   }, []);
 
@@ -729,9 +736,9 @@ export default function App() {
           firestoreReviews.length > 0
             ? firestoreReviews
             : INITIAL_COURIER_REVIEWS;
-  
+
         setReviews(loadedReviews);
-  
+
         console.log(`FIRESTORE REVIEWS SINCRONIZADAS: ${loadedReviews.length}`);
       },
       (error) => {
@@ -739,7 +746,7 @@ export default function App() {
         setReviews(INITIAL_COURIER_REVIEWS);
       }
     );
-  
+
     return unsubscribe;
   }, []);
 
@@ -754,9 +761,9 @@ export default function App() {
           firestoreDeliveryHistories.length > 0
             ? firestoreDeliveryHistories
             : INITIAL_DELIVERY_HISTORIES;
-  
+
         setDeliveryHistories(loadedDeliveryHistories);
-  
+
         console.log(
           `FIRESTORE DELIVERY HISTORIES SINCRONIZADOS: ${loadedDeliveryHistories.length}`
         );
@@ -766,11 +773,11 @@ export default function App() {
           'ERRO AO CARREGAR DELIVERY HISTORIES FIRESTORE:',
           error
         );
-  
+
         setDeliveryHistories(INITIAL_DELIVERY_HISTORIES);
       }
     );
-  
+
     return unsubscribe;
   }, []);
 
@@ -919,7 +926,7 @@ export default function App() {
   // Handle active class settings matching 'dark' theme on DOM root
   useEffect(() => {
     const root = document.documentElement;
-    if (settings.theme === 'dark') {
+    if (!isCloneEnvironment && settings.theme === 'dark') {
       root.classList.add('dark');
     } else {
       root.classList.remove('dark');
@@ -1098,6 +1105,16 @@ const handleSaveCampaignReach = async (reach: Omit<CampaignReach, 'id'>) => {
 
   // 4. Client modification callback
   const handleUpdateClient = async (updated: Client) => {
+    if(isCloneEnvironment){
+      try{
+        // Omit optional undefined fields without serializing existing Firestore metadata.
+        const persisted = Object.fromEntries(Object.entries({...updated, contactPreferences: updated.contactPreferences ? Object.fromEntries(Object.entries(updated.contactPreferences).filter(([,value])=>value!==undefined)) : undefined}).filter(([,value])=>value!==undefined)) as unknown as Client;
+        await setDoc(doc(db,'clients',updated.id),persisted,{merge:true});
+        setClients(prev=>prev.map(c=>c.id===updated.id?persisted:c));
+        setSelectedClient(prev=>prev?.id===updated.id?persisted:prev);
+        return true;
+      }catch{return false;}
+    }
     setClients((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
     // If we're updating the currently focused client inside WhatsApp Chat, update focus state too
     if (selectedClient && selectedClient.id === updated.id) {
@@ -1116,10 +1133,11 @@ const handleSaveCampaignReach = async (reach: Omit<CampaignReach, 'id'>) => {
 
   // 5. Intelligent chatbot simulation on message sent
   const handleSendMessage = async (clientId: string, text: string, type: any = 'text', fileName?: string) => {
+    if(isCloneEnvironment){ alert('Meta oficial: a conexão de produção ainda precisa ser concluída. Nenhuma mensagem foi enviada.'); return; }
     const timeNow = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     const targetClient = clients.find((c) => c.id === clientId);
     const clientChannel = targetClient?.channel === 'ambos' || !targetClient?.channel ? 'whatsapp' : targetClient.channel;
-  
+
     const saveMessagesToFirestore = async (targetClientId: string, list: Message[]) => {
       try {
         const cleanList = list.map((message) =>
@@ -1127,7 +1145,7 @@ const handleSaveCampaignReach = async (reach: Omit<CampaignReach, 'id'>) => {
             Object.entries(message).filter(([, value]) => value !== undefined)
           )
         ) as Message[];
-    
+
         await setDoc(
           doc(db, 'messages', targetClientId),
           {
@@ -1136,13 +1154,13 @@ const handleSaveCampaignReach = async (reach: Omit<CampaignReach, 'id'>) => {
           },
           { merge: true }
         );
-    
+
         console.log(`MESSAGES ATUALIZADAS FIRESTORE: ${targetClientId}`);
       } catch (error) {
         console.error('ERRO AO ATUALIZAR MESSAGES FIRESTORE:', error);
       }
     };
-  
+
     const operatorMsg: Message = {
       id: `msg_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       sender: 'operador',
@@ -1152,17 +1170,17 @@ const handleSaveCampaignReach = async (reach: Omit<CampaignReach, 'id'>) => {
       fileName,
       channel: clientChannel,
     };
-  
+
     // Append operator message to list and persist to Firestore
     setMessages((prev) => {
       const existing = prev[clientId] || [];
       const updatedList = [...existing, operatorMsg];
-  
+
       saveMessagesToFirestore(clientId, updatedList);
-  
+
       return { ...prev, [clientId]: updatedList };
     });
-  
+
     // Toggle Automation check SE "mensagem enviada" ENTÃO "Etapa = Lead"
     if (targetClient && targetClient.stage === 'Rascunho') {
       const isLeadRuleActive = automations.find((a) => a.id === 'aut_2')?.active;
@@ -1172,14 +1190,14 @@ const handleSaveCampaignReach = async (reach: Omit<CampaignReach, 'id'>) => {
         handleAddHistoryEvent(clientId, 'stage_change', 'Automação (Gatilho)', 'Automação disparada: Rascunho atualizado AUTOMATICAMENTE para LEAD após envio de mensagem proativa.');
       }
     }
-  
+
     // Trigger AI Simulated reply if the sender was operator and not a silent attachments system.
     if (type === 'text') {
       setTimeout(() => {
         // Compute smart responder text
         let replyText = 'Perfeito! Vou avaliar aqui e te aviso.';
         const lowerText = text.toLowerCase();
-  
+
         if (lowerText.includes('catalogo') || lowerText.includes('catálogo')) {
           replyText = 'Nossa, que peças lindas! Qual o frete convencional para o Rio de Janeiro?';
         } else if (lowerText.includes('cupom') || lowerText.includes('desconto')) {
@@ -1189,7 +1207,7 @@ const handleSaveCampaignReach = async (reach: Omit<CampaignReach, 'id'>) => {
         } else if (lowerText.includes('jaqueta') || lowerText.includes('blazer')) {
           replyText = 'Esse modelo tem tamanho P disponível também? Ou só M?';
         }
-  
+
         const clientMsg: Message = {
           id: `msg_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
           sender: 'cliente',
@@ -1197,17 +1215,17 @@ const handleSaveCampaignReach = async (reach: Omit<CampaignReach, 'id'>) => {
           timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
           channel: clientChannel,
         };
-  
+
         // Append simulated client response and persist to Firestore
         setMessages((prev) => {
           const list = prev[clientId] || [];
           const updatedList = [...list, clientMsg];
-  
+
           saveMessagesToFirestore(clientId, updatedList);
-  
+
           return { ...prev, [clientId]: updatedList };
         });
-  
+
         // Toggle Automation check SE "cliente respondeu" ENTÃO "Etapa = Em Atendimento"
         if (targetClient && targetClient.stage !== 'Em atendimento') {
           const isMsgReplyRuleActive = automations.find((a) => a.id === 'aut_3')?.active;
@@ -1219,12 +1237,12 @@ const handleSaveCampaignReach = async (reach: Omit<CampaignReach, 'id'>) => {
                 const finalUpdated = { ...currentTarget, stage: 'Em atendimento' as const };
                 // Also trigger historic logging
                 handleAddHistoryEvent(clientId, 'stage_change', 'Automação (Resposta)', 'Automação disparada: Mover para EM ATENDIMENTO após resposta automática recebida do lead.');
-  
+
                 // If focused in chat
                 if (selectedClient && selectedClient.id === clientId) {
                   setSelectedClient(finalUpdated);
                 }
-  
+
                 return currentClients.map((c) => (c.id === clientId ? finalUpdated : c));
               }
               return currentClients;
@@ -1544,7 +1562,7 @@ const handleCloseCashier = async (closingData: {
   }
 };
 
-  
+
 // Centralized Firestore persistence for delivery orders
 const handleUpdateDeliveryOrders = async (updater: any) => {
   setDeliveryOrders((prev) => {
@@ -1558,14 +1576,7 @@ const handleUpdateDeliveryOrders = async (updater: any) => {
       setDoc(doc(db, 'deliveryOrders', deliveryOrder.id), cleanDeliveryOrder, { merge: true })
         .catch((error) => console.error('ERRO AO ATUALIZAR DELIVERY ORDER FIRESTORE:', error));
 
-      if (deliveryOrder.status === 'FECHADO' && previousOrder?.status !== 'FECHADO') {
-        handleRegisterPaidOrderInCashier({
-          id: deliveryOrder.id,
-          total: deliveryOrder.total || 0,
-          paymentMethod: deliveryOrder.paymentMethod || 'Dinheiro',
-          source: 'deliveryOrder',
-        });
-      }
+      // Concluir a entrega não comprova recebimento; o caixa exige uma ação financeira própria.
 
       if (previousOrder && previousOrder.status !== deliveryOrder.status) {
         const historyId = `dh_${Date.now()}_${Math.random().toString(36).substring(2,9)}`;
@@ -1645,8 +1656,8 @@ if (publicCardapioMatch) {
   }
 
   return (
-    <div className={`min-h-screen font-sans antialiased text-slate-800 bg-slate-50 dark:bg-slate-950 dark:text-slate-100 flex transition-colors duration-150`}>
-      
+    <div className={`${isCloneEnvironment?'approved-operations ':''}min-h-screen font-sans antialiased text-slate-800 bg-slate-50 dark:bg-slate-950 dark:text-slate-100 flex transition-colors duration-150`}>
+
       {/* 1. Left Sidebar Navigation Panel */}
       <Sidebar
         currentTab={currentTab}
@@ -1659,9 +1670,9 @@ if (publicCardapioMatch) {
 
       {/* 2. Main Workspace Layout */}
       <div className="flex-1 flex flex-col min-w-0 min-h-screen">
-        
+
         {/* Header Workspace Options */}
-        <Header
+        {isCloneEnvironment ? <ProductionTopbar name={auth.user?.name || 'Administrador'} onMenu={()=>setMobileSidebarOpen(true)} onNavigate={setCurrentTab} onLogout={handleLogout}/> : <Header
           settings={settings}
           onUpdateSettings={handleUpdateSettings}
 
@@ -1672,11 +1683,16 @@ if (publicCardapioMatch) {
           syncing={isSyncing}
           currentUser={auth.user || undefined}
           onLogout={handleLogout}
-        />
+        />}
 
         {/* Content Tabs Area */}
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
-          {currentTab === 'dashboard' && (
+          {isCloneEnvironment && ['dashboard','unificacao','pedidos','cozinha','producao','caixa','gestao_entregas','relatorios'].includes(currentTab) && <ProductionOperations screen={currentTab} clients={clients} products={productsDigitalMenu} couriers={couriers} initialClient={clientForOrder} onNavigate={setCurrentTab} />}
+          {isCloneEnvironment && ['venda_ativa','disparador','canais_unificados','historico_copiado'].includes(currentTab) && <div key={currentTab}><UnifiedWorkspace
+            initialSection={['venda_ativa','disparador'].includes(currentTab) ? 'sales' : currentTab === 'canais_unificados' ? 'channels' : 'orders'}
+            clients={clients} messages={messages} history={history} campaigns={campaigns} orders={orders} deliveryOrders={deliveryOrders} onNavigate={setCurrentTab} /></div>}
+
+          {!isCloneEnvironment && currentTab === 'dashboard' && (
             <DashboardView
               clients={clients}
               orders={orders}
@@ -1686,7 +1702,7 @@ if (publicCardapioMatch) {
             />
           )}
 
-          {currentTab === 'caixa' && (
+          {!isCloneEnvironment && currentTab === 'caixa' && (
             <CaixaView
               activeSession={activeCaixaSession}
               lastClosedSession={caixaHistory.find((session) => session.status === 'fechado') || null}
@@ -1697,7 +1713,8 @@ if (publicCardapioMatch) {
             />
           )}
 
-          {currentTab === 'whatsapp' && (
+          {isCloneEnvironment&&currentTab==='whatsapp'&&<ProductionInbox clients={clients} messages={messages} selectedClient={selectedClient} onSelectClient={setSelectedClient} onOrder={client=>{setClientForOrder(client);setCurrentTab('pedidos');}} onConnections={()=>setCurrentTab('canais_unificados')}/>}
+          {!isCloneEnvironment && currentTab === 'whatsapp' && (
             <WhatsAppView
               clients={clients}
               messages={messages}
@@ -1706,7 +1723,7 @@ if (publicCardapioMatch) {
               onAddHistoryEvent={(id, type, head, desc) => handleAddHistoryEvent(id, type, head, desc)}
               selectedClient={selectedClient}
               onSelectClient={setSelectedClient}
-              onOpenOrderModal={setClientForOrder}
+              onOpenOrderModal={(client)=>{setClientForOrder(client);if(isCloneEnvironment)setCurrentTab('pedidos');}}
             />
           )}
 
@@ -1747,7 +1764,7 @@ if (publicCardapioMatch) {
             onSaveCampaignReach={handleSaveCampaignReach}
         />
           )}
-          {currentTab === 'disparador' && (
+          {!isCloneEnvironment && currentTab === 'disparador' && (
             <DisparadorView
               clients={clients}
               settings={settings}
@@ -1761,6 +1778,7 @@ if (publicCardapioMatch) {
 
           {currentTab === 'cardapio' && (
             <CardapioView
+              onOpenOperations={()=>setCurrentTab('pedidos')}
               clients={clients}
               onUpdateClient={handleUpdateClient}
               onAddHistoryEvent={handleAddHistoryEvent}
@@ -1808,7 +1826,7 @@ if (publicCardapioMatch) {
 />
 )}
 
-{currentTab === 'cozinha' && (
+{!isCloneEnvironment && currentTab === 'cozinha' && (
             <CozinhaView
               clients={clients}
               onUpdateClient={handleUpdateClient}
@@ -1821,14 +1839,14 @@ if (publicCardapioMatch) {
             />
           )}
 
-          {currentTab === 'producao' && (
+          {!isCloneEnvironment && currentTab === 'producao' && (
             <ProducaoView
               deliveryOrders={deliveryOrders}
               setDeliveryOrders={handleUpdateDeliveryOrders}
             />
           )}
 
-{currentTab === 'gestao_entregas' && (
+{!isCloneEnvironment && currentTab === 'gestao_entregas' && (
   <GestaoEntregasView
     couriers={couriers}
     setCouriers={async (updater: any) => {
@@ -1837,15 +1855,15 @@ if (publicCardapioMatch) {
           typeof updater === 'function'
             ? updater(prev)
             : updater;
-    
+
         nextCouriers.forEach((courier: any) => {
           const cleanCourier = JSON.parse(JSON.stringify(courier));
-    
+
           setDoc(doc(db, 'couriers', courier.id), cleanCourier, { merge: true })
             .then(() => console.log(`COURIER ATUALIZADO FIRESTORE: ${courier.id}`))
             .catch((error) => console.error('ERRO AO ATUALIZAR COURIER FIRESTORE:', error));
         });
-    
+
         return nextCouriers;
       });
     }}
@@ -1860,66 +1878,18 @@ if (publicCardapioMatch) {
   />
 )}
 
-          
 
-          
 
-          
 
-          {currentTab === 'pedidos' && (
-            <div className="space-y-6 font-sans">
-              <div>
-                <h2 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">Relatório Geral de Pedidos</h2>
-                <p className="text-sm text-slate-550 dark:text-slate-400">Ordens de serviço faturadas pelo operador no chat.</p>
-              </div>
 
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-xs">
-                    <thead>
-                      <tr className="bg-slate-50/50 dark:bg-slate-805 border-b border-light-100 dark:border-slate-800 text-[10px] uppercase font-mono text-slate-400 tracking-wider">
-                        <th className="py-3 px-4">Código</th>
-                        <th className="py-3 px-4">Cliente</th>
-                        <th className="py-3 px-4">Produtos Adquiridos</th>
-                        <th className="py-3 px-4">Meio Pgto</th>
-                        <th className="py-3 px-4">Total Ordem</th>
-                        <th className="py-3 px-4">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-                      {orders.map((ord) => (
-                        <tr key={ord.id}>
-                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white">{ord.id}</td>
-                          <td className="py-3.5 px-4 font-medium text-slate-700 dark:text-slate-350">{ord.clientName}</td>
-                          <td className="py-3.5 px-4 max-w-[200px] truncate">{ord.items.map((i) => `${i.quantity}un. × ${i.productName}`).join(', ')}</td>
-                          <td className="py-3.5 px-4 font-mono">{ord.paymentMethod}</td>
-                          <td className="py-3.5 px-4 font-mono font-bold text-emerald-505 text-emerald-500">R$ {ord.total.toFixed(2)}</td>
-                          <td className="py-3.5 px-4">
-                            {ord.status === 'Pago' ? (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400">
-                                PAGO
-                              </span>
-                            ) : ord.status === 'Cancelado' ? (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400">
-                                CANCELADO
-                              </span>
-                            ) : (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400">
-                                PENDENTE
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
+
+
+          {!isCloneEnvironment && currentTab === 'pedidos' && <OrdersView orders={orders} />}
 
           {currentTab === 'clientes' && (
             <ClientesView
+              onOpenConversation={isCloneEnvironment?client=>{setSelectedClient(client);setCurrentTab('whatsapp');}:undefined}
+              onOpenOrder={isCloneEnvironment?client=>{setClientForOrder(client);setCurrentTab('pedidos');}:undefined}
               clients={clients}
               onUpdateClient={handleUpdateClient}
               onAddHistoryEvent={handleAddHistoryEvent}
@@ -1940,7 +1910,7 @@ if (publicCardapioMatch) {
             />
           )}
 
-          {currentTab === 'relatorios' && (
+          {!isCloneEnvironment && currentTab === 'relatorios' && (
             <RelatoriosView
               clients={clients}
               orders={orders}
@@ -1960,7 +1930,7 @@ if (publicCardapioMatch) {
       </div>
 
       {/* 3. ABSOLUTE GLOBAL OVERLAYS: billing generation modal inside conversation workspace */}
-      {clientForOrder && (
+      {!isCloneEnvironment && clientForOrder && (
         <OrderModal
           client={clientForOrder}
           onClose={() => setClientForOrder(null)}

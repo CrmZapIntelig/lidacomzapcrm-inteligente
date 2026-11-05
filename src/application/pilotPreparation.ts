@@ -1,3 +1,5 @@
+import { messageProviderChannel } from '../domain/messageChannelCatalog';
+import type { ChannelProvider } from '../domain/omnichannel';
 import { evaluateDispatchEligibility } from '../domain/dispatchPrerequisites';
 import type { EligibilityEvidence, EligibilityPolicy } from '../domain/dispatchPrerequisites';
 
@@ -14,6 +16,8 @@ export function applyPilotOptOut(evidence: EligibilityEvidence, text: string): E
 }
 
 export function preparePilotBatch(input: {
+  /** One provider per preparation. Omission preserves the historical Meta default. */
+  selectedProvider?: ChannelProvider;
   selectedIds: readonly string[];
   evidence: readonly EligibilityEvidence[];
   policy: EligibilityPolicy;
@@ -23,17 +27,22 @@ export function preparePilotBatch(input: {
   riskLimit: number;
   operatorStarted: boolean;
 }) {
+  const selectedProvider = input.selectedProvider ?? 'WHATSAPP_META_OFFICIAL';
+  const selectedChannel = messageProviderChannel(selectedProvider);
   const limits = [input.requestedCount, input.commercialRemaining, input.providerRemaining, input.riskLimit];
   if (limits.some(n => n !== null && (!Number.isSafeInteger(n) || n < 0))) throw new Error('INVALID_BATCH_LIMIT');
   const cap = input.providerRemaining === null ? 0 : Math.min(...limits as number[]);
   const uniqueIds = [...new Set(input.selectedIds)];
   const decisions = uniqueIds.map(contactId => {
-    const matches = input.evidence.filter(e => e.contactId === contactId);
+    const matches = input.evidence.filter(e => e.contactId === contactId && e.tenantId === input.policy.tenantId && e.identity.provider === selectedProvider);
     if (matches.length !== 1) return { contactId, eligible: false, reasons: ['EVIDENCE_MISSING_OR_AMBIGUOUS'] };
     const decision = evaluateDispatchEligibility(matches[0], input.policy);
     const reasons = [...decision.reasons];
-    if (matches[0].identity.channel !== 'WHATSAPP') reasons.push('PILOT_WHATSAPP_ONLY');
-    if (matches[0].identity.provider !== 'WHATSAPP_META_OFFICIAL') reasons.push('OFFICIAL_META_REQUIRED');
+    // Contact-wide restrictions cannot be bypassed by selecting another provider.
+    const contactEvidence = input.evidence.filter(e => e.contactId === contactId && e.tenantId === input.policy.tenantId);
+    if (contactEvidence.some(e => e.blocked || e.optedOut || e.consent === 'DENIED')) reasons.push('CONTACT_RESTRICTED');
+    if (contactEvidence.some(e => e.alreadyPrepared)) reasons.push('CONTACT_ALREADY_PREPARED');
+    if (matches[0].identity.channel !== selectedChannel) reasons.push('PILOT_CHANNEL_MISMATCH');
     if (input.evidence.some(e => e.contactId !== contactId && uniqueIds.includes(e.contactId) &&
       e.tenantId === input.policy.tenantId && e.identity.channel === matches[0].identity.channel &&
       e.identity.address === matches[0].identity.address)) reasons.push('DUPLICATE_RECIPIENT');
@@ -41,6 +50,8 @@ export function preparePilotBatch(input: {
   });
   const candidates = decisions.filter(d => d.eligible).map(d => d.contactId);
   return {
+    selectedProvider,
+    selectedChannel,
     mode: 'SIMULATION' as const,
     canSend: false as const,
     canEnqueue: false as const,

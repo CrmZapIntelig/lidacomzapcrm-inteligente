@@ -1,1 +1,6 @@
 require('../node_modules/esbuild').buildSync({entryPoints:[__dirname+'/index.ts'],outfile:__dirname+'/lib/index.js',bundle:true,platform:'node',target:'node22',format:'cjs',external:['firebase-functions/v2/https','firebase-functions/params','firebase-functions/logger','google-auth-library'],logLevel:'warning'});
+// Private composition artifact; package main / deployed function exports remain unchanged.
+require('../node_modules/esbuild').buildSync({entryPoints:[__dirname+'/testOrderRuntime.ts'],outfile:__dirname+'/lib/testOrderRuntime.js',bundle:true,platform:'node',target:'node22',format:'cjs',logLevel:'warning'});
+require('../node_modules/esbuild').buildSync({entryPoints:[__dirname+'/testOrderDurableRuntime.ts'],outfile:__dirname+'/lib/testOrderDurableRuntime.js',bundle:true,platform:'node',target:'node22',format:'cjs',logLevel:'warning'});
+// Candidate artifact is excluded from package main; building does not publish or activate it.
+require('../node_modules/esbuild').buildSync({entryPoints:[__dirname+'/testOrdersEndpoint.candidate.ts'],outfile:__dirname+'/lib/testOrdersEndpoint.candidate.js',bundle:true,platform:'node',target:'node22',format:'cjs',external:['firebase-functions/*','firebase-admin/*','google-auth-library'],logLevel:'warning'});

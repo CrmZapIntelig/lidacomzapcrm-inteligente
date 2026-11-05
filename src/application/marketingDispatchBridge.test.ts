@@ -38,3 +38,12 @@ test('selected audience remains non-eligible without current evidence', () => {
   assert.equal(result.canSend, false); assert.equal(result.state.drafts.length, 0);
   assert.equal(result.state.queue.entries.length, 2);
 });
+
+test('marketing and campaign handoff preserve any of the three explicit providers', () => {
+  for (const selectedProvider of ['WHATSAPP_META_OFFICIAL', 'WHATSAPP_EVOLUTION_OPTIONAL', 'RCS_GOOGLE'] as const) {
+    const handoff = prepareMarketingDispatchHandoff(marketing, audience, { ...options, selectedProvider });
+    assert.equal(handoff.dispatch.selectedProvider, selectedProvider);
+    assert.equal(handoff.dispatch.drafts.length, 0);
+    assert.equal(handoff.dispatch.audience.marketingCampaignId, marketing.id);
+  }
+});

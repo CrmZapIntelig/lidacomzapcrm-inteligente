@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.order-view.json",
+  "include": ["private-orders/**/*.ts", "private-orders/**/*.tsx", "src/application/testOrderSession.test.ts"]
+}

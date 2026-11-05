@@ -1,0 +1,39 @@
+{
+  "hosting": {
+    "site": "lidacomzapcrm-work-20261021",
+    "public": "dist-dedicated",
+    "ignore": [
+      "firebase.clone.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/providers/evolution",
+        "function": {
+          "functionId": "operationalProviderDiagnostics",
+          "region": "southamerica-east1"
+        }
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Robots-Tag",
+            "value": "noindex, nofollow"
+          },
+          {
+            "key": "Cache-Control",
+            "value": "no-store"
+          }
+        ]
+      }
+    ]
+  }
+}

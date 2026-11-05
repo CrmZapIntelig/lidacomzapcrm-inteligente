@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.offline.json",
+  "compilerOptions": {
+    "paths": {
+      "react": ["./offline-preview/node_modules/@types/react"],
+      "react/*": ["./offline-preview/node_modules/@types/react/*"],
+      "react-dom/*": ["./offline-preview/node_modules/@types/react-dom/*"]
+    }
+  },
+  "include": ["src/components/OrdersView.tsx", "src/components/TestOrdersView.tsx", "src/utils/orderView.test.ts"]
+}

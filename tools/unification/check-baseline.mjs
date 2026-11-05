@@ -12,7 +12,7 @@ const canonical = values => values.map(v => JSON.stringify(v)).sort();
 const expected = JSON.parse(readFileSync(new URL('./baseline.json', import.meta.url), 'utf8'));
 const hash = createHash('sha256').update(JSON.stringify(entries)).digest('hex');
 console.log(`Global baseline: ${entries.length} diagnostics; SHA-256 ${hash}`);
-if (entries.length !== 21 || JSON.stringify(canonical(entries)) !== JSON.stringify(canonical(expected))) {
+if (entries.length !== expected.length || JSON.stringify(canonical(entries)) !== JSON.stringify(canonical(expected))) {
   console.error(JSON.stringify({ actual: entries, expected }));
   console.error(ts.formatDiagnosticsWithColorAndContext(diagnostics, { getCurrentDirectory: ts.sys.getCurrentDirectory, getCanonicalFileName: f => f, getNewLine: () => '\n' }));
   process.exitCode = 1;

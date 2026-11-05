@@ -4,6 +4,8 @@ import type { Journal } from '../messaging/localInboundJournal';
 /** Async persistence port. Implementations must atomically retry the entire callback. */
 export interface AtomicJsonPort {
   transaction<T>(update: (current: string | undefined) => { value: string; result: T }): Promise<T>;
+  /** Optional read-only snapshot; durable implementations must not create or rewrite a document. */
+  read?<T>(inspect: (current: string | undefined) => T): Promise<T>;
 }
 
 /** Same tested ingress/worker rules, with an explicitly injected distributed store.

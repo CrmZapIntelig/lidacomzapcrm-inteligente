@@ -1,0 +1,7 @@
+@import "tailwindcss" source(none);
+@source "./PrivateOrdersApp.tsx";
+@source "../src/components/OrdersView.tsx";
+@source "../src/components/TestOrdersView.tsx";
+body { margin: 0; background: #f8fafc; font-family: system-ui, sans-serif; color: #0f172a; }
+button { cursor: pointer; }
+button:focus-visible { outline: 3px solid #059669; outline-offset: 3px; }

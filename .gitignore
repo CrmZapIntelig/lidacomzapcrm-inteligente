@@ -4,6 +4,7 @@ dist/
 dist-offline/
 .local-messaging/
 dist-integrated/
+dist-private-orders/
 staging-functions/lib/
 coverage/
 .DS_Store
@@ -17,3 +18,5 @@ gha-creds-*.json
 
 # Local backups
 *.zip
+
+dist-dedicated/

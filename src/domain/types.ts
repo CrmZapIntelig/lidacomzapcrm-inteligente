@@ -4,6 +4,7 @@ import type {
   ContactChannelIdentity,
   ContactImportReport,
   ContactImportSource,
+  ExternalOrderReference,
   MessageContentType,
   MessageOriginSurface,
   OrderChannel,
@@ -132,6 +133,8 @@ export interface Order {
   contactId: ID;
   entryPoint: OrderEntryPoint;
   channel: OrderChannel;
+  /** Origin provider only; additional channel views use externalReferences. */
+  provider?: ChannelProvider;
   creationMode: OrderCreationMode;
   total: number;
   status: OrderStatus;
@@ -141,6 +144,8 @@ export interface Order {
   conversationId?: ID;
   dispatchCampaignId?: ID;
   queueEntryId?: ID;
+  /** Aliases of this canonical ID, scoped by tenant, provider, account and channel. */
+  externalReferences?: readonly ExternalOrderReference[];
 }
 
 export interface OrderItem {

@@ -1,9 +1,11 @@
+import ProductionMenuGallery from './ProductionMenuGallery';
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import React, { useState, useEffect } from 'react';
+import { isCloneEnvironment } from '../lib/firebase';
 import {
   BookOpen,
   Plus,
@@ -45,6 +47,7 @@ interface CardapioViewProps {
   products: ProductDigitalMenu[];
   setProducts: React.Dispatch<React.SetStateAction<ProductDigitalMenu[]>>;
   deliveryOrders: DeliveryOrder[];
+  onOpenOperations?: () => void;
   setDeliveryOrders: React.Dispatch<React.SetStateAction<DeliveryOrder[]>>;
 }
 
@@ -59,7 +62,9 @@ export default function CardapioView({
   setProducts,
   deliveryOrders,
   setDeliveryOrders,
+  onOpenOperations,
 }: CardapioViewProps) {
+  const [manageCatalog,setManageCatalog]=useState(false);
   // Navigation tabs inside Cardapio
   const [subTab, setSubTab] = useState<'cardapios' | 'produtos' | 'pedidos' | 'simulador' | 'mesas'>('cardapios');
 
@@ -361,6 +366,7 @@ export default function CardapioView({
 
   // --- PLACING DELIVERY ORDER SIMULATION ---
   const handleFinalizeSimulatedOrder = (e: React.FormEvent) => {
+    if(isCloneEnvironment){e.preventDefault();onOpenOperations?.();return;}
     e.preventDefault();
     if (simBasket.length === 0 || !custName.trim() || !custPhone.trim() || !custStreet.trim() || !custNumber.trim() || !custNeighborhood.trim()) {
       alert('Favor preencher todos os dados obrigatórios de entrega.');
@@ -525,15 +531,18 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
     setEditingOrder(null);
   };
 
+  if(isCloneEnvironment&&!manageCatalog)return <ProductionMenuGallery products={products} cardapios={cardapios} onManage={()=>{setSubTab('produtos');setManageCatalog(true);}} onOrders={()=>onOpenOperations?.()}/>;
   return (
     <div className="space-y-6 font-sans p-1 pb-16">
+      {isCloneEnvironment&&<button className="menu-back" onClick={()=>setManageCatalog(false)}>← Voltar ao catálogo visual</button>}
+
       
       {/* Title */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">Central de Lançamentos Delivery & Cardápio Digital</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            Crie cardápios interativos, gerencie pedidos gourmet da cozinha com diagramas e conecte checkouts com clientes do WhatsApp.
+            Gerencie o catálogo. Pedidos, retirada, mesas e entrega usam a Central de Pedidos.
           </p>
         </div>
 
@@ -560,7 +569,7 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
             2. Produtos Gourmet
           </button>
           <button
-            onClick={() => setSubTab('simulador')}
+            onClick={() => (isCloneEnvironment ? onOpenOperations?.() : setSubTab('simulador'))}
             className={`px-3 py-2 rounded-lg transition flex items-center gap-1 ${
               subTab === 'simulador'
                 ? 'bg-emerald-500 text-white shadow-xs'
@@ -571,7 +580,7 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
             3. Checkout Assistido
           </button>
           <button
-            onClick={() => setSubTab('pedidos')}
+            onClick={() => (isCloneEnvironment ? onOpenOperations?.() : setSubTab('pedidos'))}
             className={`px-3 py-2 rounded-lg transition flex items-center gap-1 ${
               subTab === 'pedidos'
                 ? 'bg-indigo-500 text-white shadow-xs font-bold'
@@ -582,7 +591,7 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
             4. Painel de Pedidos Delivery ({deliveryOrders.length})
           </button>
           <button
-            onClick={() => setSubTab('mesas')}
+            onClick={() => (isCloneEnvironment ? onOpenOperations?.() : setSubTab('mesas'))}
             className={`px-3 py-2 rounded-lg transition flex items-center gap-1 ${
               subTab === 'mesas'
                 ? 'bg-amber-500 text-white shadow-xs'
@@ -604,7 +613,7 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
               <span className="text-xs font-semibold text-slate-705 dark:text-slate-350">
-                Cardápios Ativos podem ser compartilhados via link em massa.
+                {isCloneEnvironment ? 'Catálogo interno. Atendimento público por link depende da integração do checkout.' : 'Cardápios Ativos podem ser compartilhados via link em massa.'}
               </span>
             </div>
             
@@ -690,7 +699,7 @@ ${custComplement ? `🏢 *Complemento:* ${custComplement}\n` : ''}📮 *CEP:* ${
                       <button
                         onClick={() => {
                           setSelectedSimMenu(menu);
-                          setSubTab('simulador');
+                          (isCloneEnvironment ? onOpenOperations?.() : setSubTab('simulador'));
                           setCheckoutStep('browse');
                         }}
                         className="bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-850 py-1.5 px-2.5 rounded-lg hover:bg-indigo-100 transition inline-flex items-center gap-1 text-[11px]"

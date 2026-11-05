@@ -16,20 +16,31 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: node --test --import tsx src/domain/*.test.ts src/application/*.test.ts
+      - run: npm ci --prefix staging-functions --ignore-scripts
+      - run: node --test --import tsx src/domain/*.test.ts src/application/*.test.ts src/utils/*.test.ts
+      - run: node node_modules/typescript/bin/tsc -p backend/dispatch-admission/tsconfig.json
+      - run: node --test backend/dispatch-admission/tests/admission.test.mjs
       - run: node node_modules/typescript/bin/tsc -p tsconfig.offline.json
       - run: node --test --import tsx services/messaging/*.test.ts services/staging/*.test.ts
       - run: node node_modules/typescript/bin/tsc -p tsconfig.messaging.json
-      - run: npm ci --prefix staging-functions --ignore-scripts
       - run: node node_modules/typescript/bin/tsc -p tsconfig.staging-functions.json
+      - run: node node_modules/typescript/bin/tsc -p tsconfig.operational-diagnostics.json
+      - name: Test operational diagnostics without credentials or network
+        run: node --test --import tsx staging-functions/operationalDiagnostics.test.ts
+      - name: Build isolated operational diagnostics artifact
+        run: node tools/pilot/build-operational-diagnostics.cjs "$RUNNER_TEMP/operational-diagnostics"
       - run: npm run build --prefix staging-functions
       - run: node --test tools/unification/staging-runtime.test.mjs
-      - run: node --test tools/pilot/pilot-safety.test.mjs
+      - run: node --test tools/pilot/pilot-safety.test.mjs tools/pilot/legacy-delivery-cash.test.mjs
       - run: node tools/unification/check-messaging-safety.mjs
       - run: node tools/unification/check-baseline.mjs
       - run: npm run build
+      - run: npm run build:dedicated
       - run: node --test --import tsx offline-preview/*.test.ts
       - run: npm ci --prefix offline-preview
+      - run: node node_modules/typescript/bin/tsc -p tsconfig.order-view.json
+      - run: node node_modules/typescript/bin/tsc -p tsconfig.private-orders.json
+      - run: node node_modules/vite/bin/vite.js build --config vite.private-orders.config.ts
       - run: node node_modules/typescript/bin/tsc -p tsconfig.preview-offline.json
       - run: npm run build:offline
       - run: node --test tools/unification/preview-isolation.test.mjs

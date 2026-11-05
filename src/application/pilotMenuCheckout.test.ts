@@ -25,6 +25,7 @@ test('restaurant checkout recomputes prices, options and fee from trusted catalo
 });
 test('public and conversation orders share catalog and pricing, pickup has no delivery fee', () => {
   const c = pilotCommandFixture(); c.origin = 'CONVERSATION'; c.conversationId = 'demo-TEST-conversation'; c.modality = 'PICKUP'; c.address = null;
+  c.conversationContext = { channel: 'WHATSAPP', provider: 'WHATSAPP_META_OFFICIAL' };
   const s = reviewPilotCheckout(c, pilotCatalogFixture(), context); assert.equal(s.legacy.total, 46); assert.equal(s.legacy.channel, 'whatsapp'); assert.equal(s.conversationId, c.conversationId); assert.equal(s.legacy.address.street, '');
 });
 test('zero priced size remains zero rather than falling back to base price', () => {
@@ -54,4 +55,22 @@ test('one central escaped thermal renderer prints confirmed order/comanda withou
     for (const value of ['Restaurante TEST', 'TEST Adicional', 'TEST Retirar', 'TEST Talher', 'TEST Rua']) assert.ok(html.includes(value));
   }
   assert.deepEqual(s, before); assert.throws(() => pilotOrderPrint({ ...s, mode: 'LIVE' } as never, 'PEDIDO'), /CONFIRMED_TEST/);
+});
+
+test('conversation checkout preserves explicit Meta, Evolution and RCS context', () => {
+  for (const conversationContext of [{ channel: 'WHATSAPP', provider: 'WHATSAPP_META_OFFICIAL' }, { channel: 'WHATSAPP', provider: 'WHATSAPP_EVOLUTION_OPTIONAL' }, { channel: 'RCS', provider: 'RCS_GOOGLE' }] as const) {
+    const c = { ...pilotCommandFixture(), origin: 'CONVERSATION' as const, conversationId: 'demo-TEST-conversation', conversationContext };
+    const snapshot = reviewPilotCheckout(c, pilotCatalogFixture(), context);
+    assert.equal(snapshot.legacy.channel, conversationContext.channel === 'RCS' ? 'rcs' : 'whatsapp');
+    assert.deepEqual(snapshot.conversationContext, conversationContext); assert.equal(snapshot.catalogRevision, c.catalogRevision);
+    assert.equal(snapshot.legacy.total, 53); assert.equal(snapshot.paymentState, 'PENDING');
+  }
+});
+
+test('checkout never infers a provider from conversation and rejects public or mismatched context', () => {
+  const conversation = { ...pilotCommandFixture(), origin: 'CONVERSATION' as const, conversationId: 'demo-TEST-conversation' };
+  for (const conversationContext of [undefined, null, { channel: 'WHATSAPP', provider: 'UNKNOWN' }, { channel: 'RCS', provider: 'WHATSAPP_META_OFFICIAL' }, { channel: 'WHATSAPP', provider: 'WHATSAPP_META_OFFICIAL', token: 'not-allowed' }]) {
+    assert.throws(() => reviewPilotCheckout({ ...conversation, conversationContext } as never, pilotCatalogFixture(), context), /CONTEXT/);
+  }
+  assert.throws(() => reviewPilotCheckout({ ...pilotCommandFixture(), conversationContext: { channel: 'RCS', provider: 'RCS_GOOGLE' } } as never, pilotCatalogFixture(), context), /CONTEXT/);
 });

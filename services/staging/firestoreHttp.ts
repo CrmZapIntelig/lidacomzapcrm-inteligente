@@ -5,10 +5,10 @@ import type { FirestoreRequestPort } from './firestoreAtomicPort';
  * Never imports Firebase/frontend, consults legacy credentials, starts listeners or sends messages. */
 export class StagingFirestoreHttp implements FirestoreRequestPort {
   private readonly root = 'projects/lidacomzapcrm-staging/databases/(default)/documents';
-  constructor(environment: { appEnv: string; projectId: string }, private readonly accessToken: () => Promise<string>, private readonly collection: 'stg_inbound_synthetic' | 'stg_operational_orders' = 'stg_inbound_synthetic') {
+  constructor(environment: { appEnv: string; projectId: string }, private readonly accessToken: () => Promise<string>, private readonly collection: 'stg_inbound_synthetic' | 'stg_operational_orders' | 'stg_pilot_checkout' = 'stg_inbound_synthetic') {
     if (typeof window !== 'undefined') throw new Error('SERVER_ONLY_STAGING_PERSISTENCE');
     if (environment.appEnv !== 'staging' || environment.projectId !== 'lidacomzapcrm-staging') throw new Error('ISOLATED_STAGING_REQUIRED');
-    if (!['stg_inbound_synthetic', 'stg_operational_orders'].includes(collection)) throw new Error('STAGING_COLLECTION_FORBIDDEN');
+    if (!['stg_inbound_synthetic', 'stg_operational_orders', 'stg_pilot_checkout'].includes(collection)) throw new Error('STAGING_COLLECTION_FORBIDDEN');
   }
   async request<T>(path: string, method: 'GET' | 'POST', body?: unknown, missingAllowed = false): Promise<T | undefined> {
     const allowed = path === `${this.root}:beginTransaction` || path === `${this.root}:commit` || path === `${this.root}:rollback` || new RegExp(`^${this.root.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/${this.collection}/[a-f0-9]{64}\\?transaction=[A-Za-z0-9%_+=/-]+$`).test(path);

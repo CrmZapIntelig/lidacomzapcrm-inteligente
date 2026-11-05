@@ -89,3 +89,37 @@ test('recipient snapshot prevents duplication when next call omits earlier conta
   const nextDay = prepareActiveSalesDrafts(first, { ...input, at: new Date('2026-10-01T12:00:00Z'), contacts: changedContacts, evidence: changedEvidence });
   assert.equal(nextDay.state.drafts.length, 1);
 });
+
+test('provider choice selects Evolution instead of ambiguous WhatsApp identities and records provider', () => {
+  const evolution = evidence.filter(e => e.identity.channel === 'WHATSAPP').map(e => ({ ...e, identity: { ...e.identity, id: e.identity.id + ':evolution', provider: 'WHATSAPP_EVOLUTION_OPTIONAL' as const }, capability: { ...e.capability!, provider: 'WHATSAPP_EVOLUTION_OPTIONAL' as const } }));
+  const configured = createActiveSalesState({ ...state(), strategy: 'WHATSAPP', selectedProvider: 'WHATSAPP_EVOLUTION_OPTIONAL' });
+  const result = prepareActiveSalesDrafts(configured, { ...input, evidence: [...evidence, ...evolution] });
+  assert.equal(result.state.drafts.length, 1); assert.equal(result.state.drafts[0].provider, 'WHATSAPP_EVOLUTION_OPTIONAL');
+  assert.equal(result.state.drafts[0].canSend, false);
+  assert.deepEqual(prepareActiveSalesDrafts(result.state, { ...input, evidence: [...evidence, ...evolution] }).state, result.state);
+});
+test('all three explicit providers work through the same active sales engine', () => {
+  for (const selectedProvider of ['WHATSAPP_META_OFFICIAL', 'WHATSAPP_EVOLUTION_OPTIONAL', 'RCS_GOOGLE'] as const) {
+    const channel = selectedProvider === 'RCS_GOOGLE' ? 'RCS' : 'WHATSAPP';
+    const supplied = evidence.filter(e => e.identity.channel === channel).map(e => ({ ...e, identity: { ...e.identity, provider: selectedProvider }, capability: { ...e.capability!, provider: selectedProvider } }));
+    const configured = createActiveSalesState({ ...state(), strategy: channel === 'RCS' ? 'GOOGLE_RCS' : 'WHATSAPP', selectedProvider });
+    const result = prepareActiveSalesDrafts(configured, { ...input, evidence: supplied });
+    assert.equal(result.state.drafts[0].provider, selectedProvider);
+    assert.equal(prepareActiveSalesDrafts(configured, { ...input, evidence: supplied.map(e => ({ ...e, optedOut: true })) }).state.drafts.length, 0);
+  }
+});
+test('incompatible or unknown provider choices cannot create an active sales state', () => {
+  assert.throws(() => createActiveSalesState({ ...state(), strategy: 'GOOGLE_RCS', selectedProvider: 'WHATSAPP_EVOLUTION_OPTIONAL' }));
+  assert.throws(() => createActiveSalesState({ ...state(), selectedProvider: 'UNREGISTERED' as 'RCS_GOOGLE' }));
+});
+
+test('provider switching cannot bypass a preparation recorded on another channel', () => {
+  const configured = createActiveSalesState({ ...state(), audience: { ...audience, contactIds: ['one'] }, strategy: 'WHATSAPP', selectedProvider: 'WHATSAPP_META_OFFICIAL' });
+  const changed = evidence.map(e => e.contactId === 'one' && e.identity.channel === 'RCS' ? { ...e, alreadyPrepared: true } : e);
+  const result = prepareActiveSalesDrafts(configured, { ...input, evidence: changed });
+  assert.equal(result.state.drafts.length, 0);
+  assert.equal(result.state.budgets.length, 0);
+  assert.deepEqual(result.decisions[0].reasons, ['CONTACT_ALREADY_PREPARED']);
+  const unrelated = changed.filter(e => e.alreadyPrepared).map(e => ({ ...e, tenantId: 'other-tenant' }));
+  assert.equal(prepareActiveSalesDrafts(configured, { ...input, evidence: [...evidence, ...unrelated] }).state.drafts.length, 1);
+});
