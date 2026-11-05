@@ -83,3 +83,14 @@ test('reconciliation rejects conflicts, invalid event revision and cross-tenant 
   assert.equal(planLegacyDeliveryReconciliation(scope.tenantId, [order], [{ ...evidence, revision: 6 }])[0].status, 'INVALID_EVIDENCE');
   assert.throws(() => planLegacyDeliveryReconciliation(scope.tenantId, [order], [{ ...evidence, tenantId: 'other' }]), /TENANT_INVALID/);
 });
+
+test('missing or invalid restaurant timezone never falls back to server timezone or reaches I/O', async () => {
+  for (const timeZone of [undefined, null, '', ' ', 0, 'Invalid/Zone']) {
+    const f = fixture();
+    const malformedScope = { ...scope, timeZone: timeZone as unknown as string };
+    await assert.rejects(runDailySatisfactionJob(malformedScope, f.port), /SATISFACTION_TIME_ZONE_INVALID/);
+    assert.equal(f.reads(), 0);
+    assert.equal(f.stored.size, 0);
+    assert.throws(() => prepareDailySatisfactionAudience({ ...malformedScope, deliveries: [], policies: [] }), /SATISFACTION_TIME_ZONE_INVALID/);
+  }
+});

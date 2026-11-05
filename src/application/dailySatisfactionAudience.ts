@@ -62,6 +62,7 @@ export function prepareDailySatisfactionAudience(input: {
   existingIdempotencyKeys?: readonly string[];
 }): SatisfactionAudienceResult {
   if (!validId(input.tenantId) || !validSatisfactionDay(input.businessDate)) throw new Error('SATISFACTION_SCOPE_INVALID');
+  if (typeof input.timeZone !== 'string' || !input.timeZone.trim()) throw new Error('SATISFACTION_TIME_ZONE_INVALID');
   try { new Intl.DateTimeFormat('en-US', { timeZone: input.timeZone }).format(new Date(0)); } catch { throw new Error('SATISFACTION_TIME_ZONE_INVALID'); }
   const policies = new Map<string, SatisfactionContactPolicy>();
   for (const policy of input.policies) {

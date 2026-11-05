@@ -12,6 +12,8 @@ export interface SatisfactionOperationalInput {
 }
 
 export function satisfactionBusinessDate(value: string, timeZone: string) {
+  if (typeof timeZone !== 'string' || !timeZone.trim()) throw new Error('SATISFACTION_TIME_ZONE_INVALID');
+  try { new Intl.DateTimeFormat('en-US', { timeZone }).format(new Date(0)); } catch { throw new Error('SATISFACTION_TIME_ZONE_INVALID'); }
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) throw new Error('SATISFACTION_DELIVERY_DATE_INVALID');
   const parts = new Intl.DateTimeFormat('en-US', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(date);
