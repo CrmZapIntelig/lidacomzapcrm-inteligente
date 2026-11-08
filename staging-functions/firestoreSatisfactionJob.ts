@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import type { App } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { FieldValue, Timestamp, getFirestore } from 'firebase-admin/firestore';
 import { runDailySatisfactionJob, type SatisfactionJobPort } from '../src/application/dailySatisfactionJob';
 
 const tenantId = 'prato-mineiro';
@@ -22,20 +22,22 @@ export async function runFirestoreSatisfactionJob(
     },
     async persist(entries) {
       const database = getFirestore(app, databaseId);
+      if (entries.length > 5000 || entries.some(entry => entry.orderIds.length > 100)) throw new Error('SATISFACTION_BATCH_TOO_LARGE');
       let created = 0;
       for (const entry of entries) {
         const key = createHash('sha256')
-          .update(JSON.stringify([entry.tenantId, entry.businessDate, entry.contactId]))
+          .update(JSON.stringify(entry.idempotencyKey))
           .digest('hex');
-        const ref = database.collection('satisfactionDrafts').doc(key);
-        const draft = { ...entry, schemaVersion: 1 };
+        const ref = database.collection('unified_satisfaction_audiences').doc(key);
+        const draft = { ...entry, schema: 1, id: key };
         const inserted = await database.runTransaction(async transaction => {
           const persisted = await transaction.get(ref);
           if (persisted.exists) {
-            if (!isDeepStrictEqual(persisted.data(), draft)) throw new Error('SATISFACTION_DRAFT_CONFLICT');
+            const { actor, preparedAt, ...content } = persisted.data()!;
+            if (typeof actor !== 'string' || !actor || !(preparedAt instanceof Timestamp) || !isDeepStrictEqual(content, draft)) throw new Error('SATISFACTION_DRAFT_CONFLICT');
             return false;
           }
-          transaction.create(ref, draft);
+          transaction.create(ref, { ...draft, actor: 'daily-satisfaction-job', preparedAt: FieldValue.serverTimestamp() });
           return true;
         });
         if (inserted) created++;
