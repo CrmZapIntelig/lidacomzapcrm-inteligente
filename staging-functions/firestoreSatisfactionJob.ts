@@ -4,6 +4,8 @@ import type { App } from 'firebase-admin/app';
 import { FieldValue, Timestamp, getFirestore } from 'firebase-admin/firestore';
 import { runDailySatisfactionJob, type SatisfactionJobPort } from '../src/application/dailySatisfactionJob';
 
+import { loadFirestoreSatisfactionFacts } from './firestoreSatisfactionFacts';
+
 const tenantId = 'prato-mineiro';
 const databaseId = 'lidacomzapcrm-work-20261021';
 const projectId = 'project-1300957a-ea82-4645-845';
@@ -11,14 +13,14 @@ const projectId = 'project-1300957a-ea82-4645-845';
 export async function runFirestoreSatisfactionJob(
   app: App,
   input: { businessDate: string; now: string; enabled?: boolean },
-  load: SatisfactionJobPort['load'],
+  load?: SatisfactionJobPort['load'],
 ) {
   const scope = { ...input, tenantId, timeZone: 'America/Sao_Paulo' };
   return runDailySatisfactionJob(scope, {
     tenantId,
     async load(request) {
       if (app.options.projectId !== projectId) throw new Error('SATISFACTION_PROJECT_INVALID');
-      return load(request);
+      return load ? load(request) : loadFirestoreSatisfactionFacts(getFirestore(app, databaseId), request);
     },
     async persist(entries) {
       const database = getFirestore(app, databaseId);

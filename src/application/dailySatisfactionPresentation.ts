@@ -21,7 +21,7 @@ export function satisfactionBusinessDate(value: string, timeZone: string) {
   return `${part('year')}-${part('month')}-${part('day')}`;
 }
 
-function policyForClient(tenantId: string, client: Client, whatsappProvider: SatisfactionWhatsAppProvider): SatisfactionContactPolicy {
+export function policyForClient(tenantId: string, client: Pick<Client, 'id' | 'type' | 'channel' | 'phone' | 'contactPreferences'>, whatsappProvider: SatisfactionWhatsAppProvider): SatisfactionContactPolicy {
   const preferences = client.contactPreferences;
   const supportsWhatsApp = client.channel === 'whatsapp' || client.channel === 'ambos';
   const supportsRcs = client.channel === 'rcs' || client.channel === 'ambos';
