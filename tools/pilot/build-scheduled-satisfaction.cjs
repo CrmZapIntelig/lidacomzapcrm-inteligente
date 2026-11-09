@@ -11,8 +11,4 @@ require('esbuild').buildSync({
   format: 'cjs', external: ['firebase-functions/*', 'firebase-admin/*'],
 
 });
-const { dependencies } = require('../../staging-functions/package.json');
-fs.writeFileSync(path.join(output, 'package.json'), JSON.stringify({
-  name: 'lidacomzapcrm-satisfaction', private: true, main: 'index.js', engines: { node: '22' },
-  dependencies: { 'firebase-admin': dependencies['firebase-admin'], 'firebase-functions': dependencies['firebase-functions'] },
-}, null, 2));
+require('./write-function-package.cjs')(output, 'lidacomzapcrm-satisfaction', 'index.js');
