@@ -30,6 +30,13 @@ jobs:
           node node_modules/typescript/bin/tsc --strict --skipLibCheck --target ES2022 --module esnext --moduleResolution bundler --noEmit staging-functions/scheduledSatisfaction.test.ts
           node --import tsx --test staging-functions/scheduledSatisfaction.test.ts
           node tools/pilot/build-scheduled-satisfaction.cjs "$RUNNER_TEMP/satisfaction-function"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Test consent and concurrent draft creation in Firestore Emulator
+        run: |
+          npx --yes firebase-tools@15.19.1 emulators:exec --only firestore --project demo-lidacom --config firebase.dedicated.emulator.json "node --import tsx --test staging-functions/firestoreSatisfactionJob.emulator.ts"
       - name: Test operational diagnostics without credentials or network
         run: node --test --import tsx staging-functions/operationalDiagnostics.test.ts
       - name: Build isolated operational diagnostics artifact
