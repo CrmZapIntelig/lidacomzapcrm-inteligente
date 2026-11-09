@@ -6,8 +6,9 @@ import { runFirestoreSatisfactionJob } from './firestoreSatisfactionJob';
 const projectId = 'project-1300957a-ea82-4645-845';
 const timeZone = 'America/Sao_Paulo';
 
-export function previousBusinessDate(scheduleTime: string): string {
-  const localDay = satisfactionBusinessDate(scheduleTime, timeZone);
+export function previousBusinessDate(scheduleTime: string, invocationTime: string = scheduleTime): string {
+  const cutoff = Math.min(Date.parse(scheduleTime), Date.parse(invocationTime));
+  const localDay = satisfactionBusinessDate(new Date(cutoff).toISOString(), timeZone);
   const midnight = new Date(localDay + 'T00:00:00Z');
   midnight.setUTCDate(midnight.getUTCDate() - 1);
   return midnight.toISOString().slice(0, 10);
@@ -24,11 +25,12 @@ export const dailySatisfactionDrafts = onSchedule({
   if (process.env.GCLOUD_PROJECT !== projectId || process.env.FIRESTORE_EMULATOR_HOST !== undefined) {
     throw new Error('SATISFACTION_ENVIRONMENT_INVALID');
   }
-  const businessDate = previousBusinessDate(event.scheduleTime);
+  const now = new Date().toISOString();
+  const businessDate = previousBusinessDate(event.scheduleTime, now);
   const app = getApps().find(candidate => candidate.name === 'satisfaction-drafts')
     ?? initializeApp({ projectId }, 'satisfaction-drafts');
   const result = await runFirestoreSatisfactionJob(app, {
-    businessDate, now: new Date().toISOString(), enabled: true,
+    businessDate, now, enabled: true,
   });
   console.info('satisfaction-drafts', { businessDate, created: result.created, replayed: result.replayed });
 });
