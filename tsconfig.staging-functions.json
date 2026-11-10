@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.offline.json",
-  "include": ["src/domain/**/*.ts", "src/application/**/*.ts", "services/messaging/**/*.ts", "services/staging/**/*.ts", "staging-functions/index.ts"]
+  "include": ["src/domain/**/*.ts", "src/application/**/*.ts", "services/messaging/**/*.ts", "services/staging/**/*.ts", "staging-functions/index.ts", "staging-functions/testOrderIdentity.ts", "staging-functions/testOrderRuntime.ts", "staging-functions/testOrderDurableRuntime.ts", "staging-functions/testOrdersEndpoint.candidate.ts"]
 }

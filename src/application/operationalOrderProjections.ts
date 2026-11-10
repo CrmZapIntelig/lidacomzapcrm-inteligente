@@ -3,6 +3,7 @@ import { validateSnapshot } from './stagingOperationalOrders';
 import { cents } from './orderOperations';
 import type { PaymentMethod } from './orderOperations';
 import type { DeliveryOrder, Order as LegacyOrder } from '../types';
+import type { PrintSnapshot } from './operationsFinance';
 
 /** Consumer TEST envelopes. Unsupported legacy payment modes are explicit, never coerced. */
 export function projectTestConsumers(snapshot: OperationalSnapshot) {
@@ -24,7 +25,7 @@ export function projectTestConsumers(snapshot: OperationalSnapshot) {
     kds,
     delivery: s.modality !== 'DELIVERY' || s.orderState !== 'CONFIRMED' ? null : {
       orderId: s.canonical.id, status: s.deliveryState, courierId: s.courierId,
-      legacy: deliveryMethods[s.method] ? { id: s.canonical.id, clientId: s.customer.id, clientName: s.customer.name, clientPhone: 'TEST', items, subtotal: s.subtotalCents / 100, deliveryFee: s.feeCents / 100, total: s.totalCents / 100, paymentMethod: deliveryMethods[s.method]!, status: deliveryStatus, createdAt: s.canonical.createdAt.toISOString(), deliveryTime: 'TEST', address: { name: s.customer.name, phone: 'TEST', street: s.address!.street, number: s.address!.number, neighborhood: s.address!.district, zipCode: s.address!.zip, complement: 'TEST' }, channel } satisfies DeliveryOrder : null,
+      legacy: deliveryMethods[s.method] ? { id: s.canonical.id, clientId: s.customer.id, clientName: s.customer.name, clientPhone: 'TEST', items, subtotal: s.subtotalCents / 100, deliveryFee: s.feeCents / 100, total: s.totalCents / 100, paymentMethod: deliveryMethods[s.method]!, status: deliveryStatus, createdAt: s.canonical.createdAt.toISOString(), deliveryTime: 'TEST', address: { name: s.customer.name, phone: 'TEST', street: s.address!.street, number: s.address!.number, neighborhood: s.address!.district, zipCode: s.address!.zip, complement: s.address!.complement ?? 'TEST' }, channel } satisfies DeliveryOrder : null,
       paymentGap: deliveryMethods[s.method] ? null : 'LEGACY_PAYMENT_UNSUPPORTED',
       financialState: s.paymentState, legacyClosedIsNotPaymentEvidence: true,
     },
@@ -36,6 +37,23 @@ export function readTestProjection(projection: ReturnType<typeof projectTestCons
   snapshot.canonical.createdAt = new Date(snapshot.canonical.createdAt); snapshot.canonical.updatedAt = new Date(snapshot.canonical.updatedAt);
   validateSnapshot(snapshot, snapshot.canonical.tenantId);
   return snapshot;
+}
+/** Print the current canonical snapshot, never the checkout's historical PENDING state. */
+export function operationalOrderPrint(snapshot: OperationalSnapshot, kind: 'PEDIDO' | 'COMANDA' | 'COZINHA'): PrintSnapshot {
+  validateSnapshot(snapshot, snapshot.canonical.tenantId);
+  if (!['PEDIDO', 'COMANDA', 'COZINHA'].includes(kind)) throw new Error('ORDER_PRINT_KIND_INVALID');
+  const amount = (value: number) => (value / 100).toFixed(2);
+  const payment = { PENDING: 'PENDENTE', RECEIVED: 'RECEBIDO', REFUNDED: 'ESTORNADO' }[snapshot.paymentState];
+  const method = { PIX: 'Pix', DINHEIRO: 'Dinheiro', DEBITO: 'Debito', CREDITO: 'Credito', NOTA: 'Nota' }[snapshot.method];
+  return { version: 1, mode: 'SIMULATION', kind, reference: snapshot.canonical.id, lines: [
+    snapshot.checkout?.restaurant ?? 'TEST Pedido', snapshot.canonical.createdAt.toISOString(), `Cliente: ${snapshot.customer.name}`,
+    `Modalidade: ${{ DELIVERY: 'Entrega', PICKUP: 'Retirada', TABLE: 'Mesa' }[snapshot.modality]}`,
+    `Pedido: ${{ DRAFT: 'Em revisao', CONFIRMED: 'Confirmado', CANCELED: 'Cancelado' }[snapshot.orderState]}`,
+    ...snapshot.items.flatMap(item => [`${item.quantity}x ${item.name} (${item.size}) - R$ ${amount(item.subtotalCents)}`, `Adicionais: ${item.addons.map(a => a.name).join(', ') || 'nenhum'}`, `Retirar: ${item.removed.join(', ') || 'nenhum'}`, `Utensilios: ${item.utensils.map(a => a.name).join(', ') || 'nenhum'}`, `Obs: ${item.observation}`]),
+    `Pagamento: ${method} - ${payment}`, `Recebido: R$ ${amount(snapshot.receivedCents)}`, `Subtotal: R$ ${amount(snapshot.subtotalCents)}`, `Taxa: R$ ${amount(snapshot.feeCents)}`, `Desconto: R$ ${amount(snapshot.discountCents)}`, `Total: R$ ${amount(snapshot.totalCents)}`,
+    ...(snapshot.address ? [`Endereco: ${snapshot.address.street}, ${snapshot.address.number}; ${snapshot.address.district}; ${snapshot.address.complement ?? ''}; ${snapshot.address.city ?? ''}; ${snapshot.address.zip}`] : []),
+    'TEST - NAO PRODUZIR / NAO COBRAR',
+  ] };
 }
 export interface TestCashMovement { id: string; kind: 'CASH_IN' | 'CASH_OUT'; amountCents: number }
 export function projectTestCash(events: readonly OperationalEvent[], movements: readonly TestCashMovement[] = [], openingCashCents = 0) {

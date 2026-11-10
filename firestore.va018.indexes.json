@@ -1,0 +1,30 @@
+{
+  "indexes": [],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "unified_orders",
+      "fieldPath": "payload",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "unified_satisfaction_audiences",
+      "fieldPath": "orderIds",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "unified_satisfaction_audiences",
+      "fieldPath": "idempotencyKey",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "unified_cash_entries",
+      "fieldPath": "customerName",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "unified_cash_entries",
+      "fieldPath": "source",
+      "indexes": []
+    }
+  ]
+}

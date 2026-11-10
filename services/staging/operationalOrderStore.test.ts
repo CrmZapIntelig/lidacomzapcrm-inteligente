@@ -12,6 +12,7 @@ import { closeTestCash, projectTestConsumers, readTestProjection } from '../../s
 import { renderPrintSnapshot } from '../../src/application/operationsFinance';
 import { runOperationalOrderProbe } from './operationalOrderProbe';
 import type { AtomicJsonPort } from './durableInboundJournal';
+import type { ExternalOrderReference } from '../../src/domain/omnichannel';
 
 export const environment = { appEnv: 'staging', projectId: 'lidacomzapcrm-staging', operationalOrderWrites: 'TEST_ONLY' as const };
 class FixtureFirestore implements FirestoreRequestPort {
@@ -181,4 +182,258 @@ test('NOTA rejection explicitly keeps draft and permits a new reviewed payment; 
   await store.execute(command('change', 2, { kind: 'CHANGE_PAYMENT', method: 'DINHEIRO' })); assert.equal((await store.get('demo-TEST-order'))?.method, 'DINHEIRO');
   const config = JSON.parse(readFileSync('config/order-staging-environment.example.json', 'utf8'));
   assert.equal(config.OPERATIONAL_ORDER_WRITES, 'DISABLED'); assert.equal(config.PROJECT_ID, 'lidacomzapcrm-staging');
+});
+
+test('dispatch attribution survives serialization, replay, projections, events and TEST rollback', async () => {
+  const http = new FixtureFirestore(), store = storeFor(http), snapshot = createOrderFixture();
+  snapshot.canonical.dispatchCampaignId = 'demo-TEST-dispatch'; snapshot.canonical.queueEntryId = 'demo-TEST-queue';
+  const request = command('attributed', 0, { kind: 'CREATE', snapshot });
+  await store.execute(request);
+  const restarted = storeFor(http);
+  assert.equal((await restarted.execute(request)).replay, true);
+  await restarted.execute(command('attributed-confirm', 1, { kind: 'CONFIRM' }));
+  const current = await restarted.snapshot();
+  assert.equal(current.records.length, 1);
+  assert.equal(readTestProjection(JSON.parse(JSON.stringify(current.projections[0]))).canonical.queueEntryId, 'demo-TEST-queue');
+  for (const event of [...current.events, ...current.audit]) {
+    assert.equal(event.orderId, snapshot.canonical.id);
+    assert.equal(event.dispatchCampaignId, 'demo-TEST-dispatch'); assert.equal(event.queueEntryId, 'demo-TEST-queue');
+  }
+  const changed = structuredClone(request);
+  if (changed.operation.kind !== 'CREATE') throw new Error('fixture');
+  changed.operation.snapshot.canonical.queueEntryId = 'demo-TEST-other-queue';
+  await assert.rejects(restarted.execute(changed), /ORDER_IDEMPOTENCY_CONFLICT/);
+  await restarted.execute(command('attributed-rollback', 2, { kind: 'ROLLBACK_TEST' }));
+  const rolledBack = await storeFor(http).snapshot();
+  assert.equal(rolledBack.records.length, 0);
+  assert.equal(rolledBack.audit.at(-1)?.queueEntryId, 'demo-TEST-queue');
+});
+
+test('order attribution is immutable and only TEST references enter persisted snapshots or audit', async () => {
+  const http = new FixtureFirestore(), store = storeFor(http), fixture = createOrderFixture();
+  fixture.canonical.dispatchCampaignId = 'demo-TEST-dispatch'; fixture.canonical.queueEntryId = 'demo-TEST-queue';
+  for (const field of ['dispatchCampaignId', 'queueEntryId'] as const) {
+    const invalid = structuredClone(fixture); invalid.canonical[field] = 'real-reference';
+    await assert.rejects(store.execute(command('invalid', 0, { kind: 'CREATE', snapshot: invalid })), /ORDER_DISPATCH_REF_INVALID/);
+  }
+  assert.equal(http.value, undefined);
+  await store.execute(command('create-attribution', 0, { kind: 'CREATE', snapshot: fixture }));
+  for (const field of ['dispatchCampaignId', 'queueEntryId'] as const) {
+    const current = (await store.get('demo-TEST-order'))!;
+    current.canonical[field] = 'demo-TEST-changed';
+    await assert.rejects(store.execute(command('change-' + field, 1, { kind: 'UPDATE', snapshot: current })), /ORDER_IMMUTABLE_CONTEXT/);
+  }
+  const raw = JSON.parse(http.value!); raw.audit[0].dispatchCampaignId = 'real-reference'; http.value = JSON.stringify(raw);
+  await assert.rejects(storeFor(http).snapshot(), /ORDER_STORE_AUDIT_INVALID/);
+});
+
+test('two orders for one customer stay distinct across WhatsApp and RCS with independent retries', async () => {
+  const http = new FixtureFirestore(), store = storeFor(http);
+  for (const [id, channel] of [['demo-TEST-one', 'WHATSAPP'], ['demo-TEST-two', 'RCS']] as const) {
+    const snapshot = createOrderFixture(tenant, id); snapshot.canonical.channel = channel;
+    const request = command('create-' + channel, 0, { kind: 'CREATE', snapshot }, id);
+    await store.execute(request); assert.equal((await storeFor(http).execute(request)).replay, true);
+  }
+  const current = await storeFor(http).snapshot();
+  assert.equal(current.records.length, 2); assert.equal(current.events.length, 2);
+  assert.equal(new Set(current.records.map(s => s.canonical.contactId)).size, 1);
+  assert.deepEqual(current.projections.map(p => p.orderId).sort(), ['demo-TEST-one', 'demo-TEST-two']);
+});
+
+const metaOrderReference: ExternalOrderReference = { provider: 'WHATSAPP_META_OFFICIAL', channel: 'WHATSAPP', providerAccountId: 'demo-TEST-account', externalOrderId: 'demo-TEST-external-order' };
+const evolutionOrderReference: ExternalOrderReference = { ...metaOrderReference, provider: 'WHATSAPP_EVOLUTION_OPTIONAL' };
+const rcsOrderReference: ExternalOrderReference = { ...metaOrderReference, provider: 'RCS_GOOGLE', channel: 'RCS' };
+function createReferenced(name: string, id: string, reference = metaOrderReference) {
+  const snapshot = createOrderFixture(tenant, id); snapshot.canonical.externalReferences = [structuredClone(reference)];
+  return command(name, 0, { kind: 'CREATE', snapshot }, id);
+}
+
+test('one canonical order resolves across Meta, Evolution and RCS after retry and restart', async () => {
+  const http = new FixtureFirestore(), store = storeFor(http);
+  const request = createReferenced('external-create', 'demo-TEST-order');
+  await store.execute(request); assert.equal((await storeFor(http).execute(request)).replay, true);
+  for (const [index, reference] of [evolutionOrderReference, rcsOrderReference].entries()) {
+    const link = command('link-' + index, index + 1, { kind: 'LINK_EXTERNAL_REFERENCE', reference });
+    await storeFor(http).execute(link); assert.equal((await storeFor(http).execute(link)).replay, true);
+  }
+  const current = await storeFor(http).snapshot();
+  assert.equal(current.records.length, 1); assert.equal(current.events.length, 3); assert.equal(current.audit.length, 3);
+  assert.equal(current.records[0].canonical.channel, 'WHATSAPP');
+  const references = [metaOrderReference, evolutionOrderReference, rcsOrderReference];
+  assert.deepEqual(current.records[0].canonical.externalReferences, references);
+  for (const reference of references) assert.deepEqual(await storeFor(http).getByExternalReference(reference), current.records[0]);
+  assert.deepEqual(readTestProjection(JSON.parse(JSON.stringify(current.projections[0]))), current.records[0]);
+  assert.deepEqual(current.audit.at(-1)?.externalReferences, references);
+  assert.equal(current.projections[0].orderId, 'demo-TEST-order');
+  assert.equal(current.cash.totalSalesCents, 0); assert.equal(current.cash.drawerCents, 0);
+  assert.ok(current.events.every(e => e.fact === 'STATE' && e.amountCents === 0));
+});
+
+test('concurrent creates cannot claim one external identity for two canonical orders', async () => {
+  const http = new FixtureFirestore();
+  const outcomes = await Promise.allSettled([
+    storeFor(http).execute(createReferenced('alias-a', 'demo-TEST-a')),
+    storeFor(http).execute(createReferenced('alias-b', 'demo-TEST-b')),
+  ]);
+  assert.equal(outcomes.filter(r => r.status === 'fulfilled').length, 1);
+  const rejected = outcomes.find(r => r.status === 'rejected') as PromiseRejectedResult;
+  assert.match(String(rejected.reason), /ORDER_EXTERNAL_REFERENCE_CONFLICT/); assert.ok(http.aborts > 0);
+  const state = await storeFor(http).snapshot();
+  assert.equal(state.records.length, 1); assert.equal(state.events.length, 1); assert.equal(state.audit.length, 1);
+  assert.equal((await storeFor(http).getByExternalReference(metaOrderReference))?.canonical.id, state.records[0].canonical.id);
+});
+
+test('concurrent links cannot attach an external identity to different orders', async () => {
+  const { http, store } = await setup();
+  await store.execute(command('create-other', 0, { kind: 'CREATE', snapshot: createOrderFixture(tenant, 'demo-TEST-other') }, 'demo-TEST-other'));
+  const outcomes = await Promise.allSettled([
+    store.execute(command('claim-a', 1, { kind: 'LINK_EXTERNAL_REFERENCE', reference: metaOrderReference })),
+    storeFor(http).execute(command('claim-b', 1, { kind: 'LINK_EXTERNAL_REFERENCE', reference: metaOrderReference }, 'demo-TEST-other')),
+  ]);
+  assert.equal(outcomes.filter(r => r.status === 'fulfilled').length, 1);
+  assert.match(String((outcomes.find(r => r.status === 'rejected') as PromiseRejectedResult).reason), /ORDER_EXTERNAL_REFERENCE_CONFLICT/);
+  const state = await store.snapshot();
+  assert.equal(state.records.length, 2); assert.equal(state.events.length, 3);
+  assert.equal(state.records.filter(s => s.canonical.externalReferences?.length).length, 1);
+});
+
+test('external IDs are scoped by account, provider and tenant, never by customer', async () => {
+  const http = new FixtureFirestore(), store = storeFor(http);
+  const references = [metaOrderReference, evolutionOrderReference, rcsOrderReference, { ...metaOrderReference, providerAccountId: 'demo-TEST-account-two' }, { ...metaOrderReference, externalOrderId: 'demo-TEST-second-order' }];
+  for (const [i, reference] of references.entries()) {
+    const request = createReferenced('scoped-' + i, 'demo-TEST-scoped-' + i, reference);
+    await store.execute(request); assert.equal((await store.execute(request)).replay, true);
+    assert.equal((await store.getByExternalReference(reference))?.canonical.id, request.orderId);
+  }
+  const state = await store.snapshot(); assert.equal(state.records.length, 5);
+  assert.equal(new Set(state.records.map(s => s.canonical.contactId)).size, 1);
+  const otherTenant = 'demo-TEST-other-tenant', otherHttp = new FixtureFirestore();
+  const other = new StagingOperationalOrderStore(new FirestoreAtomicJsonPort(otherHttp, otherTenant, '200', 'stg_operational_orders'), environment, otherTenant);
+  assert.equal(await other.getByExternalReference(metaOrderReference), undefined);
+  const request = createReferenced('other-tenant', 'demo-TEST-other-order'); request.tenantId = otherTenant;
+  if (request.operation.kind !== 'CREATE') throw new Error('fixture');
+  request.operation.snapshot.canonical.tenantId = otherTenant; request.operation.snapshot.conversation!.tenantId = otherTenant;
+  await other.execute(request);
+  assert.equal((await other.getByExternalReference(metaOrderReference))?.canonical.id, 'demo-TEST-other-order');
+  assert.equal((await store.getByExternalReference(metaOrderReference))?.canonical.id, 'demo-TEST-scoped-0');
+  await assert.rejects(store.execute(request), /ORDER_COMMAND_TENANT_MISMATCH/);
+});
+
+test('identity linking cannot edit immutable references or reuse a command with different data', async () => {
+  const http = new FixtureFirestore(), store = storeFor(http), request = createReferenced('identity-create', 'demo-TEST-order');
+  await store.execute(request);
+  const changedRequest = structuredClone(request);
+  if (changedRequest.operation.kind !== 'CREATE') throw new Error('fixture');
+  changedRequest.operation.snapshot.canonical.externalReferences = [evolutionOrderReference];
+  await assert.rejects(store.execute(changedRequest), /ORDER_IDEMPOTENCY_CONFLICT/);
+  for (const references of [undefined, [], [evolutionOrderReference], [metaOrderReference, evolutionOrderReference]]) {
+    const snapshot = (await store.get(request.orderId))!; snapshot.canonical.externalReferences = references;
+    await assert.rejects(store.execute(command('rewrite', 1, { kind: 'UPDATE', snapshot })), /ORDER_IMMUTABLE_CONTEXT/);
+  }
+  const before = http.value;
+  await assert.rejects(store.execute(command('duplicate', 1, { kind: 'LINK_EXTERNAL_REFERENCE', reference: metaOrderReference })), /ORDER_EXTERNAL_REFERENCE_DUPLICATE/);
+  assert.equal(http.value, before);
+  const link = command('link', 1, { kind: 'LINK_EXTERNAL_REFERENCE', reference: evolutionOrderReference });
+  await store.execute(link);
+  await assert.rejects(store.execute({ ...link, operation: { kind: 'LINK_EXTERNAL_REFERENCE', reference: rcsOrderReference } }), /ORDER_IDEMPOTENCY_CONFLICT/);
+});
+
+test('invalid or non-TEST external identifiers fail before persistence is reached', async () => {
+  const http = new FixtureFirestore(), store = storeFor(http);
+  for (const reference of [
+    { ...metaOrderReference, externalOrderId: 'real-order' }, { ...metaOrderReference, providerAccountId: 'real-account' },
+    { ...metaOrderReference, provider: 'UNKNOWN' }, { ...metaOrderReference, channel: 'RCS' },
+    { ...metaOrderReference, token: 'not-allowed' }, null,
+  ] as ExternalOrderReference[]) {
+    await assert.rejects(store.execute(createReferenced('bad', 'demo-TEST-order', reference)), /ORDER_EXTERNAL/);
+    await assert.rejects(store.execute(command('bad-link', 1, { kind: 'LINK_EXTERNAL_REFERENCE', reference })), /ORDER_EXTERNAL/);
+    await assert.rejects(store.getByExternalReference(reference), /ORDER_EXTERNAL/);
+  }
+  assert.equal(http.paths.length, 0); assert.equal(http.value, undefined);
+});
+
+test('external references preserve state and financial facts on a paid order', async () => {
+  const { store } = await setup();
+  await store.execute(command('confirm', 1, { kind: 'CONFIRM' }));
+  await store.execute(command('receive', 2, { kind: 'RECEIVE', amountCents: 4850, method: 'PIX', evidenceId: 'demo-TEST-receipt' }));
+  const before = await store.snapshot();
+  await store.execute(command('link-paid', 3, { kind: 'LINK_EXTERNAL_REFERENCE', reference: rcsOrderReference }));
+  const after = await store.snapshot();
+  assert.deepEqual(after.cash, before.cash); assert.equal(after.events.filter(e => e.fact === 'SALE').length, 1); assert.equal(after.events.filter(e => e.fact === 'RECEIPT').length, 1);
+  assert.equal(after.records[0].canonical.status, 'PAID'); assert.equal(after.records[0].productionState, 'WAITING'); assert.equal(after.records[0].deliveryState, 'NOT_APPLICABLE');
+  assert.equal(after.events.at(-1)?.fact, 'STATE'); assert.equal(after.events.at(-1)?.amountCents, 0);
+  assert.equal(after.projections[0].legacyOrder?.id, 'demo-TEST-order');
+  assert.equal(after.projections[0].kds?.orderId, 'demo-TEST-order');
+  assert.equal(after.projections[0].delivery?.legacy?.id, 'demo-TEST-order');
+  assert.deepEqual(readTestProjection(JSON.parse(JSON.stringify(after.projections[0]))).canonical.externalReferences, [rcsOrderReference]);
+});
+
+test('persisted duplicate ownership and invalid audit references fail closed without resetting data', async () => {
+  const http = new FixtureFirestore(), store = storeFor(http);
+  await store.execute(createReferenced('first', 'demo-TEST-first'));
+  await store.execute(createReferenced('second', 'demo-TEST-second', evolutionOrderReference));
+  const good = http.value!;
+  const duplicated = JSON.parse(good); duplicated.records[1].canonical.externalReferences = [metaOrderReference];
+  http.value = JSON.stringify(duplicated); const invalid = http.value;
+  await assert.rejects(storeFor(http).getByExternalReference(metaOrderReference), /ORDER_EXTERNAL_REFERENCE_CONFLICT/);
+  assert.equal(http.value, invalid);
+  const badAudit = JSON.parse(good); badAudit.audit[0].externalReferences = [{ ...metaOrderReference, externalOrderId: 'real-order' }];
+  http.value = JSON.stringify(badAudit); const auditBefore = http.value;
+  await assert.rejects(storeFor(http).snapshot(), /ORDER_EXTERNAL/); assert.equal(http.value, auditBefore);
+});
+
+test('TEST rollback removes active references, preserves their audit and rejects old retries', async () => {
+  const http = new FixtureFirestore(), store = storeFor(http), request = createReferenced('rollback-create', 'demo-TEST-order');
+  await store.execute(request); await store.execute(createReferenced('unrelated', 'demo-TEST-other', evolutionOrderReference));
+  await store.execute(command('rollback-identity', 1, { kind: 'ROLLBACK_TEST' }));
+  assert.equal(await storeFor(http).getByExternalReference(metaOrderReference), undefined);
+  assert.equal((await storeFor(http).getByExternalReference(evolutionOrderReference))?.canonical.id, 'demo-TEST-other');
+  assert.deepEqual((await store.snapshot()).audit.at(-1)?.externalReferences, [metaOrderReference]);
+  await assert.rejects(store.execute(request), /ORDER_COMMAND_ROLLED_BACK/);
+  await store.execute(createReferenced('explicit-recreate', 'demo-TEST-order'));
+  assert.equal((await store.getByExternalReference(metaOrderReference))?.canonical.id, request.orderId);
+});
+
+test('caller mutations and property ordering cannot change persisted identity or replay results', async () => {
+  const http = new FixtureFirestore(), store = storeFor(http);
+  const request = createReferenced('clone-create', 'demo-TEST-order'); await store.execute(request);
+  const reference = structuredClone(evolutionOrderReference);
+  const pending = store.execute(command('clone-link', 1, { kind: 'LINK_EXTERNAL_REFERENCE', reference }));
+  reference.externalOrderId = 'demo-TEST-mutated'; await pending;
+  const result = (await store.getByExternalReference(evolutionOrderReference))!;
+  result.canonical.externalReferences![0].externalOrderId = 'demo-TEST-mutated';
+  assert.equal((await store.getByExternalReference(metaOrderReference))?.canonical.externalReferences?.[0].externalOrderId, metaOrderReference.externalOrderId);
+  const reordered = { externalOrderId: evolutionOrderReference.externalOrderId, providerAccountId: evolutionOrderReference.providerAccountId, channel: evolutionOrderReference.channel, provider: evolutionOrderReference.provider };
+  assert.equal((await store.execute(command('clone-link', 1, { kind: 'LINK_EXTERNAL_REFERENCE', reference: reordered }))).replay, true);
+  const snapshot = (await store.get('demo-TEST-order'))!; snapshot.canonical.externalReferences = [metaOrderReference, reordered];
+  await store.execute(command('edit-preserves-reference', 2, { kind: 'UPDATE', snapshot }));
+});
+
+test('cancellation keeps external identity reserved and disabling blocks lookup and linking', async () => {
+  const http = new FixtureFirestore(), store = storeFor(http);
+  await store.execute(createReferenced('cancel-create', 'demo-TEST-order'));
+  await store.execute(command('cancel-linked', 1, { kind: 'CANCEL' }));
+  assert.equal((await store.getByExternalReference(metaOrderReference))?.canonical.status, 'CANCELED');
+  await assert.rejects(store.execute(createReferenced('cancel-duplicate', 'demo-TEST-other')), /ORDER_EXTERNAL_REFERENCE_CONFLICT/);
+  await assert.rejects(store.execute(command('link-canceled', 2, { kind: 'LINK_EXTERNAL_REFERENCE', reference: evolutionOrderReference })), /ORDER_NOT_MUTABLE/);
+  const before = http.value, requests = http.paths.length; store.disable();
+  await assert.rejects(store.getByExternalReference(metaOrderReference), /ORDER_STAGING_WRITES_DISABLED/);
+  await assert.rejects(store.execute(command('link-disabled', 2, { kind: 'LINK_EXTERNAL_REFERENCE', reference: evolutionOrderReference })), /ORDER_STAGING_WRITES_DISABLED/);
+  assert.equal(http.value, before); assert.equal(http.paths.length, requests);
+});
+
+test('TEST reference capacity and nonfinancial link audit are enforced without partial commits', async () => {
+  const http = new FixtureFirestore(), store = storeFor(http), snapshot = createOrderFixture();
+  const references = Array.from({ length: 17 }, (_, i) => ({ ...metaOrderReference, externalOrderId: 'demo-TEST-capacity-' + i }));
+  snapshot.canonical.externalReferences = references;
+  await assert.rejects(store.execute(command('too-many', 0, { kind: 'CREATE', snapshot })), /ORDER_EXTERNAL_TEST_REFERENCE_REQUIRED/);
+  assert.equal(http.paths.length, 0);
+  snapshot.canonical.externalReferences = references.slice(0, 16);
+  await store.execute(command('bounded-create', 0, { kind: 'CREATE', snapshot }));
+  const before = http.value;
+  await assert.rejects(store.execute(command('overflow', 1, { kind: 'LINK_EXTERNAL_REFERENCE', reference: references[16] })), /ORDER_EXTERNAL_TEST_REFERENCE_REQUIRED/);
+  assert.equal(http.value, before);
+  const corrupt = JSON.parse(before!); corrupt.audit[0].operation = 'LINK_EXTERNAL_REFERENCE'; corrupt.audit[0].fact = 'SALE'; corrupt.audit[0].amountCents = 4850;
+  http.value = JSON.stringify(corrupt); const corruptBefore = http.value;
+  await assert.rejects(storeFor(http).snapshot(), /ORDER_STORE_AUDIT_INVALID/); assert.equal(http.value, corruptBefore);
 });

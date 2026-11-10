@@ -27,6 +27,6 @@ export {
 } from './canonicalJson';
 export {
   validateBackendDispatchAdmissionCommand,
-  BackendDispatchAdmissionValidationResult,
 } from './validation';
 export { admitBackendDispatchRequest } from './admission';
+export type { BackendDispatchAdmissionValidationResult } from './validation';

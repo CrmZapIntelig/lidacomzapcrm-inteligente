@@ -5,7 +5,7 @@ import type { VisualSession } from '../offline-preview/scenario';
 import { budgetDay } from '../src/domain/dispatchPrerequisites';
 
 // Manually derived from the canonical state plus verified STG-01 Hosting; no runtime I/O.
-export const canonicalSource = 'ORDER-02 · STAGING READY — TEST ONLY · 04/10/2026';
+export const canonicalSource = 'MULTI-02 · PRÉVIA LOCAL · 09/10/2026';
 export const modules = [
   ['dashboard', 'Dashboard', '◈'], ['crm', 'CRM', '▤'], ['clientes', 'Clientes', '◎'], ['conversas', 'Conversas', '◌'],
   ['marketing', 'Marketing', '◇'], ['venda', 'Venda Ativa', '↗'], ['dispatch', 'Disparador Inteligente', '≋'], ['funil', 'Funil', '⋮'],
@@ -22,7 +22,7 @@ export const capabilities: readonly Capability[] = [
   { id: 'marketing', title: 'Marketing', phase: 'UNI-02/03/06', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO'], gap: 'Handoff persistido com campanhas operacionais pendente.', module: 'marketing' },
   { id: 'orders', title: 'Pedidos', phase: 'ORDER-01/02 / OPS-01', statuses: ['STAGING READY', 'VISUAL IMPLEMENTADO'], gap: 'STAGING READY — TEST ONLY: persistência e rollback comprovados. Preview em memória. Pedidos unificados operacionalmente ainda incompletos.', module: 'pedidos' },
   { id: 'omni', title: 'Omnichannel', phase: 'UNI-02/03/04 / LIVE-00', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO'], gap: 'Inbox real e identidades persistidas pendentes.', module: 'conversas' },
-  { id: 'whatsapp', title: 'WhatsApp', phase: 'LIVE-01/02/03 / META-01', statuses: ['OFFLINE IMPLEMENTADO', 'LIVE PENDENTE'], gap: 'Receiver/worker TEST pronto; META-01 PAUSADO no trusted-device. Outbound DISABLED.', module: 'whatsapp' },
+  { id: 'whatsapp', title: 'WhatsApp', phase: 'LIVE-01/02/03 / META-01', statuses: ['OFFLINE IMPLEMENTADO', 'LIVE PENDENTE'], gap: 'Meta TEST parcial e Evolution local. Ainda sem envio real; Evolution precisa de instância.', module: 'whatsapp' },
   { id: 'rcs', title: 'RCS', phase: 'LIVE-04', statuses: ['OFFLINE IMPLEMENTADO', 'LIVE PENDENTE'], gap: 'Agente não configurado; capability real UNKNOWN.', module: 'rcs' },
   { id: 'gateway', title: 'Gateway / Worker', phase: 'LIVE-00/02 / STG-02/03', statuses: ['OFFLINE IMPLEMENTADO', 'STAGING READY'], gap: 'HTTPS/worker privados somente TEST comprovados. Callback público Meta e inbound real pendentes.', module: 'gateway' },
   { id: 'events', title: 'Timeline / Funil', phase: 'UNI-02/03/04/07', statuses: ['CONTRATO', 'ADAPTER', 'OFFLINE IMPLEMENTADO', 'VISUAL IMPLEMENTADO'], gap: 'Bus genérico e handlers operacionais não integrados.', module: 'timeline' },

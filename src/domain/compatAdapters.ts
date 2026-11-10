@@ -352,7 +352,7 @@ function mapCrmOrderStatus(status: CrmOrder['status']): OrderStatus {
 }
 
 function mapDeliveryOrderStatus(status: CrmDeliveryOrder['status']): OrderStatus {
-  if (status === 'FECHADO') return 'PAID';
+  // Delivery lifecycle is not payment evidence; preserve it in the source sidecar.
   return 'CREATED';
 }
 

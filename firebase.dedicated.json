@@ -1,0 +1,7 @@
+{
+  "firestore": [{
+    "database": "lidacomzapcrm-work-20261021",
+    "rules": "firestore.dedicated.rules",
+    "indexes": "firestore.va018.indexes.json"
+  }]
+}

@@ -10,6 +10,14 @@ export type ChannelProvider =
 export type ChannelAvailability = 'UNKNOWN' | 'KNOWN_AVAILABLE' | 'KNOWN_UNAVAILABLE';
 export type ChannelEligibility = 'UNKNOWN' | 'ELIGIBLE' | 'INELIGIBLE';
 
+/** Explicit provider order identity. It is neither a message ID nor a customer ID. */
+export interface ExternalOrderReference {
+  provider: ChannelProvider;
+  channel: CommunicationChannel;
+  providerAccountId: string;
+  externalOrderId: string;
+}
+
 export type CapabilitySource =
   | 'WHATSAPP_SYNC'
   | 'RCS_CAPABILITY_CHECK'

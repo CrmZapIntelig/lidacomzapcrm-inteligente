@@ -1,0 +1,16 @@
+{
+  "firestore": {
+    "rules": "docs/pilot/security/firestore.va-01-8.candidate.rules",
+    "indexes": "firestore.va018.indexes.json"
+  },
+  "emulators": {
+    "firestore": {
+      "host": "127.0.0.1",
+      "port": 8180
+    },
+    "ui": {
+      "enabled": false
+    },
+    "singleProjectMode": true
+  }
+}

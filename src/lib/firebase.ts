@@ -15,7 +15,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const isCloneEnvironment = import.meta.env.MODE === 'clone';
+export const cloneOperatorUid = 'Wdt1sjpnHYhJgH8rkB7J2zKuEYt1';
+export const firestoreDatabaseId = isCloneEnvironment ? 'lidacomzapcrm-work-20261021' : '(default)';
+export const db = getFirestore(app, firestoreDatabaseId);
 export const storage = getStorage(app);
 
 export default app;

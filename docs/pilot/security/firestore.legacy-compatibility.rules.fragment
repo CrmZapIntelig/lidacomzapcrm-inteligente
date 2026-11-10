@@ -1,0 +1,75 @@
+    // Legacy compatibility: existing single verified operator only. This is NOT
+    // multitenant authorization or full validation of legacy nested schemas.
+    // Explicit top-level paths cannot grant access to canonical subcollections.
+    function isLegacyCollection(name) {
+      return name in ['clients','messages','history','campaigns','commercialSegments',
+        'campaignTemplates','campaignSchedules','campaignResults','campaignReaches',
+        'orders','automations','settings','productsDigitalMenu','cardapios',
+        'deliveryOrders','couriers','routes','reviews','deliveryHistories','caixaSessions'];
+    }
+    function isValidLegacyEnvelope(data, documentId) {
+      return data.keys().size() <= 100
+        && (!('id' in data) || (data.id is string && data.id == documentId))
+        && (!('tenantId' in data) || data.tenantId == 'prato-mineiro')
+        && uidUnchanged(data);
+    }
+    match /{legacyCollection}/{legacyId} {
+      allow read: if isOperator() && isLegacyCollection(legacyCollection);
+      allow create: if isOperator() && isLegacyCollection(legacyCollection)
+        && isValidLegacyEnvelope(request.resource.data, legacyId);
+      allow update: if isOperator() && isLegacyCollection(legacyCollection)
+        && isValidLegacyEnvelope(request.resource.data, legacyId)
+        && uidNotModified(resource.data, request.resource.data)
+        && (!('tenantId' in resource.data) || request.resource.data.tenantId == resource.data.tenantId);
+      allow delete: if isOperator() && isLegacyCollection(legacyCollection);
+    }
+    function isValidCloneTest(data) {
+      return data.keys().hasOnly(['schema','mode','actorUid','revision','payload'])
+        && data.schema == 1 && data.mode == 'TEST' && data.actorUid == request.auth.uid
+        && data.revision is int && data.revision >= 1
+        && data.payload is string && data.payload.size() <= 200000;
+    }
+    match /clone_unified_order_tests/{id} {
+      allow read: if isOperator();
+      allow create: if isOperator() && isValidCloneTest(request.resource.data);
+      allow update: if isOperator() && isValidCloneTest(request.resource.data)
+        && request.resource.data.revision == resource.data.revision + 1;
+      allow delete: if false;
+    }
+    function isValidDraftContact(data) {
+      return data.keys().hasOnly(['id','name','content','consent'])
+        && data.id.matches('^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$')
+        && data.name.matches('(?s)^.{0,200}$')
+        && data.content is string && data.content.size() <= 8000
+        && data.consent.matches('(?s)^.{0,100}$');
+    }
+    function isValidCloneDraft(data, id) {
+      return data.keys().hasOnly(['id','schema','kind','status','canSend','tenantId','actorUid',
+        'createdAt','provider','contactCount','storageVersion','persistedAt','preparationPayload','marketingCampaignId'])
+        && data.id == id && isId(id) && data.schema == 1
+        && data.actorUid == request.auth.uid && data.tenantId == 'prato-mineiro-clone'
+        && data.status == 'DRAFT' && data.canSend == false
+        && data.kind in ['ACTIVE_SALES_DRAFT','MARKETING_DISPATCH_DRAFT']
+        && data.provider in ['WHATSAPP_META_OFFICIAL','WHATSAPP_EVOLUTION_OPTIONAL','RCS_GOOGLE']
+        && isIsoInstant(data.createdAt) && data.storageVersion == 2
+        && data.contactCount is int && data.contactCount >= 1 && data.contactCount <= 50
+        && data.persistedAt == request.time
+        && data.preparationPayload is string && data.preparationPayload.size() <= 500000
+        && (data.marketingCampaignId == null || isId(data.marketingCampaignId));
+    }
+    // Existing draft model has no provider execution authority. Preserve reads
+    // while retaining immutable creation and explicit DRAFT/canSend=false.
+    match /clone_unified_sales_drafts/{id} {
+      allow read: if isOperator();
+      allow create: if isOperator() && isValidCloneDraft(request.resource.data, id);
+      allow update, delete: if false;
+      match /contacts/{contactId} {
+        allow read: if isOperator();
+        allow create: if isOperator() && isValidDraftContact(request.resource.data)
+          && request.resource.data.id == contactId
+          && !exists(/databases/$(database)/documents/clone_unified_sales_drafts/$(id))
+          && getAfter(/databases/$(database)/documents/clone_unified_sales_drafts/$(id)).data.persistedAt == request.time
+          && getAfter(/databases/$(database)/documents/clone_unified_sales_drafts/$(id)).data.storageVersion == 2;
+        allow update, delete: if false;
+      }
+    }

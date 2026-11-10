@@ -1,6 +1,8 @@
 import {
   Campaign,
   CampaignExecutionPreview,
+  CampaignDispatchDraft,
+  CampaignDispatchDraftItem,
   WhatsAppCampaignReadiness,
   CampaignContactEligibilitySummary,
   PreparedCampaignMessage,
@@ -35,8 +37,8 @@ export function createCampaignDispatchDraft(
   contactEligibility: CampaignContactEligibilitySummary,
   draftId: string,
   createdAt: string
-) {
-  const items = (preparation.preparedMessages || []).map((message: PreparedCampaignMessage, index) => {
+): CampaignDispatchDraft {
+  const items = (preparation.preparedMessages || []).map((message: PreparedCampaignMessage, index): CampaignDispatchDraftItem => {
     const tech = (technicalReadiness && technicalReadiness.items) || [];
     const elig = (contactEligibility && contactEligibility.recipients) || [];
 
@@ -86,7 +88,7 @@ export function createCampaignDispatchDraft(
         | 'duplicate-normalized-phone'
       >,
       deduplicationFingerprint,
-    } as const;
+    };
   });
 
   // Apply classification rules in order

@@ -1,0 +1,12 @@
+{
+  "firestore": {
+    "database": "lidacomzapcrm-work-20261021",
+    "rules": "docs/pilot/security/firestore.va-01-8.candidate.rules",
+    "indexes": "firestore.va018.indexes.json"
+  },
+  "emulators": {
+    "firestore": {
+      "port": 8180
+    }
+  }
+}

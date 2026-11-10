@@ -1,0 +1,485 @@
+// PROTOTYPE ONLY — VA-01.8 canonical operations scope.
+// Not referenced by the root firebase.json and not deployed.
+//
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+// unified_orders/{orderId}
+//   tenantId:string immutable, mode:'PRODUCTION' immutable,
+//   revision:int, payload:string JSON <= 200000 chars,
+//   lastCommandId:string, updatedAt:timestamp.
+// unified_orders/{orderId}/commands/{commandId}
+//   fingerprint:64-char SHA-256, revision:int, actor:uid,
+//   createdAt:timestamp. Create-only.
+// unified_orders/{orderId}/events/{commandId}
+//   immutable operational/audit fact with strict IDs, enums, amounts and time.
+// unified_cash/current and unified_cash_sessions/{sessionId}
+//   mirrored CashSession. expected has exactly four integer rails.
+//   lastLedgerId is required for any financial expected-value change.
+// unified_cash_entries/{ledgerId}
+//   immutable receipt/refund fact. PII customerName is admin-only.
+// unified_receipt_evidence/{evidenceFingerprint}
+//   immutable evidence-consumption marker; no list access.
+// unified_satisfaction_audiences/{audienceId}
+//   immutable operator-reviewable DRAFT_ONLY audience; canSend is always false.
+// Every other path is denied by default.
+// ===============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===========================================================
+    // Helper Functions
+    // ===========================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function uidUnchanged(data) {
+      return !('uid' in data) || data.uid == request.auth.uid;
+    }
+
+    function uidNotModified(before, after) {
+      return !('uid' in after) || (('uid' in before) && after.uid == before.uid);
+    }
+
+    function isOperator() {
+      return isOwner('Wdt1sjpnHYhJgH8rkB7J2zKuEYt1')
+        && request.auth.token.get('email_verified', false) == true;
+    }
+
+    function isId(value) {
+      return value is string
+        && value.size() >= 1
+        && value.size() <= 160
+        && value.matches('^[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}$');
+    }
+
+    function isHash(value) {
+      return value is string && value.matches('^[a-f0-9]{64}$');
+    }
+
+    function isIsoInstant(value) {
+      return value is string
+        && value.size() >= 20
+        && value.size() <= 35
+        && value.matches('^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z$');
+    }
+
+    function isBusinessDate(value) {
+      return value is string && value.matches('^\\d{4}-\\d{2}-\\d{2}$');
+    }
+
+    function isMoney(value) {
+      return value is int && value >= 0 && value <= 9007199254740991;
+    }
+
+    function isPositiveMoney(value) {
+      return value is int && value > 0 && value <= 9007199254740991;
+    }
+
+    function isSignedMoney(value) {
+      return value is int
+        && value >= -9007199254740991
+        && value <= 9007199254740991;
+    }
+
+    function isPilotTenant(data) {
+      return data.tenantId == 'prato-mineiro';
+    }
+
+    function isValidExpected(expected) {
+      return expected is map
+        && expected.keys().hasOnly(['DINHEIRO', 'PIX', 'DEBITO', 'CREDITO'])
+        && expected.keys().hasAll(['DINHEIRO', 'PIX', 'DEBITO', 'CREDITO'])
+        && isSignedMoney(expected.DINHEIRO)
+        && isSignedMoney(expected.PIX)
+        && isSignedMoney(expected.DEBITO)
+        && isSignedMoney(expected.CREDITO);
+    }
+
+    function isValidSource(source) {
+      return source is map
+        && source.keys().hasOnly(['entryPoint', 'channel', 'creationMode'])
+        && source.keys().hasAll(['entryPoint', 'channel', 'creationMode'])
+        && source.entryPoint in ['DIGITAL_MENU', 'CHAT', 'POS', 'TABLE_QR']
+        && source.channel in ['NONE', 'WHATSAPP', 'RCS']
+        && source.creationMode in ['CUSTOMER', 'HUMAN_OPERATOR', 'AI_ASSISTED', 'AUTOMATION'];
+    }
+
+    function isValidOrderEnvelope(data) {
+      return data.keys().hasOnly(['tenantId', 'mode', 'revision', 'payload', 'lastCommandId', 'updatedAt'])
+        && data.keys().hasAll(['tenantId', 'mode', 'revision', 'payload', 'lastCommandId', 'updatedAt'])
+        && isPilotTenant(data)
+        && data.mode == 'PRODUCTION'
+        && data.revision is int && data.revision >= 1 && data.revision <= 2147483647
+        && data.payload is string && data.payload.size() >= 2 && data.payload.size() <= 200000
+        && uidUnchanged(data)
+        && isId(data.lastCommandId)
+        && data.updatedAt is timestamp && data.updatedAt == request.time;
+    }
+
+    function isValidCommand(data, commandId) {
+      return data.keys().hasOnly(['fingerprint', 'revision', 'actor', 'createdAt'])
+        && data.keys().hasAll(['fingerprint', 'revision', 'actor', 'createdAt'])
+        && isHash(data.fingerprint)
+        && data.revision is int && data.revision >= 1 && data.revision <= 2147483647
+        && data.actor == request.auth.uid
+        && data.createdAt is timestamp && data.createdAt == request.time
+        && isId(commandId);
+    }
+
+    function isFinancialOperation(operation) {
+      return operation in ['RECEIVE', 'REFUND'];
+    }
+
+    function isValidEvent(data, orderId, commandId) {
+      return data.keys().hasOnly([
+          'id', 'commandId', 'actor', 'orderId', 'tenantId', 'revision',
+          'previousVersion', 'newVersion', 'at', 'operation', 'result', 'fact',
+          'amountCents', 'method', 'evidenceId', 'cashSessionId', 'confirmation',
+          'dispatchCampaignId', 'queueEntryId', 'recordedAt'
+        ])
+        && data.keys().hasAll([
+          'id', 'commandId', 'actor', 'orderId', 'tenantId', 'revision',
+          'previousVersion', 'newVersion', 'at', 'operation', 'result', 'fact',
+          'amountCents', 'method', 'recordedAt'
+        ])
+        && data.id == commandId && data.commandId == commandId
+        && data.orderId == orderId && isPilotTenant(data)
+        && data.actor == request.auth.uid
+        && data.revision is int && data.revision >= 1
+        && data.previousVersion is int && data.previousVersion >= 0
+        && data.newVersion == data.revision && data.revision == data.previousVersion + 1
+        && isIsoInstant(data.at)
+        && data.operation in ['CREATE', 'UPDATE', 'CONFIRM', 'CANCEL', 'NOTA_APPROVE', 'NOTA_REJECT', 'CHANGE_PAYMENT', 'RECEIVE', 'REFUND', 'PRODUCTION', 'DELIVERY']
+        && data.result == 'APPLIED'
+        && data.fact in ['STATE', 'SALE', 'SALE_VOID', 'RECEIPT', 'CREDIT_RECEIPT', 'REFUND']
+        && isMoney(data.amountCents)
+        && data.method in ['DINHEIRO', 'PIX', 'DEBITO', 'CREDITO', 'NOTA']
+        && data.recordedAt is timestamp && data.recordedAt == request.time
+        && (!('dispatchCampaignId' in data) || isId(data.dispatchCampaignId))
+        && (!('queueEntryId' in data) || isId(data.queueEntryId))
+        && (
+          (isFinancialOperation(data.operation)
+            && isId(data.evidenceId)
+            && isId(data.cashSessionId)
+            && data.confirmation == 'MANUAL_OPERATOR'
+            && data.amountCents > 0
+            && data.method in ['DINHEIRO', 'PIX', 'DEBITO', 'CREDITO']
+            && ((data.operation == 'REFUND' && data.fact == 'REFUND')
+              || (data.operation == 'RECEIVE' && data.fact in ['RECEIPT', 'CREDIT_RECEIPT'])))
+          || (!isFinancialOperation(data.operation)
+            && !('evidenceId' in data)
+            && !('cashSessionId' in data)
+            && !('confirmation' in data))
+        );
+    }
+
+    function orderArtifactsMatch(orderId, data) {
+      let command = getAfter(/databases/$(database)/documents/unified_orders/$(orderId)/commands/$(data.lastCommandId)).data;
+      let event = getAfter(/databases/$(database)/documents/unified_orders/$(orderId)/events/$(data.lastCommandId)).data;
+      return command.actor == request.auth.uid
+        && command.revision == data.revision
+        && event.id == data.lastCommandId
+        && event.commandId == data.lastCommandId
+        && event.orderId == orderId
+        && event.tenantId == data.tenantId
+        && event.actor == request.auth.uid
+        && event.revision == data.revision;
+    }
+
+    function isValidCashSession(data) {
+      return data.keys().hasOnly([
+          'id', 'status', 'openedAt', 'closedAt', 'openingCents', 'expected',
+          'countedCents', 'differenceCents', 'operator', 'lastLedgerId'
+        ])
+        && data.keys().hasAll(['id', 'status', 'openedAt', 'openingCents', 'expected', 'operator'])
+        && isId(data.id)
+        && data.status in ['OPEN', 'CLOSED']
+        && isIsoInstant(data.openedAt)
+        && isMoney(data.openingCents)
+        && isValidExpected(data.expected)
+        && data.operator == request.auth.uid
+        && (!('lastLedgerId' in data) || isHash(data.lastLedgerId))
+        && (
+          (data.status == 'OPEN'
+            && !('closedAt' in data)
+            && !('countedCents' in data)
+            && !('differenceCents' in data))
+          || (data.status == 'CLOSED'
+            && isIsoInstant(data.closedAt)
+            && isMoney(data.countedCents)
+            && data.differenceCents is int
+            && data.differenceCents >= -9007199254740991
+            && data.differenceCents <= 9007199254740991
+            && data.differenceCents == data.countedCents - data.openingCents - data.expected.DINHEIRO)
+        );
+    }
+
+    function isValidLedger(data, ledgerId) {
+      return data.keys().hasOnly([
+          'schema', 'id', 'tenantId', 'cashSessionId', 'orderId', 'commandId',
+          'customerId', 'customerName', 'kind', 'method', 'amountCents',
+          'netAmountCents', 'source', 'occurredAt', 'evidenceFingerprint'
+        ])
+        && data.keys().hasAll([
+          'schema', 'id', 'tenantId', 'cashSessionId', 'orderId', 'commandId',
+          'customerId', 'customerName', 'kind', 'method', 'amountCents',
+          'netAmountCents', 'source', 'occurredAt', 'evidenceFingerprint'
+        ])
+        && data.schema == 1 && data.id == ledgerId && isHash(ledgerId)
+        && isPilotTenant(data)
+        && isId(data.cashSessionId) && isId(data.orderId) && isId(data.commandId)
+        && isId(data.customerId)
+        && data.customerName is string && data.customerName.size() >= 1 && data.customerName.size() <= 160
+        && data.kind in ['RECEIPT', 'REFUND']
+        && data.method in ['DINHEIRO', 'PIX', 'DEBITO', 'CREDITO']
+        && isPositiveMoney(data.amountCents)
+        && data.netAmountCents is int
+        && data.netAmountCents == (data.kind == 'REFUND' ? -data.amountCents : data.amountCents)
+        && isValidSource(data.source)
+        && isIsoInstant(data.occurredAt)
+        && isHash(data.evidenceFingerprint);
+    }
+
+    function ledgerArtifactsMatch(data) {
+      let order = getAfter(/databases/$(database)/documents/unified_orders/$(data.orderId)).data;
+      let command = getAfter(/databases/$(database)/documents/unified_orders/$(data.orderId)/commands/$(data.commandId)).data;
+      let event = getAfter(/databases/$(database)/documents/unified_orders/$(data.orderId)/events/$(data.commandId)).data;
+      let evidence = getAfter(/databases/$(database)/documents/unified_receipt_evidence/$(data.evidenceFingerprint)).data;
+      let cash = getAfter(/databases/$(database)/documents/unified_cash/current).data;
+      let history = getAfter(/databases/$(database)/documents/unified_cash_sessions/$(data.cashSessionId)).data;
+      return order.tenantId == data.tenantId && order.lastCommandId == data.commandId
+        && command.actor == request.auth.uid && command.revision == order.revision
+        && event.actor == request.auth.uid && event.tenantId == data.tenantId
+        && event.id == data.commandId && event.commandId == data.commandId
+        && event.orderId == data.orderId && event.revision == order.revision
+        && event.amountCents == data.amountCents && event.method == data.method
+        && event.cashSessionId == data.cashSessionId
+        && ((data.kind == 'REFUND' && event.operation == 'REFUND')
+          || (data.kind == 'RECEIPT' && event.operation == 'RECEIVE'))
+        && evidence.tenantId == data.tenantId
+        && evidence.evidenceFingerprint == data.evidenceFingerprint
+        && evidence.orderId == data.orderId && evidence.commandId == data.commandId
+        && cash.id == data.cashSessionId && cash.lastLedgerId == data.id
+        && history == cash;
+    }
+
+    function cashExpectedDeltaMatches(ledgerId) {
+      let entry = getAfter(/databases/$(database)/documents/unified_cash_entries/$(ledgerId)).data;
+      let before = resource.data.expected;
+      let after = request.resource.data.expected;
+      return entry.id == ledgerId
+        && entry.tenantId == 'prato-mineiro'
+        && entry.cashSessionId == request.resource.data.id
+        && entry.netAmountCents is int
+        && entry.method in ['DINHEIRO', 'PIX', 'DEBITO', 'CREDITO']
+        && (
+          (entry.method == 'DINHEIRO'
+            && after.DINHEIRO == before.DINHEIRO + entry.netAmountCents
+            && after.PIX == before.PIX && after.DEBITO == before.DEBITO && after.CREDITO == before.CREDITO)
+          || (entry.method == 'PIX'
+            && after.PIX == before.PIX + entry.netAmountCents
+            && after.DINHEIRO == before.DINHEIRO && after.DEBITO == before.DEBITO && after.CREDITO == before.CREDITO)
+          || (entry.method == 'DEBITO'
+            && after.DEBITO == before.DEBITO + entry.netAmountCents
+            && after.DINHEIRO == before.DINHEIRO && after.PIX == before.PIX && after.CREDITO == before.CREDITO)
+          || (entry.method == 'CREDITO'
+            && after.CREDITO == before.CREDITO + entry.netAmountCents
+            && after.DINHEIRO == before.DINHEIRO && after.PIX == before.PIX && after.DEBITO == before.DEBITO)
+        );
+    }
+
+    function cashHistoryMatches(data) {
+      return getAfter(/databases/$(database)/documents/unified_cash_sessions/$(data.id)).data == data;
+    }
+
+    function validCashUpdate() {
+      return isValidCashSession(request.resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status', 'closedAt', 'countedCents', 'differenceCents', 'expected', 'lastLedgerId'
+        ])
+        && request.resource.data.id == resource.data.id
+        && request.resource.data.openedAt == resource.data.openedAt
+        && request.resource.data.openingCents == resource.data.openingCents
+        && request.resource.data.operator == resource.data.operator
+        && resource.data.status == 'OPEN'
+        && (
+          (request.resource.data.status == 'OPEN'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['expected', 'lastLedgerId'])
+            && request.resource.data.lastLedgerId != resource.data.get('lastLedgerId', '')
+            && cashExpectedDeltaMatches(request.resource.data.lastLedgerId))
+          || (request.resource.data.status == 'CLOSED'
+            && request.resource.data.expected == resource.data.expected
+            && request.resource.data.get('lastLedgerId', '') == resource.data.get('lastLedgerId', ''))
+        )
+        && cashHistoryMatches(request.resource.data);
+    }
+
+    function validCashReopen() {
+      return resource.data.status == 'CLOSED'
+        && isValidCashSession(request.resource.data)
+        && request.resource.data.status == 'OPEN'
+        && request.resource.data.id != resource.data.id
+        && request.resource.data.expected == {
+          'DINHEIRO': 0,
+          'PIX': 0,
+          'DEBITO': 0,
+          'CREDITO': 0
+        }
+        && !('lastLedgerId' in request.resource.data)
+        && cashHistoryMatches(request.resource.data);
+    }
+
+    function isValidEvidence(data, evidenceId) {
+      return data.keys().hasOnly([
+          'tenantId', 'evidenceFingerprint', 'orderId', 'commandId', 'actor', 'kind', 'recordedAt'
+        ])
+        && data.keys().hasAll([
+          'tenantId', 'evidenceFingerprint', 'orderId', 'commandId', 'actor', 'kind', 'recordedAt'
+        ])
+        && isPilotTenant(data)
+        && data.evidenceFingerprint == evidenceId && isHash(evidenceId)
+        && isId(data.orderId) && isId(data.commandId)
+        && data.actor == request.auth.uid
+        && data.kind in ['RECEIVE', 'REFUND']
+        && data.recordedAt is timestamp && data.recordedAt == request.time;
+    }
+
+    function evidenceArtifactsMatch(data) {
+      let event = getAfter(/databases/$(database)/documents/unified_orders/$(data.orderId)/events/$(data.commandId)).data;
+      return event.id == data.commandId
+        && event.commandId == data.commandId
+        && event.orderId == data.orderId
+        && event.tenantId == data.tenantId
+        && event.actor == request.auth.uid
+        && event.operation == data.kind;
+    }
+
+    function isValidIdList(values) {
+      return values is list && values.size() >= 1 && values.size() <= 100
+        && isId(values[0]);
+    }
+
+    function isValidSatisfactionAudience(data, audienceId) {
+      return data.keys().hasOnly([
+          'schema', 'id', 'idempotencyKey', 'tenantId', 'businessDate',
+          'contactId', 'orderIds', 'channel', 'provider', 'status', 'canSend',
+          'actor', 'preparedAt'
+        ])
+        && data.keys().hasAll([
+          'schema', 'id', 'idempotencyKey', 'tenantId', 'businessDate',
+          'contactId', 'orderIds', 'channel', 'provider', 'status', 'canSend',
+          'actor', 'preparedAt'
+        ])
+        && data.schema == 1 && data.id == audienceId && isHash(audienceId)
+        && data.idempotencyKey is string && data.idempotencyKey.size() >= 1 && data.idempotencyKey.size() <= 500
+        && isPilotTenant(data) && isBusinessDate(data.businessDate)
+        && isId(data.contactId) && isValidIdList(data.orderIds)
+        && data.channel in ['WHATSAPP', 'RCS']
+        && data.provider in ['WHATSAPP_META_OFFICIAL', 'WHATSAPP_EVOLUTION_OPTIONAL', 'RCS_GOOGLE']
+        && ((data.channel == 'RCS' && data.provider == 'RCS_GOOGLE')
+          || (data.channel == 'WHATSAPP' && data.provider in ['WHATSAPP_META_OFFICIAL', 'WHATSAPP_EVOLUTION_OPTIONAL']))
+        && data.status == 'DRAFT_ONLY' && data.canSend == false
+        && data.actor == request.auth.uid
+        && data.preparedAt is timestamp && data.preparedAt == request.time;
+    }
+
+    // ===========================================================
+    // Canonical Order Aggregate
+    // ===========================================================
+    match /unified_orders/{orderId} {
+      allow read: if isOperator();
+      allow create: if isOperator()
+        && isId(orderId)
+        && isValidOrderEnvelope(request.resource.data)
+        && request.resource.data.revision == 1
+        && orderArtifactsMatch(orderId, request.resource.data);
+      allow update: if isOperator()
+        && isValidOrderEnvelope(request.resource.data)
+        && uidNotModified(resource.data, request.resource.data)
+        && request.resource.data.tenantId == resource.data.tenantId
+        && request.resource.data.mode == resource.data.mode
+        && request.resource.data.revision == resource.data.revision + 1
+        && request.resource.data.lastCommandId != resource.data.lastCommandId
+        && orderArtifactsMatch(orderId, request.resource.data);
+      allow delete: if false;
+
+      match /commands/{commandId} {
+        allow get: if isOperator();
+        allow list: if false;
+        allow create: if isOperator()
+          && isValidCommand(request.resource.data, commandId)
+          && getAfter(/databases/$(database)/documents/unified_orders/$(orderId)).data.lastCommandId == commandId;
+        allow update, delete: if false;
+      }
+
+      match /events/{commandId} {
+        allow read: if isOperator();
+        allow create: if isOperator()
+          && isValidEvent(request.resource.data, orderId, commandId)
+          && getAfter(/databases/$(database)/documents/unified_orders/$(orderId)).data.lastCommandId == commandId;
+        allow update, delete: if false;
+      }
+    }
+
+    // ===========================================================
+    // Cash Session and Immutable Ledger
+    // ===========================================================
+    match /unified_cash/current {
+      allow read: if isOperator();
+      allow create: if isOperator()
+        && isValidCashSession(request.resource.data)
+        && request.resource.data.status == 'OPEN'
+        && cashHistoryMatches(request.resource.data);
+      allow update: if isOperator()
+        && (request.resource.data.id == resource.data.id ? validCashUpdate() : validCashReopen());
+      allow delete: if false;
+    }
+
+    match /unified_cash_sessions/{sessionId} {
+      allow read: if isOperator();
+      allow create, update: if isOperator()
+        && isValidCashSession(request.resource.data)
+        && request.resource.data.id == sessionId
+        && request.resource.data == getAfter(/databases/$(database)/documents/unified_cash/current).data;
+      allow delete: if false;
+    }
+
+    match /unified_cash_entries/{ledgerId} {
+      allow read: if isOperator();
+      allow create: if isOperator()
+        && isValidLedger(request.resource.data, ledgerId)
+        && ledgerArtifactsMatch(request.resource.data);
+      allow update, delete: if false;
+    }
+
+    match /unified_receipt_evidence/{evidenceId} {
+      allow get: if isOperator();
+      allow list: if false;
+      allow create: if isOperator()
+        && isValidEvidence(request.resource.data, evidenceId)
+        && evidenceArtifactsMatch(request.resource.data);
+      allow update, delete: if false;
+    }
+
+    // ===========================================================
+    // Satisfaction Preparation — never dispatch authority
+    // ===========================================================
+    match /unified_satisfaction_audiences/{audienceId} {
+      allow read: if isOperator();
+      allow create: if isOperator()
+        && isValidSatisfactionAudience(request.resource.data, audienceId);
+      allow update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

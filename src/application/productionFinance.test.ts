@@ -1,0 +1,7 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {cashMovement,finishCash,type CashSession} from './productionFinance';
+const session=():CashSession=>({id:'cash',status:'OPEN',openedAt:'2026-10-21T10:00:00Z',openingCents:10000,expected:{DINHEIRO:0,PIX:0,DEBITO:0,CREDITO:0},operator:'operator'});
+test('cash drawer excludes PIX and credit collection retains actual payment rail',()=>{let s=session();s=cashMovement(s,'PIX',4000,'RECEIVE');s=cashMovement(s,'DINHEIRO',2000,'RECEIVE');const closed=finishCash(s,12000,'2026-10-21T12:00:00Z');assert.equal(closed.differenceCents,0);assert.equal(closed.expected.PIX,4000);assert.equal(session().expected.PIX,0);});
+test('refund reduces only the rail actually refunded',()=>{const s=cashMovement(cashMovement(session(),'PIX',4000,'RECEIVE'),'PIX',4000,'REFUND');assert.equal(s.expected.PIX,0);assert.equal(s.expected.DINHEIRO,0);});
+test('closed sessions reject new receipts and closing is repeatable only with same count',()=>{const s=finishCash(session(),9500,'2026-10-21T12:00:00Z');assert.equal(s.differenceCents,-500);assert.deepEqual(finishCash(s,9500,'2026-10-21T13:00:00Z'),s);assert.throws(()=>finishCash(s,10000,'2026-10-21T13:00:00Z'));assert.throws(()=>cashMovement(s,'PIX',100,'RECEIVE'));});
+test('NOTA approval is not money; invalid and fractional cash amounts rejected',()=>{assert.throws(()=>cashMovement(session(),'NOTA',100,'RECEIVE'));for(const n of [-1,NaN,Infinity,0.5])assert.throws(()=>cashMovement(session(),'PIX',n,'RECEIVE'));});

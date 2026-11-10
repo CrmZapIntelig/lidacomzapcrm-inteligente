@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.offline.json",
+  "include": [
+    "staging-functions/operationalDiagnostics.ts",
+    "staging-functions/operationalDiagnostics.test.ts"
+  ]
+}

@@ -14,22 +14,32 @@ interface Document { fields?: { payload?: { stringValue?: string } } }
 export class FirestoreAtomicJsonPort implements AtomicJsonPort {
   private readonly document: string;
   readonly root = 'projects/lidacomzapcrm-staging/databases/(default)/documents';
-  constructor(private readonly http: FirestoreRequestPort, tenantId: string, accountId: string, collection: 'stg_inbound_synthetic' | 'stg_operational_orders' = 'stg_inbound_synthetic') {
+  constructor(private readonly http: FirestoreRequestPort, tenantId: string, accountId: string, collection: 'stg_inbound_synthetic' | 'stg_operational_orders' | 'stg_pilot_checkout' = 'stg_inbound_synthetic') {
     if (!/^demo(?:-|$)/.test(tenantId) || !/^\d+$/.test(accountId)) throw new Error('SYNTHETIC_CONTEXT_REQUIRED');
     const key = createHash('sha256').update(`${tenantId}\0${accountId}`).digest('hex');
-    if (!['stg_inbound_synthetic', 'stg_operational_orders'].includes(collection)) throw new Error('STAGING_COLLECTION_FORBIDDEN');
+    if (!['stg_inbound_synthetic', 'stg_operational_orders', 'stg_pilot_checkout'].includes(collection)) throw new Error('STAGING_COLLECTION_FORBIDDEN');
     this.document = `${this.root}/${collection}/${key}`;
   }
   async transaction<T>(update: (current: string | undefined) => { value: string; result: T }): Promise<T> {
+    return this.run(update, false);
+  }
+  async read<T>(inspect: (current: string | undefined) => T): Promise<T> {
+    return this.run(raw => ({ value: raw ?? '', result: inspect(raw) }), true);
+  }
+  private async run<T>(update: (current: string | undefined) => { value: string; result: T }, readOnly: boolean): Promise<T> {
     for (let attempt = 0; attempt < 5; attempt++) {
       let transaction: string | undefined;
       try {
-        const begin = await this.http.request<{ transaction: string }>(`${this.root}:beginTransaction`, 'POST', { options: { readWrite: {} } });
+        const begin = await this.http.request<{ transaction: string }>(`${this.root}:beginTransaction`, 'POST', { options: readOnly ? { readOnly: {} } : { readWrite: {} } });
         if (!begin?.transaction) throw new Error('STAGING_TRANSACTION_REQUIRED');
         transaction = begin.transaction;
         const current = await this.http.request<Document>(`${this.document}?transaction=${encodeURIComponent(transaction)}`, 'GET', undefined, true);
         if (current && typeof current.fields?.payload?.stringValue !== 'string') throw new Error('STAGING_DOCUMENT_INVALID');
         const next = update(current?.fields?.payload?.stringValue);
+        if (readOnly) {
+          await this.http.request(`${this.root}:rollback`, 'POST', { transaction });
+          return next.result;
+        }
         if (Buffer.byteLength(next.value, 'utf8') > 256 * 1024) throw new Error('STAGING_DOCUMENT_CAPACITY');
         await this.http.request(`${this.root}:commit`, 'POST', {
           transaction, writes: [{ update: { name: this.document, fields: { payload: { stringValue: next.value } } }, currentDocument: { exists: current !== undefined } }],

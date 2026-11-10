@@ -63,3 +63,40 @@ test('menu link binds exact approved HTTPS origin and menu ID', () => {
 test('menu link rejects unapproved IDs and path/query injection', () => {
   for (const requestedMenuId of ['other-menu', '../TEST-menu', 'TEST-menu?tenant=other', 'TEST-menu/other']) assert.throws(() => buildPilotMenuLink({ approvedOrigin: 'https://menu.example.invalid', approvedMenuId: 'TEST-menu', requestedMenuId }));
 });
+
+function channelEvidence(provider: 'WHATSAPP_META_OFFICIAL' | 'WHATSAPP_EVOLUTION_OPTIONAL' | 'RCS_GOOGLE') {
+  const e = evidence('one'); const channel = provider === 'RCS_GOOGLE' ? 'RCS' as const : 'WHATSAPP' as const;
+  return { ...e, preferredChannel: 'ANY' as const, identity: { ...e.identity, channel, provider }, capability: { ...e.capability!, channel, provider } };
+}
+test('pilot chooses one explicit provider for a contact with three channel identities', () => {
+  const kinds = ['WHATSAPP_META_OFFICIAL', 'WHATSAPP_EVOLUTION_OPTIONAL', 'RCS_GOOGLE'] as const;
+  for (const selectedProvider of kinds) {
+    const result = batch({ selectedProvider, selectedIds: ['one', 'one'], evidence: kinds.map(channelEvidence) });
+    assert.deepEqual(result.preparedContactIds, ['one']); assert.equal(result.selectedProvider, selectedProvider);
+    assert.equal(result.canSend, false); assert.equal(result.canEnqueue, false);
+  }
+  assert.equal(batch().selectedProvider, 'WHATSAPP_META_OFFICIAL');
+});
+test('Evolution/RCS pilot retains opt-out, ambiguity and unknown limits protections', () => {
+  for (const selectedProvider of ['WHATSAPP_EVOLUTION_OPTIONAL', 'RCS_GOOGLE'] as const) {
+    const e = channelEvidence(selectedProvider);
+    for (const patch of [{ optedOut: true }, { consent: 'UNKNOWN' as const }, { blocked: true }, { group: true }]) assert.deepEqual(batch({ selectedProvider, selectedIds: ['one'], evidence: [{ ...e, ...patch }] }).preparedContactIds, []);
+    assert.deepEqual(batch({ selectedProvider, selectedIds: ['one'], evidence: [e, e] }).preparedContactIds, []);
+    assert.deepEqual(batch({ selectedProvider, selectedIds: ['one'], evidence: [e], providerRemaining: null }).preparedContactIds, []);
+  }
+});
+
+test('switching providers cannot bypass a known contact opt-out or existing preparation', () => {
+  const meta = channelEvidence('WHATSAPP_META_OFFICIAL'), evolution = channelEvidence('WHATSAPP_EVOLUTION_OPTIONAL');
+  for (const patch of [{ optedOut: true }, { blocked: true }, { consent: 'DENIED' as const }, { alreadyPrepared: true }]) {
+    const result = batch({ selectedProvider: 'WHATSAPP_EVOLUTION_OPTIONAL', selectedIds: ['one'], evidence: [{ ...meta, ...patch }, evolution] });
+    assert.deepEqual(result.preparedContactIds, []);
+  }
+});
+
+test('pilot evidence selection scopes identical contact IDs to the requested tenant', () => {
+  const own = evidence('one');
+  const foreign = { ...own, tenantId: 'other-tenant', optedOut: true, identity: { ...own.identity, tenantId: 'other-tenant' } };
+  assert.deepEqual(batch({ selectedIds: ['one'], evidence: [own, foreign] }).preparedContactIds, ['one']);
+  assert.deepEqual(batch({ selectedIds: ['one'], evidence: [foreign] }).preparedContactIds, []);
+});

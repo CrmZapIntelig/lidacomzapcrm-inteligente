@@ -10,10 +10,10 @@ test('published product state shows TEST persistence and independent production/
   const orders = render('pedidos');
   for (const text of ['ORDER-02 · STAGING READY — TEST ONLY', 'Operational Persistence Port', 'Firestore Staging', 'Rollback', 'DISABLED por padrão', 'Solicitada', 'Parcial', 'Paga']) assert.ok(orders.includes(text), text);
   const state = render('arquitetura');
-  for (const text of ['GATE_OPERATIONAL_PRODUCTION_WRITE_REQUIRED', 'GATE_META_TRUSTED_DEVICE_REQUIRED', 'AGUARDANDO AUTORIZAÇÃO HUMANA', 'STG-01', 'STG-02', 'STG-03']) assert.ok(state.includes(text), text);
+  for (const text of ['GATE_OPERATIONAL_PRODUCTION_WRITE_REQUIRED', 'INBOUND TEST PENDENTE', 'AGUARDANDO AUTORIZAÇÃO HUMANA', 'STG-01', 'STG-02', 'STG-03']) assert.ok(state.includes(text), text);
   const cash = render('caixa');
   for (const text of ['Esperado', 'Informado', 'Diferença', 'Dinheiro', 'PIX', 'Débito', 'Crédito', 'NOTA']) assert.ok(cash.includes(text), text);
-  assert.match(render('whatsapp'), /PAUSADO.*GATE_META_TRUSTED_DEVICE_REQUIRED/);
+  assert.match(render('whatsapp'), /CALLBACK ACEITO POR RELATO.*INBOUND PENDENTE/);
   assert.match(render('automacoes'), /canSend=false/);
   assert.match(render('entregadores'), /Nenhum cadastro ou rastreamento real/);
 });
